@@ -5187,6 +5187,48 @@ try{
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
+    transition: all 0.2s;
+  }
+  .em-btn-refresh:hover {
+    background: #334155;
+  }
+  .em-btn-delete-all {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .em-btn-delete-all:hover {
+    background: rgba(239, 68, 68, 0.3);
+    color: #ffffff;
+    border-color: #ef4444;
+  }
+  .em-btn-del-row {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .em-btn-del-row:hover {
+    background: #ef4444;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
   }
 
   /* Jadval va skroll barqarorligi */
@@ -5411,8 +5453,9 @@ try{
     <div class="em-search-box">
       <input type="text" id="em-search-input" placeholder="Oʻquvchi, telefon yoki mavzu boʻyicha qidiruv...">
     </div>
-    <div>
+    <div style="display:flex;align-items:center;gap:10px;">
       <button type="button" class="em-btn-refresh" id="em-btn-reload">&#8635; Yangilash</button>
+      <button type="button" class="em-btn-delete-all" id="em-btn-delete-all">&#128465; Barchasini oʻchirish</button>
     </div>
   </div>
 
@@ -5428,11 +5471,12 @@ try{
           <th>Ball / Jami</th>
           <th>Foiz</th>
           <th>Topshirilgan vaqt</th>
+          <th>Amallar</th>
         </tr>
       </thead>
       <tbody id="em-table-body">
         <tr>
-          <td colspan="8" style="text-align: center; padding: 36px; color: #94a3b8;">Maʼlumotlar yuklanmoqda...</td>
+          <td colspan="9" style="text-align: center; padding: 36px; color: #94a3b8;">Maʼlumotlar yuklanmoqda...</td>
         </tr>
       </tbody>
     </table>
@@ -5698,18 +5742,23 @@ try{
         '  <th>Ball / Jami</th>',
         '  <th>Foiz</th>',
         '  <th>Topshirilgan vaqt</th>',
+        '  <th>Amallar</th>',
         '</tr>'
       ].join('');
 
       var filtered = allTests.filter(function (t) {
         if (!q) return true;
-        var name = (t.full_name || t.student_name || '').toLowerCase();
-        var phone = (t.phone || '').toLowerCase();
+        var stuMatch = allStudents.find(function (s) {
+          return (t.student_id && s.id === t.student_id) || (t.phone && s.phone && s.phone === t.phone);
+        });
+        var name = (t.full_name || t.student_name || (stuMatch && (stuMatch.full_name || stuMatch.student_name)) || '').toLowerCase();
+        var rawPhone = t.phone || (stuMatch && stuMatch.phone) || '';
+        var phone = (window.cleanPhone ? window.cleanPhone(rawPhone) : rawPhone).toLowerCase();
         var topic = (t.lesson_title || '').toLowerCase();
-        var school = (t.school || '').toLowerCase();
-        var region = (t.region || '').toLowerCase();
-        var district = (t.district || '').toLowerCase();
-        var grade = (t.grade || '').toLowerCase();
+        var school = (t.school || (stuMatch && (stuMatch.school || stuMatch.sch)) || '').toLowerCase();
+        var region = (t.region || (stuMatch && (stuMatch.region || stuMatch.vil)) || '').toLowerCase();
+        var district = (t.district || (stuMatch && (stuMatch.district || stuMatch.tum)) || '').toLowerCase();
+        var grade = (t.grade || (stuMatch && (stuMatch.grade || stuMatch.cls)) || '').toLowerCase();
         return name.includes(q) || phone.includes(q) || topic.includes(q) || school.includes(q) || region.includes(q) || district.includes(q) || grade.includes(q);
       });
 
@@ -5721,7 +5770,7 @@ try{
       });
 
       if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 36px; color: #94a3b8;">Hozircha test natijalari mavjud emas.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 36px; color: #94a3b8;">Hozircha test natijalari mavjud emas.</td></tr>';
         return;
       }
 
@@ -5731,23 +5780,52 @@ try{
         var pct = Math.round((score / total) * 100);
         var badgeCls = pct >= 80 ? 'em-badge-high' : pct >= 60 ? 'em-badge-med' : 'em-badge-low';
 
-        // Maktab va sinfni aniqlash (o'quvchi jadvalidan fallback)
-        var stuMatch = allStudents.find(function (s) {
-          return (t.student_id && s.id === t.student_id) || (t.phone && s.phone && s.phone === t.phone) || (t.student_name && (s.full_name === t.student_name || s.student_name === t.student_name));
-        });
+        // Aqlli qidirish (Smart Matching): "Noma'lum o'quvchi" bo'lsa, o'quvchilar ro'yxatidan aniqlash
+        var isUnknown = !t.student_name || t.student_name === "Nomaʼlum oʻquvchi" || t.student_name === "Noma'lum" || t.student_name === "Nomaʼlum";
+        var stuMatch = null;
+        if (t.student_id) {
+          stuMatch = allStudents.find(function (s) { return s.id === t.student_id; });
+        }
+        if (!stuMatch && t.phone) {
+          var cPh = (window.cleanPhone ? window.cleanPhone(t.phone) : t.phone.replace(/[^\d+]/g, ''));
+          if (cPh && cPh.length >= 7) {
+            stuMatch = allStudents.find(function (s) {
+              var sPh = (window.cleanPhone ? window.cleanPhone(s.phone) : (s.phone || ''));
+              return sPh && (sPh === cPh || sPh.slice(-7) === cPh.slice(-7));
+            });
+          }
+        }
+        if (!stuMatch && isUnknown && t.created_at && allStudents.length > 0) {
+          var tTime = new Date(t.created_at).getTime();
+          stuMatch = allStudents.find(function (s) {
+            var sTime = new Date(s.last_active || s.created_at || 0).getTime();
+            return Math.abs(tTime - sTime) < 300000;
+          });
+        }
+
+        var studentDisplayName = (t.full_name && t.full_name !== "Nomaʼlum oʻquvchi" && t.full_name !== "Noma'lum" && t.full_name !== "Nomaʼlum")
+          ? t.full_name
+          : (t.student_name && !isUnknown)
+            ? t.student_name
+            : (stuMatch ? (stuMatch.full_name || stuMatch.student_name || [stuMatch.first_name, stuMatch.last_name].filter(Boolean).join(' ')) : 'Nomaʼlum oʻquvchi');
+
+        var rawPhone = t.phone || (stuMatch && stuMatch.phone) || '';
+        var cleanPhoneVal = (window.cleanPhone ? window.cleanPhone(rawPhone) : (rawPhone && !rawPhone.startsWith('p:') ? rawPhone : ''));
+
         var schoolName = t.school || (stuMatch && (stuMatch.school || stuMatch.sch)) || '—';
         var gradeName = t.grade || (stuMatch && (stuMatch.grade || stuMatch.cls)) || '7-sinf';
 
         return [
           '<tr>',
           '  <td style="color:#94a3b8;font-weight:700;">' + (idx + 1) + '</td>',
-          '  <td style="font-weight:700;color:#f8fafc;">' + esc(t.full_name || t.student_name || 'Nomaʼlum') + '</td>',
-          '  <td>' + (t.phone ? '<a href="tel:' + esc(t.phone) + '" style="color:#38bdf8;text-decoration:none;">' + esc(t.phone) + '</a>' : '—') + '</td>',
+          '  <td style="font-weight:700;color:#f8fafc;">' + esc(studentDisplayName) + '</td>',
+          '  <td>' + (cleanPhoneVal ? '<a href="tel:' + esc(cleanPhoneVal) + '" style="color:#38bdf8;text-decoration:none;">' + esc(cleanPhoneVal) + '</a>' : '—') + '</td>',
           '  <td><strong style="color:#e2e8f0;">' + esc(schoolName) + '</strong><br><small style="color:#94a3b8;">' + esc(gradeName) + '</small></td>',
           '  <td style="color:#38bdf8;">' + esc(t.lesson_title || 'Fizika darsi') + '</td>',
           '  <td><strong style="font-size:15px;">' + score + '</strong> / ' + total + '</td>',
           '  <td><span class="em-badge ' + badgeCls + '">' + pct + '%</span></td>',
           '  <td style="color:#94a3b8;font-size:13px;">' + formatTime(t.created_at) + '</td>',
+          '  <td><button type="button" class="em-btn-del-row" data-id="' + t.id + '" data-type="test">&#128465; Oʻchirish</button></td>',
           '</tr>'
         ].join('');
       });
@@ -5766,6 +5844,7 @@ try{
         '  <th>Ustoz</th>',
         '  <th>Joriy Mavzu / Oxirgi Faollik</th>',
         '  <th>Roʻyxatdan oʻtgan</th>',
+        '  <th>Amallar</th>',
         '</tr>'
       ].join('');
 
@@ -5784,7 +5863,7 @@ try{
       });
 
       if (filteredStu.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 36px; color: #94a3b8;">Roʻyxatdan oʻtgan oʻquvchilar mavjud emas.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 36px; color: #94a3b8;">Roʻyxatdan oʻtgan oʻquvchilar mavjud emas.</td></tr>';
         return;
       }
 
@@ -5792,7 +5871,8 @@ try{
         var fullName = s.full_name || s.student_name || [s.first_name, s.last_name].filter(Boolean).join(' ') || 'Nomaʼlum';
         var avatar = s.avatar || s.av || '🧑‍🎓';
         var login = s.login || s.lg;
-        var phone = s.phone || '—';
+        var rawPhone = s.phone || '';
+        var cleanPhoneVal = (window.cleanPhone ? window.cleanPhone(rawPhone) : (rawPhone && !rawPhone.startsWith('p:') ? rawPhone : ''));
         var regDist = [s.region || s.vil, s.district || s.tum].filter(Boolean).join(', ') || '—';
         var school = s.school || s.sch || '—';
         var address = s.school_address || s.adr || '';
@@ -5813,13 +5893,14 @@ try{
           '      </div>',
           '    </div>',
           '  </td>',
-          '  <td>' + (s.phone ? '<a href="tel:' + esc(phone) + '" style="color:#38bdf8;text-decoration:none;">' + esc(phone) + '</a>' : '—') + '</td>',
+          '  <td>' + (cleanPhoneVal ? '<a href="tel:' + esc(cleanPhoneVal) + '" style="color:#38bdf8;text-decoration:none;">' + esc(cleanPhoneVal) + '</a>' : '—') + '</td>',
           '  <td>' + esc(regDist) + '</td>',
           '  <td><strong style="color:#e2e8f0;">' + esc(school) + '</strong>' + (address ? '<br><small style="color:#94a3b8;">' + esc(address) + '</small>' : '') + '</td>',
           '  <td><span class="em-grade-badge">' + esc(grade) + '</span></td>',
           '  <td>' + esc(teacher) + '</td>',
           '  <td><span style="color:#38bdf8;font-weight:600;">' + esc(topic) + '</span><br><small style="color:#94a3b8;">' + formatTime(lastAct) + '</small></td>',
           '  <td style="color:#94a3b8;font-size:13px;">' + formatTime(s.created_at) + '</td>',
+          '  <td><button type="button" class="em-btn-del-row" data-id="' + s.id + '" data-type="student">&#128465; Oʻchirish</button></td>',
           '</tr>'
         ].join('');
       });
@@ -6214,6 +6295,114 @@ try{
 
   document.getElementById('em-btn-reload')?.addEventListener('click', function () {
     loadData();
+  });
+
+  // Qator bo'yicha yagona o'chirish (Single Row Delete)
+  document.getElementById('em-table-body')?.addEventListener('click', async function (e) {
+    var btn = e.target.closest('.em-btn-del-row');
+    if (!btn) return;
+    var id = btn.getAttribute('data-id');
+    var type = btn.getAttribute('data-type');
+    if (!id || !type) return;
+
+    var confirmMsg = (type === 'test')
+      ? "Ushbu test natijasini haqiqatan ham oʻchirmoqchimisiz?"
+      : "Ushbu oʻquvchi maʼlumotlarini haqiqatan ham oʻchirmoqchimisiz?";
+    if (!confirm(confirmMsg)) return;
+
+    var client = getClient();
+    if (!client) {
+      alert("Supabase bilan aloqa mavjud emas!");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Oʻchirilmoqda...";
+
+    try {
+      var table = (type === 'test') ? 'test_results' : 'students';
+      var res = await client.from(table).delete().eq('id', id);
+      if (res && res.error) {
+        alert("Oʻchirishda xatolik yuz berdi: " + res.error.message);
+        btn.disabled = false;
+        btn.innerHTML = "&#128465; Oʻchirish";
+        return;
+      }
+
+      if (type === 'test') {
+        allTests = allTests.filter(function (x) { return String(x.id) !== String(id); });
+      } else {
+        allStudents = allStudents.filter(function (x) { return String(x.id) !== String(id); });
+      }
+
+      updateStats();
+      renderTable();
+      renderCharts();
+    } catch (err) {
+      alert("Oʻchirishda xatolik: " + (err.message || err));
+      btn.disabled = false;
+      btn.innerHTML = "&#128465; Oʻchirish";
+    }
+  });
+
+  // Faol bo'limdagi barcha yozuvlarni to'liq o'chirish (Delete All in Active Tab)
+  document.getElementById('em-btn-delete-all')?.addEventListener('click', async function () {
+    var isTestView = (currentView === "tests");
+    var targetName = isTestView ? "barcha test natijalarini" : "barcha oʻquvchilar roʻyxatini";
+    var table = isTestView ? 'test_results' : 'students';
+    var dataArr = isTestView ? allTests : allStudents;
+
+    if (!dataArr || dataArr.length === 0) {
+      alert("Oʻchirish uchun maʼlumot mavjud emas!");
+      return;
+    }
+
+    if (!confirm("DIQQAT! Siz " + targetName + " butunlay oʻchirib tashlamoqchimisiz?\nBu amalni ortga qaytarib boʻlmaydi!")) {
+      return;
+    }
+
+    var client = getClient();
+    if (!client) {
+      alert("Supabase bilan aloqa mavjud emas!");
+      return;
+    }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = "Oʻchirilmoqda...";
+
+    try {
+      var ids = dataArr.map(function (item) { return item.id; }).filter(Boolean);
+      var res;
+      if (ids.length > 0) {
+        res = await client.from(table).delete().in('id', ids);
+      } else {
+        res = await client.from(table).delete().not('id', 'is', null);
+      }
+
+      if (res && res.error) {
+        alert("Barchasini oʻchirishda xatolik: " + res.error.message);
+        btn.disabled = false;
+        btn.innerHTML = "&#128465; Barchasini oʻchirish";
+        return;
+      }
+
+      if (isTestView) {
+        allTests = [];
+      } else {
+        allStudents = [];
+      }
+
+      updateStats();
+      renderTable();
+      renderCharts();
+      alert("Barcha yozuvlar muvaffaqiyatli oʻchirildi! ✅");
+    } catch (err) {
+      alert("Xatolik yuz berdi: " + (err.message || err));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = "&#128465; Barchasini oʻchirish";
+    }
   });
 
   // Har 15 soniyada fonda avtomatik yangilash (fallback polling)
