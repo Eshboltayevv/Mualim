@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mexanik harakat va uning turlari — 7-sinf Fizika</title>
+<style>
+:root{--b:#0b78d1;--g:#1b9e55;--r:#d93c3c;--bg:linear-gradient(#e8f5ff,#cde9ff);--c:rgba(255,255,255,.72);--t:#12263a}
+[data-theme=dark]{--bg:linear-gradient(#0b1622,#10253a);--c:rgba(28,48,70,.75);--t:#e6f1fb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg) fixed;color:var(--t);line-height:1.5}
+.w{max-width:960px;margin:auto;padding:10px}
+.card{background:var(--c);backdrop-filter:blur(10px);border:1px solid #fff4;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(11,120,209,.15);margin:10px 0}
+h1,h2,h3{margin:.2em 0;background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:1.4rem}
+button,select,input{min-height:44px;border-radius:12px;border:1px solid #0b78d155;padding:0 14px;font:inherit;background:var(--c);color:var(--t);cursor:pointer}
+input[type=range]{padding:0;width:180px;max-width:100%}
+button.p,nav button.on{background:var(--b);color:#fff}
+button.ok,.ok{background:var(--g)!important;color:#fff!important}
+button.no,.no{background:var(--r)!important;color:#fff!important}
+button:disabled{opacity:.9;cursor:default}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+nav button{white-space:nowrap;flex:1}
+section{display:none}section.on{display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+canvas{width:100%;display:block;background:#f4fbff;border-radius:12px;touch-action:none}
+svg{width:100%;max-height:210px;color:#12263a;background:#f4fbff;border-radius:12px}
+[data-theme=dark] svg{color:#12263a}
+.bar{height:10px;background:#0b78d133;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(120deg,#0b78d1,#19b5c9);transition:width .3s}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.dots b{width:12px;height:12px;border-radius:50%;background:#0b78d144;cursor:pointer;outline:8px solid transparent}.dots b.on{background:var(--b)}
+.opts{display:grid;gap:8px}.opts button{text-align:left;padding:8px 14px;height:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.sub{background:#000a;color:#fff;border-radius:10px;padding:8px;min-height:44px;margin-top:6px}
+.f{font-size:1.1rem;background:#0b78d122;border-radius:10px;padding:6px 10px;display:inline-block}
+#vw:fullscreen{background:#0b1622;padding:10px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="card">
+ <div class="row" style="justify-content:space-between">
+  <h1>⚙️ Mexanik harakat va uning turlari</h1>
+  <div class="row"><span id="sc">Ball: 0</span><span id="stars">☆☆☆☆☆</span><span id="tm">⏱ 00:00</span></div>
+ </div>
+ <div class="bar" style="margin:8px 0"><i id="pb"></i></div>
+ <div class="row">
+  <button id="spk" class="p">🔊 O'qish</button>
+  <select id="rate" aria-label="Tezlik"><option value=".7">Sekin</option><option value="1" selected>Oddiy</option><option value="1.4">Tez</option></select>
+  <select id="lang" aria-label="Til"><option value="tr-TR" selected>Ovoz: Türkçe</option><option value="uz-UZ">Ovoz: O'zbek</option><option value="ru-RU">Ovoz: Русский</option><option value="en-US">Ovoz: English</option></select>
+  <button id="th">🌙 / ☀️</button><button id="rst">♻ Tozalash</button>
+ </div>
+</div>
+<nav id="nav"></nav>
+
+<section id="s0"><div class="card"><h2 id="stt"></h2><div id="fig"></div><div id="sbd"></div></div>
+ <div class="card"><div class="row" style="justify-content:space-between"><button id="pv">← Orqaga</button><b id="sn"></b><button id="nx" class="p">Oldinga →</button></div><div class="bar" style="margin:8px 0"><i id="sp"></i></div><div class="dots" id="dots"></div></div></section>
+
+<section id="s1"><div class="card"><h2>Simulyatsiyalar</h2><div class="row" id="sTabs"></div><canvas id="cv" width="600" height="300"></canvas><div class="row" id="sCtl" style="margin-top:8px"></div></div></section>
+
+<section id="s2"><div class="card" id="vw"><h2>VR laboratoriya</h2>
+ <p>Sahnani sichqoncha yoki barmoq bilan aylantiring. Avtomobil tekis harakatlanadi, ustunlar — sanoq jismlari.</p>
+ <canvas id="vc" width="600" height="340"></canvas>
+ <div class="row" style="margin-top:8px"><label>Tezlik: <input type="range" id="vv" min="1" max="15" value="6"></label><b id="vvt"></b>
+ <button id="vp">⏸ Pauza</button><button id="va">🔄 Avto-aylanish</button><button id="vr">↺ Boshlash</button><button id="vf" class="p">⛶ To'liq ekran</button></div>
+ <p id="vo" class="f"></p></div></section>
+
+<section id="s3"><div class="card"><h2>Video-dars</h2><canvas id="mc" width="600" height="300"></canvas><div class="sub" id="cap"></div><div class="bar" style="margin:8px 0"><i id="mp"></i></div>
+ <div class="row"><button id="mpl" class="p">▶ Boshlash</button><button id="mre">↺ Qaytadan</button></div></div></section>
+
+<section id="s4"><div class="card"><h2>Test</h2><div id="tq"></div></div></section>
+<section id="s5"><div class="card"><h2>O'yinlar</h2><div class="row" id="gTabs"></div><div id="gb" style="margin-top:12px"></div></div></section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const sh=a=>[...a].sort(()=>Math.random()-.5);
+let G={s:0,t:0,d:{},th:'',v:{}};
+try{Object.assign(G,JSON.parse(localStorage.getItem('fz7')||'{}'))}catch(e){}
+const MAX=135;
+function save(){try{localStorage.setItem('fz7',JSON.stringify(G))}catch(e){}}
+function upd(){$('#sc').textContent='Ball: '+G.s;const k=Math.min(5,Math.round(G.s/MAX*5));$('#stars').textContent='★'.repeat(k)+'☆'.repeat(5-k);$('#pb').style.width=Math.min(100,G.s/MAX*100)+'%';const m=Math.floor(G.t/60),s=G.t%60;$('#tm').textContent='⏱ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function add(k,n){if(G.d[k])return;G.d[k]=1;G.s+=n;save();upd()}
+setInterval(()=>{G.t++;upd();if(G.t%5==0)save()},1000);
+document.documentElement.dataset.theme=G.th||'';
+$('#th').onclick=()=>{G.th=G.th=='dark'?'':'dark';document.documentElement.dataset.theme=G.th;save()};
+$('#rst').onclick=()=>{G={s:0,t:0,d:{},th:G.th,v:{}};save();upd();location.reload()};
+
+/* ---------- Navigation ---------- */
+const TABS=['📖 Slaydlar','🧪 Simulyatsiya','🥽 VR','🎬 Video','📝 Test',"🎮 O'yinlar"];let cur=0;
+TABS.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>go(i);$('#nav').appendChild(b)});
+function go(n){cur=n;$$('section').forEach((s,i)=>s.classList.toggle('on',i==n));$$('#nav button').forEach((b,i)=>b.classList.toggle('on',i==n));if('speechSynthesis' in window)speechSynthesis.cancel();if(n==0)add('sl'+si,1);if(n==3)drawVid();window.scrollTo(0,0)}
+/* ---------- Speech ---------- */
+$('#spk').onclick=()=>{if(!('speechSynthesis' in window)){alert("Brauzer ovozli o'qishni qo'llamaydi");return}
+ if(speechSynthesis.speaking){speechSynthesis.cancel();return}
+ const t=(cur==0?$('#stt').textContent+'. '+$('#sbd').innerText:$('#s'+cur).innerText).slice(0,1500);
+ const u=new SpeechSynthesisUtterance(t);u.lang=$('#lang').value;u.rate=+$('#rate').value;speechSynthesis.speak(u)};
+/* ---------- SVG helpers ---------- */
+const sv=b=>`<svg viewBox="0 0 320 150" role="img">${b}</svg>`;
+const L=(a,b,c,d,col,w)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col||'currentColor'}" stroke-width="${w||2}"/>`;
+const T=(x,y,s,c)=>`<text x="${x}" y="${y}" font-size="12" fill="${c||'currentColor'}">${s}</text>`;
+const C=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const R=(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${c}"/>`;
+const P=(d,c,x)=>`<path d="${d}" fill="none" stroke="${c||'#0b78d1'}" stroke-width="3" ${x||''}/>`;
+const car=(x,y)=>R(x,y,44,16,'#0b78d1')+R(x+10,y-9,22,10,'#19b5c9')+C(x+11,y+17,5,'#333')+C(x+33,y+17,5,'#333');
+const ax=(x,y)=>L(40,130,300,130)+L(40,130,40,12)+T(285,145,x)+T(8,22,y);
+const FIG={
+a:()=>sv(L(10,115,310,115)+`<g><animateTransform attributeName="transform" type="translate" values="0 0;220 0;0 0" dur="6s" repeatCount="indefinite"/>${car(20,84)}</g>`+T(90,35,'Avtomobil vaqt o‘tishi bilan joyini o‘zgartiradi')),
+b:()=>sv(L(10,115,310,115)+R(40,70,8,45,'#7a5230')+C(44,58,22,'#2e9d5a')+car(210,84)+L(44,135,232,135,'#d93c3c')+T(90,128,'masofa o‘zgaradi','#d93c3c')+T(20,18,'Sanoq jismi: daraxt')),
+c:()=>sv(P('M20 120 Q80 10 150 90 T300 40')+C(20,120,6,'#1b9e55')+C(300,40,6,'#d93c3c')+T(30,140,'Boshlanish')+T(230,25,'Traektoriya')),
+d:()=>sv(P('M30 110 Q155 -10 280 110')+L(30,110,280,110,'#d93c3c',2).replace('/>',' stroke-dasharray="6"/>')+C(30,110,6,'#1b9e55')+C(280,110,6,'#d93c3c')+T(110,50,'Yo‘l (egri chiziq uzunligi)')+T(100,130,'Ko‘chish (to‘g‘ri kesma)','#d93c3c')),
+e:()=>sv(L(20,90,310,90)+[30,100,170,240].map((x,i)=>C(x,90,8,'#0b78d1')+T(x-8,115,i+' s')+T(x-12,70,i*70+' m')).join('')+T(60,25,'Teng vaqtlarda teng yo‘llar')),
+f:()=>sv(`<polygon points="160,15 100,125 220,125" fill="#0b78d122" stroke="#0b78d1" stroke-width="3"/>`+L(130,70,190,70)+L(160,70,160,125)+T(155,55,'s')+T(138,103,'v')+T(172,103,'t')+T(10,20,'s = v·t')+T(10,40,'v = s/t')+T(10,60,'t = s/v')),
+g:()=>sv(R(40,25,240,36,'#0b78d1')+R(40,80,240,36,'#19b5c9')+T(75,49,'1 m/s = 3,6 km/h','#fff')+T(75,104,'36 km/h = 10 m/s','#fff')),
+h:()=>sv(ax('t','s')+L(40,130,280,35,'#0b78d1',3)+T(200,60,'s = v·t')+T(60,30,'To‘g‘ri chiziq')),
+i:()=>sv(ax('t','v')+R(40,60,200,70,'#0b78d133')+L(40,60,240,60,'#0b78d1',3)+T(110,100,'S = v·t (yuza)')),
+j:()=>sv(L(10,90,310,90)+[20,45,80,125,180,245].map(x=>C(x,90,7,'#0b78d1')).join('')+T(20,40,'Teng vaqtda yo‘llar har xil: tezlik o‘zgaradi')),
+k:()=>sv(R(20,40,60,26,'#1b9e55')+R(80,40,150,26,'#0b78d1')+R(230,40,70,26,'#d93c3c')+T(30,58,'s₁/t₁','#fff')+T(130,58,'s₂/t₂','#fff')+T(245,58,'s₃/t₃','#fff')+T(60,110,'v o‘rt = (s₁+s₂+s₃)/(t₁+t₂+t₃)')),
+l:()=>sv(P('M10 100 C60 20 110 140 160 80 S260 20 310 90')+C(160,80,6,'#d93c3c')+L(160,80,200,70,'#d93c3c',3)+T(190,55,'tezlik yo‘nalishi')),
+m:()=>sv(`<circle cx="160" cy="75" r="50" fill="none" stroke="#0b78d1" stroke-width="3"/>`+C(210,75,7,'#d93c3c')+L(160,75,210,75)+L(210,75,210,30,'#1b9e55',3)+T(175,70,'R')+T(10,20,'Aylana bo‘ylab harakat')+T(220,40,'v')),
+n:()=>sv(R(20,25,130,32,'#0b78d1')+T(70,46,'Poyezd','#fff')+L(155,41,200,41,'#d93c3c',3)+R(170,85,130,32,'#19b5c9')+T(205,106,'Yo‘lovchi','#fff')+T(10,140,'Poyezdga nisbatan tinch, yerga nisbatan harakatda')),
+o:()=>sv(T(20,35,'Berilgan: v = 72 km/h = 20 m/s')+T(20,65,'t = 30 s')+T(20,95,'s = v·t = 20·30 = 600 m','#1b9e55')+R(20,110,260,16,'#0b78d1'))
+};
+/* ---------- Slides ---------- */
+const S=[
+["Mexanik harakat nima?","Jismning boshqa jismlarga nisbatan <b>vaziyati vaqt o'tishi bilan o'zgarishi</b> mexanik harakat deyiladi. Misollar: yo'ldagi avtomobil, osmondagi samolyot, yugurayotgan bola.","a"],
+["Sanoq jismi","Harakat har doim biror jismga nisbatan o'rganiladi. Bu jism <b>sanoq jismi</b> deyiladi. Sanoq jismini tanlash harakatni tavsiflash uchun zarur.","b"],
+["Traektoriya","Jism harakati davomida qoldiradigan (o'tadigan) chiziq <b>traektoriya</b> deyiladi. U to'g'ri yoki egri bo'lishi mumkin.","c"],
+["Yo'l va ko'chish","<b>Yo'l (s)</b> — traektoriya uzunligi. <b>Ko'chish</b> — boshlang'ich va oxirgi nuqtalarni tutashtiruvchi kesma. Egri harakatda yo'l ko'chishdan katta bo'ladi.","d"],
+["To'g'ri chiziqli tekis harakat","Jism to'g'ri chiziq bo'ylab harakatlanib, <b>teng vaqt oraliqlarida teng yo'llarni</b> o'tsa, bunday harakat tekis harakat deyiladi.","e"],
+["Tezlik","Tezlik — bir birlik vaqtda o'tilgan yo'l: <span class='f'>v = s / t</span>. Bundan: <span class='f'>s = v·t</span>, <span class='f'>t = s / v</span>.","f"],
+["Tezlik birliklari","SI da tezlik birligi — <b>m/s</b>. Ko'pincha km/h ishlatiladi. <br>1 m/s = 3,6 km/h; km/h ni m/s ga o'tkazish uchun 3,6 ga bo'ling.","g"],
+["Yo'l grafigi s(t)","Tekis harakatda yo'lning vaqtga bog'lanish grafigi — koordinata boshidan chiqqan <b>to'g'ri chiziq</b>. Chiziq qanchalik tik bo'lsa, tezlik shunchalik katta.","h"],
+["Tezlik grafigi v(t)","Tekis harakatda tezlik o'zgarmaydi, shuning uchun v(t) grafigi vaqt o'qiga <b>parallel to'g'ri chiziq</b>. Chiziq ostidagi yuza yo'lga teng.","i"],
+["Notekis harakat","Teng vaqt oraliqlarida jism turlicha yo'llarni o'tsa, harakat <b>notekis</b> deyiladi. Tezlik o'zgarib turadi (avtobus yo'lda, to'xtab-yurib ketadi).","j"],
+["O'rtacha tezlik","Notekis harakatda <span class='f'>v<sub>o'rt</sub> = s<sub>umumiy</sub> / t<sub>umumiy</sub></span>. Masalan: 100 m ni 20 s da, 50 m ni 10 s da o'tgan jismning o'rtacha tezligi 150/30 = 5 m/s.","k"],
+["Egri chiziqli harakat","Traektoriyasi egri chiziq bo'lgan harakat egri chiziqli harakat deyiladi. Tezlik yo'nalishi traektoriyaga urinma bo'ylab yo'nalgan va doimo o'zgaradi.","l"],
+["Aylana bo'ylab harakat","Egri chiziqli harakatning xususiy holi. Jism aylanani bir marta aylanib chiqish vaqti — <b>davr T</b>. Chiziqli tezlik: <span class='f'>v = 2πR / T</span>.","m"],
+["Harakatning nisbiyligi","Harakat va tinchlik <b>nisbiy</b>: poyezddagi yo'lovchi poyezdga nisbatan tinch, yerga nisbatan esa harakatda. Traektoriya va tezlik ham sanoq jismiga bog'liq.","n"],
+["Masala yechish namunasi","Avtomobil 72 km/h tezlik bilan 30 s harakatlandi. Yo'lni toping.<br>1) 72 km/h = 20 m/s 2) s = v·t = 20·30 = <b>600 m</b>. Doimo birliklarni bir xil tizimga keltiring.","o"]
+];
+let si=+(G.v.si||0);
+function slide(){const s=S[si];$('#stt').textContent=(si+1)+'. '+s[0];$('#sbd').innerHTML=s[1];$('#fig').innerHTML=FIG[s[2]]();$('#sn').textContent=(si+1)+' / '+S.length;$('#sp').style.width=(si+1)/S.length*100+'%';$$('#dots b').forEach((d,i)=>d.classList.toggle('on',i==si));G.v.si=si;add('sl'+si,1);if('speechSynthesis' in window)speechSynthesis.cancel()}
+S.forEach((_,i)=>{const b=document.createElement('b');b.onclick=()=>{si=i;slide()};$('#dots').appendChild(b)});
+const nxt=()=>{si=Math.min(S.length-1,si+1);slide()},prv=()=>{si=Math.max(0,si-1);slide()};
+$('#nx').onclick=nxt;$('#pv').onclick=prv;
+document.addEventListener('keydown',e=>{if(cur!=0)return;if(e.key=='ArrowRight')nxt();if(e.key=='ArrowLeft')prv()});
+let tx=null;const s0=$('#s0');s0.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+s0.addEventListener('touchend',e=>{if(tx==null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)d<0?nxt():prv();tx=null},{passive:true});
+
+/* ---------- Simulations ---------- */
+const cv=$('#cv'),cx=cv.getContext('2d'),DK='#12263a';
+function cCar(c,x,y){c.fillStyle='#0b78d1';c.fillRect(x,y-22,56,22);c.fillStyle='#19b5c9';c.fillRect(x+12,y-36,30,14);c.fillStyle='#333';[x+12,x+44].forEach(w=>{c.beginPath();c.arc(w,y+2,7,0,7);c.fill()})}
+function tx_(c,s,x,y){c.fillStyle=DK;c.font='16px system-ui';c.fillText(s,x,y)}
+const SIMS=[
+{n:'Tekis harakat',p:[['v (m/s)',1,20,8,1]],d(c,t,v){const tt=t%10,s=v*tt;c.fillStyle=DK;c.fillRect(20,200,560,3);for(let i=0;i<=10;i++){c.fillRect(30+i*48,203,2,10);tx_(c,i*20,22+i*48,230)}cCar(c,30+Math.min(s/200,1)*470,200);tx_(c,'t = '+tt.toFixed(1)+' s',20,30);tx_(c,'s = v·t = '+s.toFixed(1)+' m',20,55);tx_(c,'v = '+v+' m/s (o‘zgarmas)',20,80)}},
+{n:'s(t) grafik',p:[['v (m/s)',1,20,8,1]],d(c,t,v){const tt=t%10;c.strokeStyle=DK;c.lineWidth=2;c.beginPath();c.moveTo(50,20);c.lineTo(50,260);c.lineTo(580,260);c.stroke();tx_(c,'s (m)',8,20);tx_(c,'t (s)',545,282);c.strokeStyle='#0b78d1';c.lineWidth=4;c.beginPath();c.moveTo(50,260);c.lineTo(50+tt*50,260-v*tt*1.1);c.stroke();c.fillStyle='#d93c3c';c.beginPath();c.arc(50+tt*50,260-v*tt*1.1,8,0,7);c.fill();tx_(c,'t = '+tt.toFixed(1)+' s, s = '+(v*tt).toFixed(1)+' m',70,40);tx_(c,'Qiyalik (tezlik) = '+v+' m/s',70,65)}},
+{n:'Notekis harakat',p:[['a (m/s²)',.5,3,1.5,.5]],d(c,t,a){const tt=t%8,v=a*tt,s=a*tt*tt/2,m=a*64/2;c.fillStyle=DK;c.fillRect(20,200,560,3);cCar(c,30+s/m*470,200);tx_(c,'t = '+tt.toFixed(1)+' s',20,30);tx_(c,'Oniy tezlik v = '+v.toFixed(1)+' m/s',20,55);tx_(c,'Yo‘l s = '+s.toFixed(1)+' m',20,80);tx_(c,'O‘rtacha tezlik = s/t = '+(tt?s/tt:0).toFixed(1)+' m/s',20,105);c.fillStyle='#19b5c9';c.fillRect(20,240,v/(a*8)*540,18)}},
+{n:'Aylana harakat',p:[['R (m)',2,12,8,1],['T (s)',1,8,4,.5]],d(c,t,R,T){const w=2*Math.PI/T*t,r=R*11,x=300+r*Math.cos(w),y=150+r*Math.sin(w);c.strokeStyle='#0b78d1';c.lineWidth=3;c.beginPath();c.arc(300,150,r,0,7);c.stroke();c.strokeStyle=DK;c.beginPath();c.moveTo(300,150);c.lineTo(x,y);c.stroke();c.strokeStyle='#1b9e55';c.lineWidth=4;c.beginPath();c.moveTo(x,y);c.lineTo(x-Math.sin(w)*40,y+Math.cos(w)*40);c.stroke();c.fillStyle='#d93c3c';c.beginPath();c.arc(x,y,9,0,7);c.fill();tx_(c,'v = 2πR/T = '+(2*Math.PI*R/T).toFixed(2)+' m/s',10,26);tx_(c,'Aylanishlar: '+Math.floor(t/T),10,50)}}
+];
+let simI=0,simT0=performance.now();
+SIMS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;b.onclick=()=>pickSim(i);$('#sTabs').appendChild(b);s.v=s.p.map(q=>q[3])});
+function pickSim(i){simI=i;simT0=performance.now();$$('#sTabs button').forEach((b,j)=>b.classList.toggle('on',j==i));const box=$('#sCtl');box.innerHTML='';SIMS[i].p.forEach((q,j)=>{const l=document.createElement('label'),o=document.createElement('b'),r=document.createElement('input');r.type='range';r.min=q[1];r.max=q[2];r.step=q[4];r.value=SIMS[i].v[j];o.textContent=' '+q[0]+' = '+r.value+' ';r.oninput=()=>{SIMS[i].v[j]=+r.value;o.textContent=' '+q[0]+' = '+r.value+' ';add('sim'+i,5)};l.append(o,r);box.appendChild(l)})}
+pickSim(0);$$('#sTabs button')[0].classList.add('on');
+/* ---------- VR ---------- */
+const vc=$('#vc'),vx=vc.getContext('2d'),V={yaw:.7,pit:.4,pos:0,sp:6,run:true,auto:false};
+function pr(x,y,z){z-=20;const cy=Math.cos(V.yaw),sy=Math.sin(V.yaw),cp=Math.cos(V.pit),sp=Math.sin(V.pit);const x1=x*cy+z*sy,z1=-x*sy+z*cy,y2=y*cp-z1*sp,z2=y*sp+z1*cp,k=520/(z2+48);return[300+x1*k,200-y2*k]}
+function ln(a,b,col,w){const p=pr(...a),q=pr(...b);vx.strokeStyle=col;vx.lineWidth=w||1;vx.beginPath();vx.moveTo(p[0],p[1]);vx.lineTo(q[0],q[1]);vx.stroke()}
+function drawVR(dt){if(V.run)V.pos+=V.sp*dt;if(V.auto)V.yaw+=dt*.4;const p=V.pos%40;vx.clearRect(0,0,600,340);
+ for(let x=-6;x<=6;x+=3)ln([x,0,0],[x,0,40],'#7aa7c7');for(let z=0;z<=40;z+=5)ln([-6,0,z],[6,0,z],'#7aa7c7');
+ for(let z=0;z<=40;z+=10){ln([-8,0,z],[-8,5,z],'#7a5230',4);ln([8,0,z],[8,5,z],'#7a5230',4)}
+ const b=[[-1,0,p],[1,0,p],[1,0,p+4],[-1,0,p+4],[-1,1.6,p],[1,1.6,p],[1,1.6,p+4],[-1,1.6,p+4]];
+ [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(e=>ln(b[e[0]],b[e[1]],'#0b78d1',3));
+ const q=pr(0,1.6,p+2);vx.fillStyle='#d93c3c';vx.beginPath();vx.arc(q[0],q[1],5,0,7);vx.fill();
+ $('#vo').textContent='v = '+V.sp+' m/s · s = '+V.pos.toFixed(1)+' m · t = '+(V.pos/V.sp).toFixed(1)+' s'}
+let dr=null;vc.addEventListener('pointerdown',e=>{dr=[e.clientX,e.clientY];vc.setPointerCapture(e.pointerId);add('vr',5)});
+vc.addEventListener('pointermove',e=>{if(!dr)return;V.yaw+=(e.clientX-dr[0])*.01;V.pit=Math.max(-.2,Math.min(1.3,V.pit+(e.clientY-dr[1])*.01));dr=[e.clientX,e.clientY]});
+vc.addEventListener('pointerup',()=>dr=null);vc.addEventListener('pointercancel',()=>dr=null);
+$('#vv').oninput=e=>{V.sp=+e.target.value;$('#vvt').textContent=V.sp+' m/s';add('vr',5)};$('#vvt').textContent='6 m/s';
+$('#vp').onclick=()=>{V.run=!V.run;$('#vp').textContent=V.run?'⏸ Pauza':'▶ Davom'};
+$('#va').onclick=()=>{V.auto=!V.auto;$('#va').classList.toggle('p',V.auto)};
+$('#vr').onclick=()=>{V.pos=0;V.yaw=.7;V.pit=.4};
+$('#vf').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():$('#vw').requestFullscreen()}catch(e){alert("To'liq ekran qo'llanmaydi")}};
+/* ---------- Video ---------- */
+const mc=$('#mc'),mx=mc.getContext('2d'),M={t:0,play:false},DUR=24;
+const CAP=[[0,'1-qism: Avtomobil 5 m/s tezlik bilan tekis harakatlanmoqda. Har soniyada 5 m yo‘l o‘tadi.'],[8,'2-qism: Haydovchi gazni bosdi — tezlik ortmoqda. Bu notekis harakat.'],[16,'3-qism: Tezlik yana o‘zgarmas (9 m/s). Harakat yana tekis bo‘ldi.'],[23.5,'Dars tugadi. s = v·t formulasini eslang!']];
+function mpos(t){if(t<8)return 5*t;if(t<16){const u=t-8;return 40+5*u+.25*u*u}return 96+9*(t-16)}
+function mvel(t){return t<8?5:t<16?5+.5*(t-8):9}
+function drawVid(){const t=M.t,x=mpos(t),c=mx;c.clearRect(0,0,600,300);c.fillStyle='#bfe6ff';c.fillRect(0,0,600,200);c.fillStyle=DK;c.fillRect(0,210,600,6);
+ for(let i=0;i<=8;i++){const px=40+i*70-((x*3)%70);c.fillRect(px,216,4,16)}
+ cCar(c,60+Math.min(x/168,1)*0+Math.sin(t)*0+ (t<8?x*2:x*2),210);
+ tx_(c,'t = '+t.toFixed(1)+' s',15,30);tx_(c,'s = '+x.toFixed(1)+' m',15,55);tx_(c,'v = '+mvel(t).toFixed(1)+' m/s',15,80);
+ c.fillStyle='#19b5c9';c.fillRect(15,260,mvel(t)/9*300,14);tx_(c,'tezlik',325,273);
+ let cp=CAP[0][1];CAP.forEach(q=>{if(t>=q[0])cp=q[1]});$('#cap').textContent=cp;$('#mp').style.width=t/DUR*100+'%'}
+$('#mpl').onclick=()=>{if(M.t>=DUR)M.t=0;M.play=!M.play;$('#mpl').textContent=M.play?'⏸ Pauza':'▶ Davom';if(M.play)add('vid',5)};
+$('#mre').onclick=()=>{M.t=0;M.play=true;$('#mpl').textContent='⏸ Pauza';drawVid()};
+/* ---------- Master loop ---------- */
+let last=performance.now();
+function loop(ts){const dt=Math.min(.1,(ts-last)/1000);last=ts;
+ if(cur==1){cx.clearRect(0,0,600,300);const s=SIMS[simI];s.d(cx,(ts-simT0)/1000,...s.v)}
+ else if(cur==2)drawVR(dt);
+ else if(cur==3){if(M.play){M.t+=dt;if(M.t>=DUR){M.t=DUR;M.play=false;$('#mpl').textContent='▶ Qayta ko‘rish';add('vid',5)}}drawVid()}
+ requestAnimationFrame(loop)}
+/* ---------- Quiz engine ---------- */
+function quiz(el,qs,key,pts,end){let i=0,c=0;(function r(){
+ if(i>=qs.length){const p=Math.round(c/qs.length*100);el.innerHTML=`<h3>Natija: ${c}/${qs.length} to'g'ri (${p}%)</h3><p>${end(c,p)}</p><button class="p" id="rs">Qayta boshlash</button>`;$('#rs').onclick=()=>{i=0;c=0;r()};return}
+ const q=qs[i];el.innerHTML=`<div class="bar"><i style="width:${i/qs.length*100}%"></i></div><p><b>${i+1}/${qs.length}.</b> ${q[0]}</p><div class="opts">${q[1].map((o,j)=>`<button>${o}</button>`).join('')}</div><p class="ex"></p>`;
+ const bs=[...el.querySelectorAll('.opts button')];
+ bs.forEach((b,j)=>b.onclick=()=>{bs.forEach(x=>x.disabled=true);bs[q[2]].classList.add('ok');if(j==q[2]){c++;add(key+i,pts)}else b.classList.add('no');
+  const ex=el.querySelector('.ex');ex.innerHTML=(j==q[2]?"✅ To'g'ri! ":"❌ Xato. ")+(q[3]||'')+'<br><button class="p" id="nq">'+(i==qs.length-1?'Natijani ko\'rish':'Keyingisi')+'</button>';$('#nq').onclick=()=>{i++;r()}})})()}
+const Q=[
+["Mexanik harakat nima?",["Jism rangining o'zgarishi","Jism vaziyatining vaqt o'tishi bilan o'zgarishi","Jism massasining o'zgarishi","Jism haroratining o'zgarishi"],1,"Mexanik harakat — vaziyatning o'zgarishi."],
+["Traektoriya nima?",["Jism o'tgan chiziq","Jism massasi","Vaqt oralig'i","Tezlik birligi"],0,"Jism harakat davomida chizgan chiziq traektoriya."],
+["SI da yo'l birligi qaysi?",["km","metr","sm","soat"],1,"SI da yo'l — metr (m)."],
+["Tezlik formulasi qaysi?",["v = s·t","v = t/s","v = s/t","v = s+t"],2,"Tezlik = yo'l / vaqt."],
+["36 km/h necha m/s?",["5","10","36","3,6"],1,"36 / 3,6 = 10 m/s."],
+["v = 5 m/s, t = 20 s. Yo'l qancha?",["4 m","25 m","100 m","15 m"],2,"s = v·t = 5·20 = 100 m."],
+["Tekis harakatda s(t) grafigi qanday?",["Aylana","Parabola","Vaqt o'qiga parallel","Koordinata boshidan o'tgan to'g'ri chiziq"],3,"s = v·t — to'g'ri chiziqli bog'lanish."],
+["O'rtacha tezlik qanday topiladi?",["Tezliklar yig'indisi","Butun yo'l / butun vaqt","Eng katta tezlik","Eng kichik tezlik"],1,"v o'rt = s umumiy / t umumiy."],
+["Sanoq jismi nima?",["Harakat o'rganiladigan nisbiy jism","Eng og'ir jism","Eng tez jism","Yerdagi jism faqat"],0,"Harakat sanoq jismiga nisbatan tavsiflanadi."],
+["Avtomobil 2 soatda 90 km yurdi. Tezligi?",["180 km/h","45 km/h","90 km/h","30 km/h"],1,"v = 90/2 = 45 km/h."],
+["Aylana bo'ylab harakat qaysi turga kiradi?",["To'g'ri chiziqli","Egri chiziqli","Tinch holat","Tebranish emas, tinchlik"],1,"Traektoriya aylana — egri chiziqli harakat."]
+];
+quiz($('#tq'),Q,'q',2,(c,p)=>(p>=80?'🌟 Ajoyib!':p>=50?'👍 Yaxshi, yana mashq qiling.':'📚 Slaydlarni qayta ko\'rib chiqing.'));
+/* ---------- Games ---------- */
+const PAIRS=[["Yo'l","Traektoriya uzunligi"],["Tezlik","v = s / t"],["SI da vaqt","soniya (s)"],["SI da tezlik","m/s"],["Sanoq jismi","Harakat unga nisbatan o'rganiladi"],["Traektoriya","Jism chizgan chiziq"]];
+const OG=[
+["🔗 Moslashtirish",el=>{let sel=-1,d=0;const R=sh(PAIRS.map((_,i)=>i));el.innerHTML=`<p>Avval chapdan, so'ng o'ngdan mos javobni tanlang.</p><div class="row" style="align-items:flex-start"><div class="opts" style="flex:1" id="gl">${PAIRS.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('')}</div><div class="opts" style="flex:1" id="gr">${R.map(i=>`<button data-i="${i}">${PAIRS[i][1]}</button>`).join('')}</div></div><p id="gm"></p>`;
+ const lb=[...el.querySelectorAll('#gl button')];el.querySelectorAll('#gl button').forEach(b=>b.onclick=()=>{if(b.classList.contains('ok'))return;lb.forEach(x=>x.style.outline='');sel=+b.dataset.i;b.style.outline='3px solid #0b78d1'});
+ el.querySelectorAll('#gr button').forEach(b=>b.onclick=()=>{if(sel<0||b.classList.contains('ok'))return;if(+b.dataset.i==sel){b.classList.add('ok');lb[sel].classList.add('ok');lb[sel].style.outline='';sel=-1;if(++d==PAIRS.length){add('g0',10);$('#gm').textContent="🎉 Barcha juftliklar topildi! +10 ball"}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}})}],
+["⚡ Rost / Yolg'on",el=>quiz(el,[["Tezlik birligi m/s bo'la oladi.",["Rost","Yolg'on"],0,"To'g'ri, SI da m/s."],["Tekis harakatda tezlik doimo o'zgaradi.",["Rost","Yolg'on"],1,"Tekis harakatda tezlik o'zgarmas."],["Yo'l — traektoriya uzunligi.",["Rost","Yolg'on"],0,""],["10 m/s = 36 km/h.",["Rost","Yolg'on"],0,"10·3,6 = 36."],["Egri harakatda yo'l har doim ko'chishga teng.",["Rost","Yolg'on"],1,"Yo'l ko'chishdan katta."],["Harakat nisbiy emas.",["Rost","Yolg'on"],1,"Harakat nisbiydir."],["s = v·t formula to'g'ri.",["Rost","Yolg'on"],0,""],["Tinch turgan jismning tezligi katta.",["Rost","Yolg'on"],1,"Tezlik nolga teng."]],'g1x',0,(c)=>{if(c>=6){add('g1',10);return"🎉 Tezkor g'olib! +10 ball"}return"Yana urinib ko'ring (kamida 6 ta to'g'ri kerak)."})],
+["✏️ Bo'sh joy",el=>{const F=[["Vaziyatning o'zgarishi — ___ harakat.","mexanik"],["Harakat chizig'i — ___.","traektoriya"],["SI da yo'l birligi — ___.","metr|m"],["5 m/s tezlikda 4 s da ___ m yo'l o'tiladi.","20"]];
+ el.innerHTML=F.map((f,i)=>`<p>${f[0].replace('___',`<input data-i="${i}" size="10" placeholder="...">`)}</p>`).join('')+`<button class="p" id="gc">Tekshirish</button><p id="gm"></p>`;
+ $('#gc').onclick=()=>{let ok=0;el.querySelectorAll('input').forEach(inp=>{const a=F[+inp.dataset.i][1].split('|'),g=inp.value.trim().toLowerCase();const y=a.includes(g);inp.classList.toggle('ok',y);inp.classList.toggle('no',!y);if(y)ok++});$('#gm').textContent=ok+'/'+F.length+' to\'g\'ri';if(ok==F.length){add('g2',10);$('#gm').textContent+=' 🎉 +10 ball'}}}],
+["📶 Tartiblash",el=>{const I=[["Toshbaqa",.1],["Piyoda odam",1.5],["Velosiped",5],["Avtomobil",25],["Samolyot",250]];let ans=[];
+ (function r(){const pool=I.filter(x=>!ans.includes(x));el.innerHTML=`<p>Sekin dan tezgacha tartiblang (bosish tartibida):</p><div class="row">${sh(pool).map(x=>`<button class="p" data-n="${x[0]}">${x[0]}</button>`).join('')}</div><p><b>Javob:</b> ${ans.map(x=>x[0]+' ('+x[1]+' m/s)').join(' → ')}</p><button id="gu">↺ Qaytadan</button><p id="gm"></p>`;
+ el.querySelectorAll('.p').forEach(b=>b.onclick=()=>{ans.push(I.find(x=>x[0]==b.dataset.n));r();if(ans.length==I.length){const ok=ans.every((x,i)=>i==0||ans[i-1][1]<x[1]);$('#gm').innerHTML=ok?'🎉 To\'g\'ri tartib! +10 ball':'❌ Tartib noto\'g\'ri';$('#gm').className=ok?'ok':'no';if(ok)add('g3',10)}});
+ $('#gu').onclick=()=>{ans=[];r()}})()}],
+["🃏 Xotira kartalari",el=>{const D=[["s","Yo'l"],["v","Tezlik"],["t","Vaqt"],["m/s","Tezlik birligi"],["km","Yo'l birligi"],["s=vt","Yo'l formulasi"]];const cards=sh(D.flatMap((d,i)=>[[i,d[0]],[i,d[1]]]));let open=[],lock=false,done=0;
+ el.innerHTML=`<div class="grid">${cards.map((c,i)=>`<button data-i="${i}" style="height:64px">❓</button>`).join('')}</div><p id="gm"></p>`;
+ const bs=[...el.querySelectorAll('.grid button')];bs.forEach((b,i)=>b.onclick=()=>{if(lock||b.classList.contains('ok')||open.includes(i))return;b.textContent=cards[i][1];b.classList.add('p');open.push(i);if(open.length==2){const[a,c]=open;if(cards[a][0]==cards[c][0]){bs[a].className=bs[c].className='ok';open=[];if(++done==D.length){add('g4',10);$('#gm').textContent='🎉 Barcha juftliklar topildi! +10 ball'}}else{lock=true;setTimeout(()=>{[a,c].forEach(k=>{bs[k].textContent='❓';bs[k].classList.remove('p')});open=[];lock=false},800)}}})}],
+["🏆 Viktorina",el=>quiz(el,[["Tezligi 15 m/s bo'lgan jism 6 s da qancha yo'l o'tadi?",["21 m","90 m","2,5 m"],1,"15·6 = 90 m."],["72 km/h necha m/s?",["20","7,2","72"],0,"72/3,6 = 20."],["Qaysi grafik tekis harakatga mos?",["Egri chiziq","Koordinata boshidan o'tgan to'g'ri chiziq","Aylana"],1,""],["Yo'l 120 m, vaqt 10 s. Tezlik?",["12 m/s","1200 m/s","110 m/s"],0,"120/10 = 12."],["Harakat nimaga nisbatan o'rganiladi?",["Sanoq jismiga","Faqat Yerga","Havoga"],0,""]],'g5x',0,c=>{if(c>=4){add('g5',10);return"🏆 Viktorina chempioni! +10 ball"}return"Kamida 4 ta to'g'ri javob kerak."})]
+];
+OG.forEach((g,i)=>{const b=document.createElement('button');b.textContent=g[0];b.onclick=()=>{$$('#gTabs button').forEach((x,j)=>x.classList.toggle('on',j==i));$('#gb').innerHTML='';g[1]($('#gb'))};$('#gTabs').appendChild(b)});
+$$('#gTabs button')[0].click();
+/* ---------- Init ---------- */
+slide();upd();go(0);requestAnimationFrame(t=>{last=t;loop(t)});
+</script>
+
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

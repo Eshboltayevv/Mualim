@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Fizika nima? Tabiatni oʻrganish usullari — 7-sinf fizika elektron darsi"><meta name="theme-color" content="#0b78d1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%94%AC%3C/text%3E%3C/svg%3E">
+<meta name="color-scheme" content="light dark"><title>Fizika nima? Tabiatni oʻrganish usullari — 7-sinf</title>
+<style>
+:root{--bg:#eef5fb;--cd:#fff;--tx:#12263a;--mut:#53708a;--ac:#0b78d1;--ac2:#19b5c9;--ac3:#e8f3fd;--ok:#1b9e55;--no:#d93c3c;--bd:#cfe0ef;--gl:rgba(255,255,255,.62);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[data-t=night]{--bg:#0a1724;--cd:#132536;--tx:#e8f1fa;--mut:#8ea8c0;--ac:#4fb0ff;--ac2:#35d0cf;--ac3:#1c3448;--bd:#294258;--gl:rgba(20,34,50,.62)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font:16px/1.6 system-ui,sans-serif;color:var(--tx);background:
+radial-gradient(700px 500px at 10% -10%,rgba(11,120,209,.18),transparent 60%),
+radial-gradient(600px 460px at 100% 0%,rgba(25,181,201,.16),transparent 60%),var(--bg)}
+button,select,input{font:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer}
+header{position:sticky;top:0;z-index:9;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--gl);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--bd)}
+h1{font-size:17px;margin:0;flex:1 1 auto}
+.stat{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--mut)}
+.stat b{color:var(--tx)}
+#tgl{border:1px solid var(--bd);background:var(--ac3);border-radius:10px;min-height:38px;padding:0 10px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;position:sticky;top:52px;z-index:8;background:var(--bg);scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{white-space:nowrap;flex:none;min-height:44px;border:1px solid var(--bd);background:var(--gl);backdrop-filter:blur(10px);color:var(--tx);padding:8px 16px;border-radius:12px}
+nav button.on{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
+main{max-width:980px;margin:0 auto;padding:4px 16px 70px}
+section{display:none}section.on{display:block;animation:pop .35s}
+@keyframes pop{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+.card{background:var(--gl);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 8px 28px rgba(11,70,120,.1)}
+.hd{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;padding:12px 16px;border-radius:14px;margin-bottom:14px}
+.hd .nb{background:rgba(255,255,255,.25);border-radius:50%;width:32px;height:32px;display:grid;place-items:center;flex:none;font-weight:800}
+.hd h2{margin:0;font-size:18px}
+canvas{width:100%;max-width:640px;background:var(--ac3);border-radius:14px;display:block;margin:8px auto;touch-action:none}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{border:1px solid var(--bd);background:var(--ac3);color:var(--tx);border-radius:12px;min-height:44px;padding:0 16px;font-weight:600}
+.btn.p{background:linear-gradient(120deg,var(--ac),var(--ac2));color:#fff;border:0}
+.btn.ok{background:var(--ok)!important;color:#fff;border:0}.btn.no{background:var(--no)!important;color:#fff;border:0}
+input[type=range]{flex:1;min-width:120px}
+.f{background:var(--ac3);border-left:5px solid var(--ac);padding:10px 14px;border-radius:8px;font:700 18px ui-monospace,monospace;margin:8px 0}
+.dots{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.dots i{width:11px;height:11px;border-radius:50%;background:var(--bd);cursor:pointer}
+.dots i.cur{background:var(--ac);transform:scale(1.4)}
+.pr{height:7px;background:var(--bd);border-radius:5px;overflow:hidden}.pr i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2))}
+.sv svg{width:100%;height:auto}.sv text{fill:var(--tx);font:13px sans-serif}
+.gc{background:var(--ac3);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:left;min-height:46px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;white-space:normal}
+small.m{color:var(--mut);display:block;margin-top:6px}
+@media(max-width:700px){h1{font-size:15px}.hd h2{font-size:16px}.card{padding:13px}canvas{border-radius:10px}}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+#vrw:fullscreen,#vrw.fs{background:var(--bg);padding:12px;overflow:auto}
+#vrw.fs{position:fixed;inset:0;z-index:50}
+#vrw:fullscreen canvas,#vrw.fs canvas{max-width:min(100%,110vh)}
+.sv{margin-top:8px}
+</style></head>
+<body>
+<header><h1>🔬 Fizika nima? Tabiatni oʻrganish usullari</h1>
+<div class="stat"><span>⭐ <b id="hStar">0</b></span><span>🏆 <b id="hScore">0</b></span><span>⏱ <b id="hTime">00:00</b></span></div>
+<button id="tgl">🌓</button></header>
+<nav id="nv"></nav>
+<main>
+<section id="slides"></section>
+<section id="sim">
+ <div class="hd"><span class="nb">2</span><h2>Simulyatsiyalar</h2></div>
+ <div class="row" id="sn" style="margin-bottom:10px"></div>
+ <canvas id="c1" width="640" height="320"></canvas>
+ <div class="row" id="simc"></div>
+ <div class="f" id="so"></div><small class="m" id="sh"></small>
+</section>
+<section id="vr">
+ <div class="hd"><span class="nb">3</span><h2>VR laboratoriya</h2></div>
+ <div id="vrw"><canvas id="cvr" width="640" height="420"></canvas>
+ <div class="row"><button class="btn" id="vra">⟳ Avto-aylanish: ha</button><label>Masshtab <input type="range" id="vrz" min="0.6" max="1.8" step="0.1" value="1"></label>
+ <label>Ip uzunligi: <b id="vrlv">100</b> sm <input type="range" id="vrl" min="40" max="140" value="100"></label>
+ <button class="btn" id="vrrs">↺ Tiklash</button><button class="btn" id="vrfs">⛶ Toʻliq ekran</button></div>
+ <p class="f" id="vri">Sichqoncha yoki barmoq bilan aylantiring, asbobni bosib maʼlumot oling.</p></div>
+</section>
+<section id="video">
+ <div class="hd"><span class="nb">4</span><h2>Video-dars: ilmiy usul bosqichlari</h2></div>
+ <canvas id="cvd" width="640" height="300"></canvas>
+ <p id="vdcap" class="f">Boshlash uchun ▶ tugmasini bosing</p>
+ <div class="row"><button class="btn p" id="vdp">▶ Ishga tushirish</button><button class="btn" id="vds">⏸ Pauza</button><button class="btn" id="vdr">↺ Qaytadan</button>
+ <label><input type="checkbox" id="vsnd"> 🔊 Ovozli sharh</label></div>
+ <div class="row"><input id="vseek" type="range" min="0" max="40" step="0.1" value="0"></div>
+</section>
+<section id="test"></section>
+<section id="games"></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const ST={score:0,done:{},t0:Date.now(),elapsed:0};
+try{Object.assign(ST,JSON.parse(localStorage.getItem('fiz_v1')||'{}'))}catch(e){}
+function saveST(){try{localStorage.setItem('fiz_v1',JSON.stringify({score:ST.score,done:ST.done,elapsed:ST.elapsed}))}catch(e){}}
+function addScore(n){ST.score+=n;if(ST.score<0)ST.score=0;hud()}
+function hud(){$('hScore').textContent=ST.score;$('hStar').textContent='★'.repeat(Math.min(5,Math.floor(ST.score/30)))||'0';$('hTime').textContent=fmt(ST.elapsed)}
+function fmt(s){s|=0;return String(s/60|0).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+setInterval(()=>{ST.elapsed=(Date.now()-ST.t0)/1000;hud();if(ST.elapsed%5<1)saveST()},1000);
+
+/* tungi rejim */
+if(localStorage.getItem('fiz_theme')=='night')document.documentElement.dataset.t='night';
+$('tgl').onclick=()=>{const d=document.documentElement;d.dataset.t=d.dataset.t=='night'?'':'night';localStorage.setItem('fiz_theme',d.dataset.t)};
+
+/* navigatsiya */
+const TABS=[['slides','📑 Slaydlar'],['sim','🧪 Simulyatsiya'],['vr','🥽 VR lab'],['video','🎬 Video'],['test','📝 Test'],['games','🎮 O\'yinlar']];
+TABS.forEach(([id,n],i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>go(id);if(i==0)b.classList.add('on');$('nv').append(b)});
+function go(id){if(typeof onGo=="function")onGo(id);document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id==id));[...$('nv').children].forEach((b,i)=>b.classList.toggle('on',TABS[i][0]==id))}
+go('slides');
+
+/* ========= 1) SLAYDLAR ========= */
+let RT='1',LG='uz-UZ';
+const R=a=>`<svg viewBox="0 0 400 150">${a.map((e,i)=>{const x=(i+.5)*400/a.length;return `<text x="${x}" y="70" text-anchor="middle" style="font-size:38px">${e[0]}<animate attributeName="y" values="70;58;70" dur="2s" begin="${i*.35}s" repeatCount="indefinite"/></text><text x="${x}" y="112" text-anchor="middle">${e[1]}</text>`}).join("")}</svg>`;
+const FIG={
+f1:()=>`<svg viewBox="0 0 400 150"><g transform="translate(200 68)"><circle r="12" fill="var(--ac)"><animate attributeName="r" values="12;15;12" dur="1.6s" repeatCount="indefinite"/></circle>${[0,60,120].map((r,i)=>`<g transform="rotate(${r})"><ellipse rx="95" ry="30" fill="none" stroke="var(--ac2)" stroke-width="2" opacity=".6"/><circle r="6" fill="var(--no)"><animateMotion dur="${3+i}s" repeatCount="indefinite" path="M-95,0 a95,30 0 1,0 190,0 a95,30 0 1,0 -190,0"/></circle></g>`).join("")}</g><text x="200" y="146" text-anchor="middle">Atom — tabiat sirlari</text></svg>`,
+f2:()=>R([["🌧️","Yomgʻir"],["⚡","Chaqmoq"],["🌋","Vulqon"],["🌊","Toʻlqin"]]),
+f3:()=>R([["🚗","Mexanik"],["🔥","Issiqlik"],["🔊","Tovush"],["💡","Yorugʻlik"],["🧲","Magnit"],["🔌","Elektr"]]),
+f4:()=>`<svg viewBox="0 0 400 150"><line x1="20" y1="100" x2="380" y2="100" stroke="var(--bd)" stroke-width="4"/><text x="20" y="95" style="font-size:34px">🚗<animate attributeName="x" values="20;320;20" dur="6s" repeatCount="indefinite"/></text><text x="200" y="30" text-anchor="middle" style="font-size:20px;font-weight:700">s = v · t</text><text x="200" y="135" text-anchor="middle">yoʻl = tezlik × vaqt</text></svg>`,
+f5:()=>R([["📏","metr (m)"],["⚖️","kilogramm (kg)"],["⏱️","sekund (s)"]]),
+f6:()=>`<svg viewBox="0 0 400 150"><line x1="30" y1="70" x2="370" y2="70" stroke="var(--ac)" stroke-width="4"/>${[["mm","10⁻³ m"],["sm","10⁻² m"],["m","1 m"],["km","10³ m"]].map((a,i)=>`<circle cx="${60+i*95}" cy="70" r="9" fill="var(--ac2)"><animate attributeName="r" values="7;12;7" dur="2s" begin="${i*.4}s" repeatCount="indefinite"/></circle><text x="${60+i*95}" y="45" text-anchor="middle" style="font-size:18px;font-weight:700">${a[0]}</text><text x="${60+i*95}" y="108" text-anchor="middle">${a[1]}</text>`).join("")}</svg>`,
+f7:()=>R([["📏","Chizgʻich"],["🌡️","Termometr"],["⏱️","Sekundomer"],["⚖️","Tarozi"],["🧪","Menzurka"]]),
+f8:()=>`<svg viewBox="0 0 400 150"><rect x="30" y="80" width="340" height="36" rx="4" fill="#f3d36b" stroke="#a88"/>${Array.from({length:35},(_,i)=>`<line x1="${40+i*9.4}" y1="80" x2="${40+i*9.4}" y2="${i%5?92:102}" stroke="#333"/>`).join("")}<rect x="40" y="42" width="10" height="26" rx="5" fill="var(--ac)"><animate attributeName="width" values="10;188;188;10" dur="5s" repeatCount="indefinite"/></rect><text x="200" y="26" text-anchor="middle">Qalam uzunligini oʻlchash</text></svg>`,
+f9:()=>`<svg viewBox="0 0 400 150"><rect x="60" y="14" width="18" height="100" rx="9" fill="#fff" stroke="var(--tx)"/><rect x="65" y="100" width="8" height="0" fill="var(--no)"><animate attributeName="y" values="100;30;100" dur="5s" repeatCount="indefinite"/><animate attributeName="height" values="0;70;0" dur="5s" repeatCount="indefinite"/></rect><circle cx="69" cy="122" r="14" fill="var(--no)"/><text x="110" y="50">20 °C va 30 °C orasida 5 boʻlinma</text><text x="110" y="78">C = (30 − 20) / 5 = 2 °C</text><text x="110" y="106">Xatolik: Δ = C / 2 = 1 °C</text></svg>`,
+f10:()=>`<svg viewBox="0 0 400 150"><line x1="40" y1="80" x2="360" y2="80" stroke="var(--tx)"/>${[0,1,2,3,4,5,6].map(i=>`<line x1="${40+i*53}" y1="74" x2="${40+i*53}" y2="86" stroke="var(--tx)"/><text x="${40+i*53}" y="104" text-anchor="middle">${i*2}</text>`).join("")}<rect x="146" y="50" width="53" height="24" fill="var(--ac)" opacity=".4"><animate attributeName="opacity" values=".2;.7;.2" dur="2s" repeatCount="indefinite"/></rect><circle cx="173" cy="62" r="6" fill="var(--no)"/><text x="200" y="30" text-anchor="middle">Natija: 5 ± 1 (oraliq 4 … 6)</text></svg>`,
+f11:()=>R([["👀","Kuzatish"],["📝","Yozib borish"],["❓","Savol"]]),
+f12:()=>R([["🧪","Tajriba"],["🌡️","Oʻlchash"],["📊","Natija"]]),
+f13:()=>`<svg viewBox="0 0 400 150">${["Kuzatish","Gipoteza","Tajriba","Xulosa"].map((t,i)=>`<rect x="${8+i*98}" y="52" width="88" height="38" rx="10" fill="var(--ac)"/><text x="${52+i*98}" y="76" text-anchor="middle" style="fill:#fff;font-weight:700">${t}</text>${i<3?`<text x="${99+i*98}" y="76" text-anchor="middle" style="font-size:18px">➜</text>`:""}`).join("")}<circle r="7" fill="var(--no)" cy="38"><animate attributeName="cx" values="52;150;248;346;52" dur="6s" repeatCount="indefinite"/></circle><text x="200" y="128" text-anchor="middle">Xulosa yangi savollarga olib keladi ↺</text></svg>`,
+f14:()=>R([["🔭","Teleskop"],["📱","Telefon"],["🚀","Raketa"],["⚡","Elektr"]]),
+f15:()=>`<svg viewBox="0 0 400 150">${[0,1,2,3,4].map(i=>`<text x="${60+i*70}" y="70" text-anchor="middle" style="font-size:40px">⭐<animate attributeName="opacity" values="1;.3;1" dur="1.5s" begin="${i*.25}s" repeatCount="indefinite"/></text>`).join("")}<text x="200" y="120" text-anchor="middle">Kuzat · Tajriba qil · Oʻlcha · Xulosa chiqar</text></svg>`};
+const S=[
+["Fizika nima?","<p><b>Fizika</b> — tabiat va unda sodir boʻladigan hodisalarni, moddaning xossalarini oʻrganuvchi fan. Soʻz yunoncha <i>physis</i> — «tabiat» degani.</p><p>Fizika bizga yomgʻir nega yogʻishini, samolyot nega uchishini tushuntiradi.</p>","f1"],
+["Tabiat hodisalari","<p><b>Fizik hodisa</b> — jism holati oʻzgaradi, lekin modda turi oʻzgarmaydi.</p><ul><li>Yomgʻir yogʻishi, chaqmoq chaqnashi</li><li>Muz erishi, suv qaynashi</li><li>Tovush tarqalishi</li></ul>","f2"],
+["Fizik hodisa turlari","<ul><li><b>Mexanik</b> — jismlar harakati</li><li><b>Issiqlik</b> — isish va sovish</li><li><b>Tovush</b> va <b>yorugʻlik</b></li><li><b>Elektr</b> va <b>magnit</b> hodisalari</li></ul>","f3"],
+["Fizik kattalik","<p><b>Fizik kattalik</b> — jism yoki hodisani sonlar bilan tavsiflaydigan xossa: uzunlik <i>l</i>, massa <i>m</i>, vaqt <i>t</i>, tezlik <i>v</i>.</p><div class='f'>s = v · t</div><p>Rasmdagi mashina tekis harakatda: yoʻl = tezlik × vaqt.</p>","f4"],
+["Birliklar sistemasi (SI)","<p>Kattaliklar <b>birlik</b>lar bilan oʻlchanadi. Xalqaro sistema SI: uzunlik — <b>metr</b>, massa — <b>kilogramm</b>, vaqt — <b>sekund</b>.</p>","f5"],
+["Karrali birliklar","<p>1 km = 1000 m; 1 m = 100 sm; 1 sm = 10 mm.</p><p>Misol: 2,5 km = 2500 m; 350 g = 0,35 kg.</p>","f6"],
+["Fizik asboblar","<p>Oʻlchash uchun asboblar: chizgʻich (uzunlik), termometr (harorat), sekundomer (vaqt), tarozi (massa), menzurka (hajm).</p>","f7"],
+["Oʻlchash nima?","<p><b>Oʻlchash</b> — kattalikni oʻlchov birligi bilan solishtirib, qiymatini aniqlash.</p><p>Natija: <b>son + birlik</b>, masalan 12 sm.</p>","f8"],
+["Boʻlinma qiymati","<p>Asbob shkalasidagi ikki yaqin chiziqcha orasidagi qiymat:</p><div class='f'>C = (y₂ − y₁) / n</div><p>Misol: 20 va 30 °C orasida 5 boʻlinma → C = 2 °C.</p>","f9"],
+["Oʻlchash xatoligi","<p>Aniq oʻlchash mumkin emas. Xatolik taxminan boʻlinma qiymatining yarmiga teng:</p><div class='f'>Δ = C / 2</div><p>Natija: <b>x ± Δ</b>.</p>","f10"],
+["Kuzatish","<p><b>Kuzatish</b> — hodisaga aralashmasdan, uni tabiiy sharoitda diqqat bilan oʻrganish (Oy fazalari, ob-havo, yulduzlar).</p>","f11"],
+["Tajriba","<p><b>Tajriba</b> (eksperiment) — hodisani maxsus sharoitda, shartlarni oʻzgartirib, takror oʻrganish. Natijalar jadvalga yoziladi.</p>","f12"],
+["Ilmiy usul","<ol><li>Kuzatish va savol</li><li>Gipoteza (taxmin)</li><li>Tajriba va oʻlchash</li><li>Natijani tahlil, xulosa</li></ol>","f13"],
+["Fizika va texnika","<p>Fizika qonunlari texnikaning asosi: telefon, samolyot, raketa, elektr stansiyalari fizik bilimlar natijasida yaratilgan.</p>","f14"],
+["Xulosa","<ul><li>Fizika — tabiat haqidagi fan</li><li>Kattaliklar birliklar bilan oʻlchanadi</li><li>Usullar: kuzatish, tajriba, oʻlchash</li></ul><p>Endi Simulyatsiya, VR, Video, Test va Oʻyinlarda bilimingizni mustahkamlang! 🚀</p>","f15"]];
+let si=0;
+function slide(){const[t,h,fk]=S[si],f=FIG[fk];if(!ST.done['s'+si]){ST.done['s'+si]=1;addScore(1)}
+$('slides').innerHTML=`<div class="card"><div class="hd"><span class="nb">1</span><h2>${t}</h2></div>${h}${f?`<div class="sv">${f()}</div>`:''}
+<div class="pr"><i style="width:${(si+1)/S.length*100}%"></i></div>
+<div class="dots">${S.map((_,i)=>`<i class="${i==si?'cur':''}" data-i="${i}"></i>`).join('')}</div>
+<div class="row"><button class="btn" id="pv">◀ Oldingi</button><button class="btn p" id="nx">Keyingi ▶</button><button class="btn" id="rd">🔊 O'qish</button>
+<select id="rate" style="min-height:38px;border-radius:10px;border:1px solid var(--bd);background:var(--ac3);color:var(--tx)"><option value=".8">Sekin</option><option value="1" selected>O'rtacha</option><option value="1.3">Tez</option></select><select id="lng" style="min-height:38px;border-radius:10px;border:1px solid var(--bd);background:var(--ac3);color:var(--tx)"><option value="uz-UZ">Oʻzbek</option><option value="ru-RU">Русский</option><option value="en-US">English</option></select>
+<small class="m" style="flex:1 1 100%">${si+1} / ${S.length} · ← → tugmalari bilan ham o'tish mumkin</small></div></div>`;
+$('pv').onclick=()=>{if(si>0){si--;slide()}};$('nx').onclick=()=>{if(si<S.length-1){si++;slide()}else{addScore(5)}};
+document.querySelectorAll('.dots i').forEach(d=>d.onclick=()=>{si=+d.dataset.i;slide()});
+$('rate').value=RT;$('lng').value=LG;$('rate').onchange=e=>RT=e.target.value;$('lng').onchange=e=>LG=e.target.value;$('rd').onclick=()=>{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t+'. '+h.replace(/<[^>]+>/g,' '));u.lang=$('lng').value;u.rate=+$('rate').value;speechSynthesis.speak(u)};}
+document.addEventListener('keydown',e=>{if(!$('slides').classList.contains('on')||/INPUT|SELECT/.test(e.target.tagName))return;if(e.key=='ArrowRight'&&si<S.length-1){si++;slide()}if(e.key=='ArrowLeft'&&si>0){si--;slide()}});
+{let x0=0;$('slides').addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+$('slides').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>60){if(dx<0&&si<S.length-1){si++;slide()}else if(dx>0&&si>0){si--;slide()}}},{passive:true})}
+slide();
+
+/* ========= 2-4) SIMULYATSIYA · VR · VIDEO ========= */
+const TX=()=>getComputedStyle(document.body).color;
+function ball(c,x,y,r,col){const g=c.createRadialGradient(x-r/3,y-r/3,r/6,x,y,r);g.addColorStop(0,'#fff');g.addColorStop(1,col);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill()}
+const cs=$('c1').getContext('2d');
+const SIMS=[
+{n:'🚗 Tekis harakat',h:'Tezlikni oʻzgartiring: s–t grafigi toʻgʻri chiziq, qiyaligi tezlikka teng.',c:[['Tezlik v (m/s)',1,20,6,1]],
+reset(){this.s={x:0,t:0,g:[]}},
+d(c,dt,[v]){const s=this.s,tx=TX();s.x+=v*dt;s.t+=dt;if(s.x>=100){s.x=0;s.t=0;s.g=[]}s.g.push([s.t,s.x]);
+const g=c.createLinearGradient(0,0,0,150);g.addColorStop(0,'#8fd3ff');g.addColorStop(1,'#e6f6ff');c.fillStyle=g;c.fillRect(0,0,640,150);
+ball(c,570,36,22,'#ffb300');c.fillStyle='rgba(255,255,255,.9)';
+for(let i=0;i<3;i++){const x=((i*260-s.x*4)%780+780)%780-100;c.beginPath();c.arc(x,38+i*18,16,0,7);c.arc(x+18,34+i*18,20,0,7);c.arc(x+38,40+i*18,14,0,7);c.fill()}
+c.fillStyle='#5f7482';c.fillRect(0,150,640,56);c.fillStyle='#fff';const off=-(s.x*14)%70;for(let i=-1;i<10;i++)c.fillRect(i*70+off,176,36,4);
+const cx=250,cy=164;c.fillStyle='#0b78d1';c.fillRect(cx,cy-30,120,30);c.fillStyle='#19b5c9';c.beginPath();c.moveTo(cx+25,cy-30);c.lineTo(cx+45,cy-54);c.lineTo(cx+90,cy-54);c.lineTo(cx+105,cy-30);c.fill();
+[cx+28,cx+92].forEach(x=>{c.save();c.translate(x,cy+2);c.rotate(s.x/.3);ball(c,0,0,14,'#222');c.strokeStyle='#ccc';c.lineWidth=2;c.beginPath();c.moveTo(-10,0);c.lineTo(10,0);c.moveTo(0,-10);c.lineTo(0,10);c.stroke();c.restore()});
+c.strokeStyle='rgba(255,255,255,.85)';c.lineWidth=3;for(let i=0;i<Math.floor(v/3);i++){const y=cy-26+i*8,l=20+v*2+(s.t*300%20);c.beginPath();c.moveTo(cx-10-l,y);c.lineTo(cx-10,y);c.stroke()}
+c.fillStyle='rgba(11,120,209,.25)';c.fillRect(40,196,560,6);c.fillStyle='#1b9e55';c.fillRect(40,196,5.6*s.x,6);
+const gx=60,gy=222,gw=540,gh=90,T=100/v;c.strokeStyle=tx;c.fillStyle=tx;c.lineWidth=1.5;c.font='12px sans-serif';c.beginPath();c.moveTo(gx,gy);c.lineTo(gx,gy+gh);c.lineTo(gx+gw,gy+gh);c.stroke();
+c.fillText('s, m',14,gy+8);c.fillText('t, s',gx+gw-20,gy+gh+12);c.fillText('100',30,gy+8);c.fillText(T.toFixed(1),gx+gw-30,gy+gh-4);
+c.strokeStyle='#0b78d1';c.lineWidth=3;c.beginPath();s.g.forEach(([a,b],i)=>{const X=gx+a/T*gw,Y=gy+gh-b/100*gh;i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke();ball(c,gx+s.t/T*gw,gy+gh-s.x/100*gh,6,'#d93c3c');
+return `t = ${s.t.toFixed(1)} s · s = v·t = ${v}·${s.t.toFixed(1)} = ${s.x.toFixed(1)} m`}},
+{n:'⏲️ Mayatnik',h:'Ip uzunligi oshsa, davr T = 2π√(l/g) ortadi. Burchak esa davrga deyarli taʼsir qilmaydi.',c:[['Ip uzunligi l (m)',0.3,2.5,1,0.1],['Boshlangʻich burchak (°)',5,60,30,5]],
+reset(){this.s={t:0,tr:[],h:[]}},
+d(c,dt,[L,A]){const s=this.s,tx=TX(),T=2*Math.PI*Math.sqrt(L/9.8),a0=A*Math.PI/180;s.t+=dt;const th=a0*Math.cos(2*Math.PI*s.t/T),len=30+L*85,px=240,py=22,x=px+len*Math.sin(th),y=py+len*Math.cos(th);
+s.tr.push([x,y]);if(s.tr.length>28)s.tr.shift();s.h.push(th);if(s.h.length>200)s.h.shift();
+c.strokeStyle=tx;c.fillStyle=tx;c.lineWidth=1;c.strokeRect(430,34,200,110);c.beginPath();c.moveTo(430,89);c.lineTo(630,89);c.stroke();c.font='12px sans-serif';c.fillText('Burchak–vaqt grafigi',440,26);
+c.strokeStyle='#0b78d1';c.lineWidth=2;c.beginPath();s.h.forEach((v,i)=>{const X=430+i,Y=89-v/a0*48;i?c.lineTo(X,Y):c.moveTo(X,Y)});c.stroke();
+c.fillStyle=tx;c.fillRect(px-70,py-12,140,12);c.strokeStyle='rgba(11,120,209,.4)';c.setLineDash([5,5]);c.lineWidth=2;c.beginPath();c.arc(px,py,len,Math.PI/2-a0,Math.PI/2+a0);c.stroke();c.setLineDash([]);
+s.tr.forEach((p,i)=>{c.fillStyle=`rgba(217,60,60,${i/70})`;c.beginPath();c.arc(p[0],p[1],14*i/28,0,7);c.fill()});
+c.strokeStyle=tx;c.lineWidth=2;c.beginPath();c.moveTo(px,py);c.lineTo(x,y);c.stroke();ball(c,x,y,16,'#d93c3c');
+return `T = 2π√(l/g) = 2π√(${L}/9,8) = ${T.toFixed(2)} s · chastota ν = ${(1/T).toFixed(2)} Hz`}},
+{n:'🍎 Erkin tushish',h:'g ni oʻzgartiring (Oy, Mars, Yer, Yupiter). Rasmda har 0,2 s dagi oʻrin koʻrsatilgan.',c:[['g (m/s²): Oy 1,6 · Yer 9,8',1.6,25,9.8,0.2],['Balandlik h (m)',5,45,20,1]],
+reset(){this.s={t:0,gh:[]}},
+d(c,dt,[g,H]){const s=this.s,tx=TX(),tf=Math.sqrt(2*H/g);s.t+=dt;if(s.t>tf+1.5){s.t=0;s.gh=[]}const t=Math.min(s.t,tf),h=g*t*t/2,sc=250/H,x=330,y=30+h*sc;
+while(s.gh.length<=Math.floor(t/.2))s.gh.push(.2*s.gh.length);
+c.fillStyle='#7ec27e';c.fillRect(0,280,640,40);c.strokeStyle=tx;c.fillStyle=tx;c.lineWidth=1;c.font='12px sans-serif';
+for(let m=0;m<=H;m+=5){const yy=30+m*sc;c.beginPath();c.moveTo(60,yy);c.lineTo(76,yy);c.stroke();c.fillText((H-m)+' m',22,yy+4)}
+s.gh.forEach(gt=>{const gy=30+g*gt*gt/2*sc;c.globalAlpha=.3;ball(c,x,gy,14,'#d93c3c');c.globalAlpha=1;c.fillStyle=tx;c.fillText(gt.toFixed(1)+' s',x+24,gy+4)});
+if(s.t>tf){c.fillStyle='#d93c3c';c.beginPath();c.ellipse(x,272,20,9,0,0,7);c.fill()}else ball(c,x,y,14,'#d93c3c');
+const v=g*t,al=Math.min(90,v*2.5);c.strokeStyle='#0b78d1';c.fillStyle='#0b78d1';c.lineWidth=4;c.beginPath();c.moveTo(x+80,y);c.lineTo(x+80,y+al);c.stroke();c.beginPath();c.moveTo(x+72,y+al);c.lineTo(x+88,y+al);c.lineTo(x+80,y+al+10);c.fill();c.fillText('v',x+90,y+al/2);
+const pl=[[1.6,'Oy'],[3.7,'Mars'],[9.8,'Yer'],[24.8,'Yupiter']].sort((a,b)=>Math.abs(a[0]-g)-Math.abs(b[0]-g))[0][1];c.fillStyle=tx;c.font='bold 14px sans-serif';c.fillText('Eng yaqin: '+pl,470,40);
+return `t = √(2h/g) = ${tf.toFixed(2)} s · hozir: t = ${t.toFixed(2)} s, v = g·t = ${v.toFixed(1)} m/s`}},
+{n:'🌡️ Termometr',h:'Termometr shkalasi: boʻlinma qiymati C = 2 °C, xatolik Δ = C/2 = 1 °C. 0 °C dan past — qor, 100 °C da — qaynash.',c:[['Harorat T (°C)',-20,100,20,1]],
+reset(){const o=this.s;this.s={cur:o?o.cur:20,p:[]}},
+d(c,dt,[T]){const s=this.s,tx=TX();s.cur+=(T-s.cur)*Math.min(1,dt*3);const v=s.cur,x=200,top=30,bot=250,fy=k=>bot-(k+20)/120*(bot-top),col=`hsl(${Math.max(0,220-(v+20)*1.9)},85%,50%)`;
+if(v>92&&Math.random()<.5)s.p.push({x:x+40+Math.random()*120,y:270,vy:-40-Math.random()*30,k:0});if(v<=0&&Math.random()<.5)s.p.push({x:Math.random()*640,y:0,vy:50+Math.random()*30,k:1});
+s.p.forEach(p=>{p.y+=p.vy*dt;if(p.k){c.fillStyle='#fff';c.strokeStyle='#9bc';c.beginPath();c.arc(p.x,p.y,4,0,7);c.fill();c.stroke()}else{c.strokeStyle='#19b5c9';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,5,0,7);c.stroke()}});s.p=s.p.filter(p=>p.y>60&&p.y<290);
+c.fillStyle='rgba(255,255,255,.9)';c.strokeStyle=tx;c.lineWidth=2;c.fillRect(x-12,top-12,24,bot-top+24);c.strokeRect(x-12,top-12,24,bot-top+24);
+c.fillStyle=col;c.fillRect(x-6,fy(v),12,bot-fy(v)+14);ball(c,x,bot+32,22,col);
+c.fillStyle=tx;c.strokeStyle=tx;c.lineWidth=1.5;c.font='12px sans-serif';for(let k=-20;k<=100;k+=2){const yy=fy(k),big=k%10==0;c.beginPath();c.moveTo(x+12,yy);c.lineTo(x+(big?28:20),yy);c.stroke();if(k%20==0)c.fillText(k+'°',x+32,yy+4)}
+c.font='bold 17px sans-serif';c.fillText('Boʻlinma qiymati: C = (20 − 0) / 10 = 2 °C',300,100);c.fillText('Xatolik: Δ = C / 2 = 1 °C',300,130);c.fillStyle=col;c.font='bold 30px sans-serif';c.fillText('('+Math.round(v)+' ± 1) °C',300,180);
+return `Koʻrsatish: ${v.toFixed(0)} °C · C = 2 °C · Δ = ±1 °C · natija: (${Math.round(v)} ± 1) °C`}}];
+let simI=0;
+function simSet(i){simI=i;const m=SIMS[i];m.reset();[...$('sn').children].forEach((b,j)=>b.classList.toggle('p',j==i));$('simc').innerHTML="";m.v=m.c.map(a=>a[3]);
+m.c.forEach((a,k)=>{const l=document.createElement('label');l.style.cssText='flex:1 1 260px;display:flex;gap:10px;align-items:center';l.innerHTML=`<span>${a[0]}: <b>${a[3]}</b></span>`;const r=document.createElement('input');r.type='range';r.min=a[1];r.max=a[2];r.step=a[4];r.value=a[3];
+r.oninput=()=>{m.v[k]=+r.value;l.querySelector('b').textContent=r.value;m.reset();if(!ST.done['m'+i]){ST.done['m'+i]=1;addScore(3)}};l.append(r);$('simc').append(l)});$('sh').textContent=m.h}
+SIMS.forEach((m,i)=>{const b=document.createElement('button');b.className='btn';b.textContent=m.n;b.onclick=()=>simSet(i);$('sn').append(b)});simSet(0);
+function simTick(dt){cs.clearRect(0,0,640,320);cs.textAlign='left';$('so').textContent=SIMS[simI].d(cs,dt,SIMS[simI].v)}
+/* VR */
+const cvr=$('cvr'),vx=cvr.getContext('2d');
+const VR={yaw:.7,pit:.5,z:1,auto:true,sel:-1,L:100,t:0,drag:false,lx:0,ly:0,mv:0};
+const OBJ=[
+{n:'Chizgʻich',c:[230,190,60],p:[-120,3,45],s:[120,6,22],i:'Chizgʻich uzunlikni oʻlchaydi. SI birligi — metr (m). Boʻlinma qiymatiga eʼtibor bering!'},
+{n:'Termometr',c:[220,60,60],p:[-30,35,50],s:[10,70,10],i:'Termometr haroratni oʻlchaydi (°C). Boʻlinma qiymati C = 2 °C boʻlishi mumkin.'},
+{n:'Sekundomer',c:[40,120,210],p:[50,7,45],s:[36,14,36],i:'Sekundomer vaqtni oʻlchaydi. SI birligi — sekund (s).'},
+{n:'Tarozi',c:[40,160,90],p:[130,6,40],s:[60,12,44],i:'Tarozi massani oʻlchaydi. SI birligi — kilogramm (kg).'},
+{n:'Menzurka',c:[30,180,200],p:[-70,25,-20],s:[18,50,18],i:'Menzurka suyuqlik hajmini oʻlchaydi (ml, sm³).'},
+{n:'Mayatnik',c:[120,120,135],p:[100,60,-50],s:[8,120,8],i:'Mayatnik tayanchi. Ip uzunligini slayder bilan oʻzgartirib, davrni kuzating.'},
+{n:'Mayatnik',nl:1,c:[120,120,135],p:[70,118,-50],s:[68,6,6],i:'Mayatnik tayanchi.'}];
+const FC=[[0,1,3,2],[4,6,7,5],[0,4,5,1],[2,3,7,6],[0,2,6,4],[1,5,7,3]],SH=[.75,1,.6,1.15,.7,.9];
+function PJ(x,y,z){const cy=Math.cos(VR.yaw),sy=Math.sin(VR.yaw),x1=x*cy+z*sy,z1=-x*sy+z*cy,cp=Math.cos(VR.pit),sp=Math.sin(VR.pit),y1=y*cp+z1*sp,z2=-y*sp+z1*cp,f=VR.z*(cvr.width/640)*430/(430+z2);return[cvr.width/2+x1*f,cvr.height*.66-y1*f,f,z2]}
+function T_vr(){return 2*Math.PI*Math.sqrt(VR.L/100/9.8)}
+function vrTick(dt){const c=vx,W=cvr.width,H=cvr.height,tx=TX();VR.t+=dt;if(VR.auto&&!VR.drag)VR.yaw+=dt*.25;c.clearRect(0,0,W,H);
+const quad=(a,col,st)=>{c.beginPath();a.forEach((q,i)=>{const p=PJ(q[0],0,q[1]);i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])});c.closePath();c.fillStyle=col;c.fill();if(st){c.strokeStyle=st;c.stroke()}};
+quad([[-280,-280],[280,-280],[280,280],[-280,280]],'rgba(25,181,201,.13)');c.strokeStyle='rgba(11,120,209,.25)';c.lineWidth=1;
+for(let k=-280;k<=280;k+=40){let a=PJ(k,0,-280),b=PJ(k,0,280);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);a=PJ(-280,0,k);b=PJ(280,0,k);c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+quad([[-175,-90],[175,-90],[175,90],[-175,90]],'rgba(170,120,70,.6)','rgba(90,60,30,.7)');
+const fl=[];OBJ.forEach((o,oi)=>{const P=[];for(let i=0;i<8;i++)P.push(PJ(o.p[0]+((i>>2&1)?1:-1)*o.s[0]/2,o.p[1]+((i>>1&1)?1:-1)*o.s[1]/2,o.p[2]+((i&1)?1:-1)*o.s[2]/2));FC.forEach((f,k)=>fl.push({o,oi,k,q:f.map(i=>P[i]),z:f.reduce((a,i)=>a+P[i][3],0)/4}))});
+fl.sort((a,b)=>b.z-a.z).forEach(f=>{const sh=SH[f.k],cc=f.o.c;c.beginPath();f.q.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));c.closePath();c.fillStyle=`rgb(${Math.min(255,cc[0]*sh)|0},${Math.min(255,cc[1]*sh)|0},${Math.min(255,cc[2]*sh)|0})`;c.fill();
+const sel=VR.sel==f.oi||(VR.sel>=5&&f.oi>=5&&VR.sel<=6);c.strokeStyle=sel?'#ffd400':'rgba(0,0,0,.35)';c.lineWidth=sel?3:1;c.stroke()});
+const sw=PJ(50,14.5,45);c.strokeStyle='#fff';c.lineWidth=2;c.beginPath();c.moveTo(sw[0],sw[1]);c.lineTo(sw[0]+14*sw[2]*Math.sin(VR.t*2),sw[1]-14*sw[2]*Math.cos(VR.t*2)*.6);c.stroke();
+const Lc=VR.L*.8,an=.5*Math.cos(2*Math.PI*VR.t/T_vr()),bx=40+Lc*Math.sin(an),by=115-Lc*Math.cos(an),pv=PJ(40,115,-50),bp=PJ(bx,by,-50);c.strokeStyle=tx;c.lineWidth=2;c.beginPath();c.moveTo(pv[0],pv[1]);c.lineTo(bp[0],bp[1]);c.stroke();ball(c,bp[0],bp[1],10*bp[2],'#d93c3c');
+c.fillStyle=tx;c.font='bold 13px sans-serif';c.textAlign='center';OBJ.forEach(o=>{if(o.nl)return;const p=PJ(o.p[0],o.p[1]+o.s[1]/2+12,o.p[2]);c.fillText(o.n,p[0],p[1])});c.textAlign='left'}
+function vrPick(e){const r=cvr.getBoundingClientRect(),mx=(e.clientX-r.left)*cvr.width/r.width,my=(e.clientY-r.top)*cvr.height/r.height;let best=-1,bd=55;OBJ.forEach((o,i)=>{const p=PJ(...o.p),d=Math.hypot(p[0]-mx,p[1]-my);if(d<bd){bd=d;best=i}});
+VR.sel=best;if(best>=0){const o=OBJ[best];$('vri').textContent=o.n+': '+o.i+(best>=5?' Hozir T = '+T_vr().toFixed(2)+' s':'');const k=best>=6?5:best;if(!ST.done['v'+k]){ST.done['v'+k]=1;addScore(2)}}}
+cvr.addEventListener('pointerdown',e=>{VR.drag=true;VR.lx=e.clientX;VR.ly=e.clientY;VR.mv=0;cvr.setPointerCapture(e.pointerId)});
+cvr.addEventListener('pointermove',e=>{if(!VR.drag)return;const dx=e.clientX-VR.lx,dy=e.clientY-VR.ly;VR.mv+=Math.abs(dx)+Math.abs(dy);VR.lx=e.clientX;VR.ly=e.clientY;VR.yaw+=dx*.008;VR.pit=Math.max(.1,Math.min(1.4,VR.pit+dy*.006))});
+cvr.addEventListener('pointerup',e=>{VR.drag=false;if(VR.mv<6)vrPick(e)});cvr.addEventListener('pointercancel',()=>VR.drag=false);
+$('vra').onclick=()=>{VR.auto=!VR.auto;$('vra').textContent='⟳ Avto-aylanish: '+(VR.auto?'ha':'yoʻq')};
+$('vrz').oninput=e=>VR.z=+e.target.value;
+$('vrl').oninput=e=>{VR.L=+e.target.value;$('vrlv').textContent=VR.L;$('vri').textContent='Ip uzunligi '+VR.L+' sm → davr T = 2π√(l/g) = '+T_vr().toFixed(2)+' s';if(!ST.done.vL){ST.done.vL=1;addScore(2)}};
+$('vrrs').onclick=()=>{VR.yaw=.7;VR.pit=.5;VR.z=1;VR.L=100;VR.sel=-1;$('vrz').value=1;$('vrl').value=100;$('vrlv').textContent=100};
+$('vrfs').onclick=()=>{const w=$('vrw');if(document.fullscreenElement){document.exitFullscreen();return}if(w.classList.contains('fs')){w.classList.remove('fs');return}if(w.requestFullscreen)w.requestFullscreen().catch(()=>w.classList.add('fs'));else w.classList.add('fs')};
+/* VIDEO */
+const vd=$('cvd').getContext('2d'),VD={t:0,play:false,ci:-1},VT=40;
+const CAP=[[0,'Kuzatish: olma shoxdan uzilib yerga tushadi — hodisa har safar takrorlanadi.'],[5,'Biz hodisani oʻzgartirmaymiz, faqat diqqat bilan kuzatamiz va yozib boramiz.'],[10,'Savol tugʻiladi: ogʻir jism yengilidan tezroq tushadimi? Bu — gipoteza.'],[15,'Gipoteza — sinab koʻriladigan taxmin. U tajribada tekshiriladi.'],[20,'Tajriba: ikki xil massali sharni bir balandlikdan bir vaqtda qoʻyib yuboramiz.'],[25,'Sekundomer bilan tushish vaqtini oʻlchaymiz — ikkalasi bir vaqtda yerga tegadi.'],[30,'Natijani grafikda tasvirlaymiz: balandlik vaqt kvadratiga bogʻliq.'],[35,'Xulosa: havo qarshiligi boʻlmasa, jismlar massasidan qatʼiy nazar bir xil tushadi.']];
+function vdDraw(){const c=vd,t=VD.t,W=640,H=300,sc=Math.min(3,Math.floor(t/10)),lt=t-sc*10,tx=TX();
+const bg=c.createLinearGradient(0,0,0,H);bg.addColorStop(0,['#8fd3ff','#c9d8ff','#ffe9b8','#d4f1e0'][sc]);bg.addColorStop(1,'#f4fbff');c.fillStyle=bg;c.fillRect(0,0,W,H);c.fillStyle='#6fbf6f';c.fillRect(0,250,W,50);
+c.globalAlpha=Math.min(1,lt);c.textAlign='center';c.lineWidth=2;
+if(sc==0){c.fillStyle='#8a5a2b';c.fillRect(90,150,22,100);ball(c,100,125,58,'#2e8b3e');ball(c,140,150,38,'#3aa04d');const k=lt%5,fall=k>2.2,tt=Math.max(0,k-2.2),ay=Math.min(165+200*tt*tt,241),ax=135+(fall?0:Math.sin(k*8)*1.5);ball(c,ax,ay,10,'#d93c3c');
+c.fillStyle='#e8b98a';c.beginPath();c.arc(500,205,15,0,7);c.fill();c.fillStyle='#0b78d1';c.fillRect(488,220,24,30);c.font=`${28+Math.sin(t*4)*3}px sans-serif`;c.fillText('👀',455,150);c.strokeStyle='#d93c3c';c.setLineDash([5,5]);c.beginPath();c.moveTo(470,160);c.lineTo(ax+14,ay);c.stroke();c.setLineDash([])}
+else if(sc==1){const b=Math.sin(t*3)*6;ball(c,230,170+b,36,'#0b78d1');ball(c,410,190-b,16,'#19b5c9');c.fillStyle=tx;c.font='14px sans-serif';c.fillText('ogʻir',230,235);c.fillText('yengil',410,235);
+c.fillStyle='#fff';c.strokeStyle='#0b78d1';c.beginPath();c.ellipse(320,60,150,32+Math.sin(t*3)*2,0,0,7);c.fill();c.stroke();c.fillStyle='#12263a';c.font='bold 17px sans-serif';c.fillText('Qaysi biri tezroq tushadi?',320,66);
+c.fillStyle='#d93c3c';for(let i=0;i<3;i++){c.font='bold 30px sans-serif';c.globalAlpha=.7;c.fillText('?',140+i*180,200-((lt*35+i*40)%110))}}
+else if(sc==2){c.strokeStyle='#12263a';c.fillStyle='#12263a';c.font='12px sans-serif';for(let m=0;m<=4;m++){const y=40+m*52.5;c.beginPath();c.moveTo(50,y);c.lineTo(66,y);c.stroke();c.fillText((2-m*.5).toFixed(1)+' m',28,y+4)}
+const k=lt%5,ft=1.9,tt=Math.max(0,Math.min(k-1,ft)),u=(tt/ft)**2,y=40+u*210;for(let j=0;j<=tt*4;j++){const q=(j/4/ft)**2;c.globalAlpha=.25;ball(c,250,40+q*210,22,'#0b78d1');ball(c,390,40+q*210,10,'#19b5c9')}c.globalAlpha=1;ball(c,250,y,22,'#0b78d1');ball(c,390,y,10,'#19b5c9');
+c.fillStyle='#fff';c.strokeStyle='#12263a';c.fillRect(270,8,100,30);c.strokeRect(270,8,100,30);c.fillStyle='#12263a';c.font='bold 18px sans-serif';c.fillText('⏱ '+(tt/ft*.64).toFixed(2)+' s',320,30);if(tt>=ft){c.fillStyle='#1b9e55';c.font='bold 18px sans-serif';c.fillText('Ikkalasi bir vaqtda tushdi!',320,150)}}
+else{c.strokeStyle='#12263a';c.fillStyle='#12263a';c.lineWidth=2;c.beginPath();c.moveTo(80,30);c.lineTo(80,250);c.lineTo(560,250);c.stroke();c.font='14px sans-serif';c.fillText('h',66,40);c.fillText('t, s',545,270);const p=Math.min(1,lt/6);c.strokeStyle='#d93c3c';c.lineWidth=4;c.beginPath();for(let i=0;i<=p*48;i++){const X=80+i*10,Y=250-(i/48)**2*200;i?c.lineTo(X,Y):c.moveTo(X,Y)}c.stroke();
+if(p>=1){c.fillStyle='#1b9e55';c.font=`bold ${54+Math.sin(t*5)*4}px sans-serif`;c.fillText('✔',470,110);c.font='bold 16px sans-serif';c.fillText('Gipoteza rad etildi',470,140)}}
+c.globalAlpha=1;c.textAlign='left';c.fillStyle='#0b78d1';c.fillRect(12,12,120,28);c.fillStyle='#fff';c.font='bold 14px sans-serif';c.fillText(['1. Kuzatish','2. Gipoteza','3. Tajriba','4. Xulosa'][sc],22,31);
+c.fillStyle='rgba(11,120,209,.25)';c.fillRect(0,H-6,W,6);c.fillStyle='#0b78d1';c.fillRect(0,H-6,W*t/VT,6);
+let ci=0;CAP.forEach((a,i)=>{if(t>=a[0])ci=i});$('vdcap').textContent=VD.play||t>0?CAP[ci][1]:'Boshlash uchun ▶ tugmasini bosing';
+if(ci!=VD.ci){VD.ci=ci;if(VD.play&&$('vsnd').checked&&window.speechSynthesis){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(CAP[ci][1]);u.lang=LG;u.rate=+RT;speechSynthesis.speak(u)}}}
+function vdTick(dt){if(VD.play){VD.t+=dt;if(VD.t>=VT){VD.t=VT;VD.play=false;if(!ST.done.vid){ST.done.vid=1;addScore(5)}}}vdDraw();$('vseek').value=VD.t}
+$('vdp').onclick=()=>{if(VD.t>=VT)VD.t=0;VD.play=true;VD.ci=-1};$('vds').onclick=()=>{VD.play=false;window.speechSynthesis&&speechSynthesis.cancel()};
+$('vdr').onclick=()=>{VD.t=0;VD.play=true;VD.ci=-1};$('vseek').oninput=e=>{VD.t=+e.target.value;VD.ci=-1;vdDraw()};
+function onGo(id){try{if(id!='video')VD.play=false;window.speechSynthesis&&speechSynthesis.cancel();if(id=='video')vdDraw()}catch(e){}}
+/* umumiy sikl */
+let lastTs=0;function master(ts){requestAnimationFrame(master);const dt=Math.min(.05,(ts-lastTs)/1000||0);lastTs=ts;const on=id=>$(id).classList.contains('on');
+try{if(on('sim'))simTick(dt);else if(on('vr'))vrTick(dt);else if(on('video'))vdTick(dt)}catch(e){console.error(e)}}
+requestAnimationFrame(master);
+/* ========= 5) TEST ========= */
+const Q=[
+["Fizika nimani oʻrganadi?",["Tabiat hodisalarini","Faqat sonlarni","Tillarni","Tarixni"],0,"Fizika — tabiat haqidagi fan."],
+["Quyidagilardan qaysi biri fizik hodisa?",["Muz erishi","Non pishishi","Temir zanglashi","Yogʻoch yonishi"],0,"Muz erishida modda turi oʻzgarmaydi."],
+["Uzunlikning SI birligi nima?",["Kilogramm","Metr","Sekund","Litr"],1,"Uzunlik metr (m) bilan oʻlchanadi."],
+["1 km necha metr?",["10","100","1000","10000"],2,"kilo = 1000."],
+["Vaqtni oʻlchaydigan asbob qaysi?",["Termometr","Tarozi","Sekundomer","Chizgʻich"],2,"Sekundomer vaqtni oʻlchaydi."],
+["Hodisaga aralashmay, tabiiy sharoitda oʻrganish nima?",["Tajriba","Kuzatish","Hisoblash","Chizish"],1,"Bu kuzatish."],
+["Maxsus sharoitda, takror oʻrganish nima?",["Kuzatish","Tajriba","Taxmin","Eslash"],1,"Bu tajriba (eksperiment)."],
+["Boʻlinma qiymati formulasi qaysi?",["C=(y₂−y₁)/n","C=y₁·n","C=n/y","C=y₂+y₁"],0,"Qiymatlar farqi boʻlinmalar soniga boʻlinadi."],
+["20 va 30 °C orasida 5 boʻlinma bor. C = ?",["1 °C","2 °C","5 °C","10 °C"],1,"(30−20)/5 = 2 °C."],
+["Ilmiy usulning toʻgʻri tartibi qaysi?",["Xulosa–Tajriba–Kuzatish","Kuzatish–Gipoteza–Tajriba–Xulosa","Tajriba–Kuzatish–Xulosa","Gipoteza–Xulosa–Kuzatish"],1,"Avval kuzatamiz, soʻng gipoteza, tajriba, xulosa."]];
+let qi=0,qScore=0,qDone=false;
+function renderTest(){if(qDone)return testResult();const[q,opts,ci]=Q[qi];
+$('test').innerHTML=`<div class="card"><div class="hd"><span class="nb">5</span><h2>Test — ${qi+1}/${Q.length}</h2></div>
+<p style="font-size:18px;font-weight:600">${q}</p><div id="qopts"></div><p class="f" id="qfb" style="display:none"></p>
+<div class="row"><button class="btn p" id="qnext" style="display:none">Keyingi savol ▶</button></div></div>`;
+const wrap=$('qopts');opts.forEach((o,i)=>{const b=document.createElement('button');b.className='btn opt';b.textContent=o;
+b.onclick=()=>{[...wrap.children].forEach(x=>x.disabled=true);const ok=i==ci;b.classList.add(ok?'ok':'no');if(!ok)wrap.children[ci].classList.add('ok');
+$('qfb').style.display='block';$('qfb').textContent=(ok?'✅ To\'g\'ri! ':'❌ Noto\'g\'ri. ')+Q[qi][3];
+if(ok){qScore++;addScore(10)}$('qnext').style.display='inline-flex'};wrap.append(b)});
+$('qnext').onclick=()=>{qi++;if(qi>=Q.length){qDone=true;ST.done.test=qScore}renderTest()};}
+function testResult(){const pct=Math.round(qScore/Q.length*100);
+$('test').innerHTML=`<div class="card"><div class="hd"><span class="nb">✅</span><h2>Test natijasi</h2></div>
+<p style="font-size:20px">Siz <b>${Q.length}</b> savoldan <b>${qScore}</b> tasiga to'g'ri javob berdingiz.</p>
+<div class="pr"><i style="width:${pct}%"></i></div><p>${pct}% · ${'★'.repeat(Math.max(1,Math.round(pct/20)))}</p>
+<button class="btn p" id="qRetry">↺ Qaytadan boshlash</button></div>`;
+$('qRetry').onclick=()=>{qi=0;qScore=0;qDone=false;renderTest()};}
+renderTest();
+
+/* ========= 6) OʻYINLAR ========= */
+$('games').innerHTML=`<div class="card"><div class="hd"><span class="nb">6</span><h2>Oʻyinlar</h2></div><div class="row" id="gn" style="margin-bottom:12px"></div><div id="gb"></div></div>`;
+const TF=[["Fizika tabiat haqidagi fan.",["Rost","Yolgʻon"],0,"Toʻgʻri."],["1 m = 10 sm.",["Rost","Yolgʻon"],1,"1 m = 100 sm."],["Tajriba — shart-sharoitni boshqarib oʻrganish.",["Rost","Yolgʻon"],0,"Toʻgʻri."],["Termometr massani oʻlchaydi.",["Rost","Yolgʻon"],1,"U haroratni oʻlchaydi."],["Muz erishi fizik hodisa.",["Rost","Yolgʻon"],0,"Modda turi oʻzgarmaydi."],["Sekund — uzunlik birligi.",["Rost","Yolgʻon"],1,"Sekund — vaqt birligi."]];
+const FB=[["Kattalikni birlik bilan solishtirish — ___.",["oʻlchash","kuzatish","taxmin"],0,"Bu oʻlchash."],["Gipoteza — sinab koʻriladigan ___.",["xato","taxmin","qonun"],1,"Gipoteza — taxmin."],["Massaning SI birligi — ___.",["metr","kilogramm","sekund"],1,"kg."],["Haroratni ___ bilan oʻlchaymiz.",["termometr","tarozi","chizgʻich"],0,"Termometr."],["Boʻlinma qiymati 2 °C boʻlsa, xatolik ___.",["2 °C","1 °C","4 °C"],1,"Δ = C/2."]];
+const VQ=[["Ilmiy usul nimadan boshlanadi?",["Xulosadan","Kuzatishdan","Hisobdan"],1,"Kuzatishdan."],["Fizik kattalikka misol?",["Massa","Ism","Rang nomi"],0,"Massa."],["2 km necha metr?",["20","200","2000"],2,"2·1000."],["Yoʻl formulasi?",["s=v·t","s=v/t","s=t/v"],0,"s=v·t."],["Oʻlchash xatoligi taxminan?",["C/2","2C","0"],0,"Δ = C/2."]];
+function gQuiz(el,qs){let i=0,sc=0;(function r(){if(i>=qs.length){el.innerHTML=`<div class="f">Natija: ${sc}/${qs.length} toʻgʻri! ${"★".repeat(Math.round(sc/qs.length*5))}</div><button class="btn p" id="gqr">↺ Qaytadan</button>`;$('gqr').onclick=()=>{i=0;sc=0;r()};return}
+const q=qs[i];el.innerHTML=`<p style="font-size:18px;font-weight:600">${i+1}/${qs.length}. ${q[0]}</p><div id="gqo"></div><p class="f" id="gqf" style="display:none"></p>`;const w=$('gqo');
+q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='btn opt';b.textContent=o;b.onclick=()=>{[...w.children].forEach(x=>x.disabled=true);const ok=j==q[2];b.classList.add(ok?'ok':'no');if(!ok)w.children[q[2]].classList.add('ok');if(ok){sc++;addScore(5)}$('gqf').style.display='block';$('gqf').textContent=(ok?'✅ ':'❌ ')+q[3];const n=document.createElement('button');n.className='btn p';n.textContent='Keyingi ▶';n.onclick=()=>{i++;r()};el.append(n)};w.append(b)})})()}
+function gMatch(el){const P=[["Fizika","tabiat haqidagi fan"],["Kuzatish","hodisaga aralashmasdan oʻrganish"],["Tajriba","maxsus sharoitda oʻrganish"],["Metr","uzunlik birligi"],["Sekundomer","vaqt oʻlchaydigan asbob"]];let a=null,ok=0;
+el.innerHTML=`<p>Avval atamani, keyin uning taʼrifini bosing.</p><div class="grid" id="ml"></div><br><div class="grid" id="mr"></div><p class="f" id="mf" style="display:none">🎉 Barcha juftlar topildi!</p>`;
+const mk=(box,arr,side)=>arr.forEach(([t,i])=>{const b=document.createElement('button');b.className='btn gc';b.textContent=t;b.onclick=()=>{if(b.disabled)return;if(!side){box.querySelectorAll('button').forEach(x=>x.classList.remove('p'));b.classList.add('p');a={b,i}}else if(a){if(a.i==i){a.b.classList.remove('p');[a.b,b].forEach(x=>{x.classList.add('ok');x.disabled=true});a=null;addScore(5);if(++ok==P.length)$('mf').style.display='block'}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}}};box.append(b)});
+mk($('ml'),P.map((p,i)=>[p[0],i]),0);mk($('mr'),P.map((p,i)=>[p[1],i]).sort(()=>Math.random()-.5),1)}
+function gSort(el){const St=["Kuzatish","Savol qoʻyish","Gipoteza","Tajriba","Xulosa"];let n=0;el.innerHTML=`<p>Ilmiy usul bosqichlarini toʻgʻri tartibda bosing:</p><div class="grid" id="so2"></div><p class="f" id="sf" style="display:none">🎉 Toʻgʻri tartib!</p>`;
+St.slice().sort(()=>Math.random()-.5).forEach(t=>{const b=document.createElement('button');b.className='btn gc';b.textContent=t;b.onclick=()=>{if(b.disabled)return;if(St[n]==t){n++;b.disabled=true;b.classList.add('ok');b.textContent=n+". "+t;if(n==St.length){$('sf').style.display='block';addScore(10)}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}};$('so2').append(b)})}
+function gMem(el){const P=[["⏱️","Sekundomer"],["📏","Chizgʻich"],["🌡️","Termometr"],["⚖️","Tarozi"],["🔭","Teleskop"],["🧪","Menzurka"]],C=[];P.forEach((p,i)=>{C.push([p[0],i]);C.push([p[1],i])});C.sort(()=>Math.random()-.5);let a=null,lock=false,f=0,m=0;
+el.innerHTML=`<p>Asbob va uning nomini juftlang.</p><div class="grid" id="mg" style="grid-template-columns:repeat(auto-fill,minmax(110px,1fr))"></div><p class="f" id="mm" style="display:none"></p>`;
+C.forEach(([t,i])=>{const b=document.createElement('button');b.className='btn gc';b.style.cssText='text-align:center;font-size:18px';b.textContent='❔';b.onclick=()=>{if(lock||b.disabled||(a&&a.b===b))return;b.textContent=t;b.classList.add('p');if(!a){a={b,i};return}f++;if(a.i==i){[a.b,b].forEach(x=>{x.classList.remove('p');x.classList.add('ok');x.disabled=true});a=null;if(++m==P.length){$('mm').style.display='block';$('mm').textContent='🎉 '+f+' urinishda topdingiz!';addScore(10)}}else{lock=true;const x=a.b;a=null;setTimeout(()=>{[x,b].forEach(y=>{y.textContent='❔';y.classList.remove('p')});lock=false},800)}};$('mg').append(b)})}
+const OGN=[['🔗 Mos keltirish',gMatch],['⚡ Rost/Yolgʻon',e=>gQuiz(e,TF)],['✏️ Boʻsh joy',e=>gQuiz(e,FB)],['🔢 Tartiblash',gSort],['🃏 Xotira',gMem],['🏆 Viktorina',e=>gQuiz(e,VQ)]];
+function gSet(i){[...$('gn').children].forEach((b,j)=>b.classList.toggle('p',j==i));const e=$('gb');e.innerHTML="";OGN[i][1](e)}
+OGN.forEach(([n],i)=>{const b=document.createElement('button');b.className='btn'+(i?'':' p');b.textContent=n;b.onclick=()=>gSet(i);$('gn').append(b)});
+gSet(0);
+
+hud();
+</script>
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

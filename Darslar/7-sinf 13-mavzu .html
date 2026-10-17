@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moddaning zichligi. Zichlikni aniqlash — 7-sinf Fizika</title>
+<style>
+:root{--b:#0b78d1;--g:#1b9e55;--r:#d93c3c;--bg:linear-gradient(#e8f5ff,#cde9ff);--c:rgba(255,255,255,.72);--t:#12263a}
+[data-theme=dark]{--bg:linear-gradient(#0b1622,#10253a);--c:rgba(28,48,70,.75);--t:#e6f1fb}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg) fixed;color:var(--t);line-height:1.5}
+.w{max-width:960px;margin:auto;padding:10px}
+.card{background:var(--c);backdrop-filter:blur(10px);border:1px solid #fff4;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(11,120,209,.15);margin:10px 0}
+h1,h2,h3{margin:.2em 0;background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:1.4rem}
+button,select,input{min-height:44px;border-radius:12px;border:1px solid #0b78d155;padding:0 14px;font:inherit;background:var(--c);color:var(--t);cursor:pointer}
+input[type=range]{padding:0;width:180px;max-width:100%}
+button.p,nav button.on{background:var(--b);color:#fff}
+button.ok,.ok{background:var(--g)!important;color:#fff!important}
+button.no,.no{background:var(--r)!important;color:#fff!important}
+button:disabled{opacity:.9;cursor:default}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+nav button{white-space:nowrap;flex:1}
+section{display:none}section.on{display:block}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+canvas{width:100%;display:block;background:#f4fbff;border-radius:12px;touch-action:none}
+svg{width:100%;max-height:210px;color:#12263a;background:#f4fbff;border-radius:12px}
+[data-theme=dark] svg{color:#12263a}
+.bar{height:10px;background:#0b78d133;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(120deg,#0b78d1,#19b5c9);transition:width .3s}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}.dots b{width:12px;height:12px;border-radius:50%;background:#0b78d144;cursor:pointer;outline:8px solid transparent}.dots b.on{background:var(--b)}
+.opts{display:grid;gap:8px}.opts button{text-align:left;padding:8px 14px;height:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.sub{background:#000a;color:#fff;border-radius:10px;padding:8px;min-height:44px;margin-top:6px}
+.f{font-size:1.1rem;background:#0b78d122;border-radius:10px;padding:6px 10px;display:inline-block}
+#vw:fullscreen{background:#0b1622;padding:10px;overflow:auto}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="card">
+ <div class="row" style="justify-content:space-between">
+  <h1>🧊 Moddaning zichligi</h1>
+  <div class="row"><span id="sc">Ball: 0</span><span id="stars">☆☆☆☆☆</span><span id="tm">⏱ 00:00</span></div>
+ </div>
+ <div class="bar" style="margin:8px 0"><i id="pb"></i></div>
+ <div class="row">
+  <button id="spk" class="p">🔊 O'qish</button>
+  <select id="rate" aria-label="Tezlik"><option value=".7">Sekin</option><option value="1" selected>Oddiy</option><option value="1.4">Tez</option></select>
+  <select id="lang" aria-label="Til"><option value="tr-TR" selected>Ovoz: Türkçe</option><option value="uz-UZ">Ovoz: O'zbek</option><option value="ru-RU">Ovoz: Русский</option><option value="en-US">Ovoz: English</option></select>
+  <button id="th">🌙 / ☀️</button><button id="rst">♻ Tozalash</button>
+ </div>
+</div>
+<nav id="nav"></nav>
+
+<section id="s0"><div class="card"><h2 id="stt"></h2><div id="fig"></div><div id="sbd"></div></div>
+ <div class="card"><div class="row" style="justify-content:space-between"><button id="pv">← Orqaga</button><b id="sn"></b><button id="nx" class="p">Oldinga →</button></div><div class="bar" style="margin:8px 0"><i id="sp"></i></div><div class="dots" id="dots"></div></div></section>
+
+<section id="s1"><div class="card"><h2>Simulyatsiyalar</h2><div class="row" id="sTabs"></div><canvas id="cv" width="600" height="300"></canvas><div class="row" id="sCtl" style="margin-top:8px"></div></div></section>
+
+<section id="s2"><div class="card" id="vw"><h2>VR laboratoriya</h2>
+ <p>Sahnani sichqoncha yoki barmoq bilan aylantiring. Slayder yoki «Material» tugmasi bilan 10 cm li kub zichligini o'zgartiring: suvdan (1000 kg/m³) yengil bo'lsa suzadi, og'ir bo'lsa cho'kadi.</p>
+ <canvas id="vc" width="600" height="340"></canvas>
+ <div class="row" style="margin-top:8px"><label>ρ (kg/m³): <input type="range" id="vv" min="100" max="8000" step="100" value="900"></label><b id="vvt"></b>
+ <button id="vp">⏸ Pauza</button><button id="va">🔄 Avto-aylanish</button><button id="vu">🧊 Material</button><button id="vr">↺ Boshlash</button><button id="vf" class="p">⛶ To'liq ekran</button></div>
+ <p id="vo" class="f"></p></div></section>
+
+<section id="s3"><div class="card"><h2>Video-dars</h2><canvas id="mc" width="600" height="300"></canvas><div class="sub" id="cap"></div><div class="bar" style="margin:8px 0"><i id="mp"></i></div>
+ <div class="row"><button id="mpl" class="p">▶ Boshlash</button><button id="mre">↺ Qaytadan</button></div></div></section>
+
+<section id="s4"><div class="card"><h2>Test</h2><div id="tq"></div></div></section>
+<section id="s5"><div class="card"><h2>O'yinlar</h2><div class="row" id="gTabs"></div><div id="gb" style="margin-top:12px"></div></div></section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const sh=a=>[...a].sort(()=>Math.random()-.5);
+let G={s:0,t:0,d:{},th:'',v:{}};
+try{Object.assign(G,JSON.parse(localStorage.getItem('fz7e')||'{}'))}catch(e){}
+const MAX=128;
+function save(){try{localStorage.setItem('fz7e',JSON.stringify(G))}catch(e){}}
+function upd(){$('#sc').textContent='Ball: '+G.s;const k=Math.min(5,Math.round(G.s/MAX*5));$('#stars').textContent='★'.repeat(k)+'☆'.repeat(5-k);$('#pb').style.width=Math.min(100,G.s/MAX*100)+'%';const m=Math.floor(G.t/60),s=G.t%60;$('#tm').textContent='⏱ '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function add(k,n){if(G.d[k])return;G.d[k]=1;G.s+=n;save();upd()}
+setInterval(()=>{G.t++;upd();if(G.t%5==0)save()},1000);
+document.documentElement.dataset.theme=G.th||'';
+$('#th').onclick=()=>{G.th=G.th=='dark'?'':'dark';document.documentElement.dataset.theme=G.th;save()};
+$('#rst').onclick=()=>{G={s:0,t:0,d:{},th:G.th,v:{}};save();upd();location.reload()};
+
+/* ---------- Navigation ---------- */
+const TABS=['📖 Slaydlar','🧪 Simulyatsiya','🥽 VR','🎬 Video','📝 Test',"🎮 O'yinlar"];let cur=0;
+TABS.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>go(i);$('#nav').appendChild(b)});
+function go(n){cur=n;$$('section').forEach((s,i)=>s.classList.toggle('on',i==n));$$('#nav button').forEach((b,i)=>b.classList.toggle('on',i==n));if('speechSynthesis' in window)speechSynthesis.cancel();if(n==0)add('sl'+si,1);if(n==3)drawVid();window.scrollTo(0,0)}
+/* ---------- Speech ---------- */
+$('#spk').onclick=()=>{if(!('speechSynthesis' in window)){alert("Brauzer ovozli o'qishni qo'llamaydi");return}
+ if(speechSynthesis.speaking){speechSynthesis.cancel();return}
+ const t=(cur==0?$('#stt').textContent+'. '+$('#sbd').innerText:$('#s'+cur).innerText).slice(0,1500);
+ const u=new SpeechSynthesisUtterance(t);u.lang=$('#lang').value;u.rate=+$('#rate').value;speechSynthesis.speak(u)};
+/* ---------- SVG helpers ---------- */
+const sv=b=>`<svg viewBox="0 0 320 150" role="img">${b}</svg>`;
+const L=(a,b,c,d,col,w)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col||'currentColor'}" stroke-width="${w||2}"/>`;
+const T=(x,y,s,c)=>`<text x="${x}" y="${y}" font-size="12" fill="${c||'currentColor'}">${s}</text>`;
+const C=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+const R=(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${c}"/>`;
+const P=(d,c,x)=>`<path d="${d}" fill="none" stroke="${c||'#0b78d1'}" stroke-width="3" ${x||''}/>`;
+const car=(x,y)=>R(x,y,44,16,'#0b78d1')+R(x+10,y-9,22,10,'#19b5c9')+C(x+11,y+17,5,'#333')+C(x+33,y+17,5,'#333');
+const ax=(x,y)=>L(40,130,300,130)+L(40,130,40,12)+T(285,145,x)+T(8,22,y);
+const FIG={
+a:()=>sv(R(25,45,70,70,'#7d8791')+R(125,45,70,70,'#b8c2cc')+R(225,45,70,70,'#c9a06a')+T(30,135,'Temir 7,8 kg')+T(125,135,'Alyuminiy 2,7 kg')+T(228,135,'Yog‘och 0,6 kg')+T(30,25,'Hajmi bir xil (1000 cm³), massalari har xil')),
+b:()=>sv(R(30,20,260,40,'#0b78d1')+T(50,46,'Zichlik = massa / hajm','#fff')+T(30,90,'Moddaning xususiyati (jismniki emas)')+T(30,115,'Bir modda — bir zichlik')),
+c:()=>sv(`<polygon points="160,15 100,125 220,125" fill="#0b78d122" stroke="#0b78d1" stroke-width="3"/>`+L(130,70,190,70)+L(160,70,160,125)+T(155,55,'m')+T(138,103,'ρ')+T(172,103,'V')+T(10,20,'ρ = m/V')+T(10,40,'m = ρ·V')+T(10,60,'V = m/ρ')),
+d:()=>sv(R(20,20,280,34,'#0b78d1')+R(20,70,280,34,'#19b5c9')+T(70,43,'SI: kilogramm/metr³ (kg/m³)','#fff')+T(70,93,'Qulay: gramm/santimetr³ (g/cm³)','#fff')+T(20,130,'1 g/cm³ — 1 cm³ moddaning massasi 1 g')),
+e:()=>sv(R(20,20,280,34,'#0b78d1')+T(60,43,'1 g/cm³ = 1000 kg/m³','#fff')+T(20,85,'2,7 g/cm³ = 2700 kg/m³')+T(20,110,'7800 kg/m³ = 7,8 g/cm³')+T(20,135,'g/cm³ → kg/m³: ×1000')),
+f:()=>sv([['Yog‘och',.6,'#c9a06a'],['Muz',.9,'#9fd8ff'],['Suv',1,'#4aa3ff'],['Alyuminiy',2.7,'#b8c2cc'],['Temir',7.8,'#7d8791'],['Mis',8.9,'#c8753d']].map((q,i)=>T(8,18+i*23,q[0])+R(80,6+i*23,q[1]*22,16,q[2])+T(85+q[1]*22,18+i*23,q[1]+' g/cm³')).join('')),
+g:()=>sv(L(160,30,160,125,'currentColor',3)+L(110,125,210,125,'currentColor',3)+L(50,40,270,40,'currentColor',3)+L(50,40,50,80)+L(270,40,270,80)+R(25,80,50,6,'#0b78d1')+R(245,80,50,6,'#0b78d1')+R(35,58,30,22,'#7d8791')+R(255,64,10,16,'#d93c3c')+R(267,64,10,16,'#d93c3c')+T(110,20,'Tarozi: m = 156 g')),
+h:()=>sv(`<rect x="120" y="15" width="60" height="115" fill="none" stroke="currentColor" stroke-width="3"/>`+R(123,70,54,57,'#4aa3ff88')+C(150,105,13,'#7d8791')+T(190,50,'V₁ = 100 mL')+T(190,80,'V₂ = 120 mL')+T(190,110,'V = 20 cm³','#1b9e55')),
+i:()=>sv(T(15,25,'1) Massani tarozida o‘lchang (m)')+T(15,50,'2) Hajmni o‘lchang (V)')+T(15,75,'3) ρ = m / V ni hisoblang')+T(15,100,'4) Jadval bilan solishtiring')+T(15,130,'5) Moddani aniqlang','#1b9e55')),
+j:()=>sv(T(15,28,'Berilgan: m = 156 g, V = 20 cm³')+T(15,55,'ρ = m / V')+T(15,82,'ρ = 156 / 20 = 7,8 g/cm³','#1b9e55')+T(15,110,'= 7800 kg/m³ → temir')),
+k:()=>sv(T(15,28,'Berilgan: ρ = 2700 kg/m³, V = 2 m³')+T(15,55,'m = ρ · V')+T(15,82,'m = 2700 · 2 = 5400 kg','#1b9e55')+T(15,110,'(alyuminiy bo‘lagi)')),
+l:()=>sv(T(15,28,'Berilgan: m = 1000 kg, ρ = 800 kg/m³')+T(15,55,'V = m / ρ')+T(15,82,'V = 1000 / 800 = 1,25 m³','#1b9e55')+T(15,110,'(kerosin hajmi)')),
+m:()=>sv(`<rect x="90" y="15" width="140" height="120" fill="none" stroke="currentColor" stroke-width="3"/>`+R(93,18,134,38,'#f1d56a')+R(93,56,134,38,'#4aa3ff')+R(93,94,134,38,'#9aa3ad')+T(240,40,'yog‘ 800')+T(240,78,'suv 1000')+T(240,116,'simob 13600')),
+n:()=>sv(`<rect x="20" y="30" width="110" height="100" fill="#4aa3ff44" stroke="currentColor" stroke-width="3"/>`+R(55,50,40,40,'#9fd8ff')+T(25,20,'ρ jism < ρ suyuq: suzadi')+`<rect x="190" y="30" width="110" height="100" fill="#4aa3ff44" stroke="currentColor" stroke-width="3"/>`+R(225,90,40,36,'#7d8791')+T(180,20,'ρ jism > ρ suyuq: cho‘kadi')),
+o:()=>sv(C(160,60,40,'#d93c3c88')+L(160,100,160,125,'currentColor',2)+T(15,20,'Havo ≈ 1,29 kg/m³')+T(15,140,'Geliy shari havodan engil — ko‘tariladi')),
+p:()=>sv(T(15,28,'V = 50 cm³, m = 135 g')+T(15,55,'ρ = 135 / 50 = 2,7 g/cm³','#1b9e55')+T(15,82,'= 2700 kg/m³ → alyuminiy')+T(15,110,'Hajm 2 marta ortsa, ρ o‘zgarmaydi'))
+};
+/* ---------- Slides ---------- */
+const S=[
+["Moddalar turlicha","Bir xil hajmli temir, alyuminiy va yog‘och kublarning massalari turlicha. Buning sababi — moddalarning <b>zichligi</b> turlicha ekanligida.","a"],
+["Zichlik nima?","<b>Zichlik</b> — moddaning bir birlik hajmining massasini ko‘rsatuvchi fizik kattalik. Zichlik jismga emas, <b>moddaga</b> xos xususiyat.","b"],
+["Zichlik formulasi","<span class='f'>ρ = m / V</span>. Bu yerda ρ (ro) — zichlik, m — massa, V — hajm. Bundan: <span class='f'>m = ρ·V</span>, <span class='f'>V = m / ρ</span>.","c"],
+["Zichlik birliklari","SI da zichlik birligi — <b>kg/m³</b>. Qulay birlik — <b>g/cm³</b>. Zichlik 1 g/cm³ bo‘lsa, 1 cm³ moddaning massasi 1 g bo‘ladi.","d"],
+["Birliklarni o‘zgartirish","<b>1 g/cm³ = 1000 kg/m³</b>. g/cm³ ni kg/m³ ga o‘tkazish uchun 1000 ga ko‘paytiring. Masalan: 2,7 g/cm³ = 2700 kg/m³.","e"],
+["Moddalar zichliklari","Suv — 1 g/cm³ (1000 kg/m³), muz — 0,9; alyuminiy — 2,7; temir — 7,8; mis — 8,9 g/cm³. Havo juda siyrak: ≈ 1,29 kg/m³.","f"],
+["Massani o‘lchash","Jism massasi <b>tarozi</b> yordamida o‘lchanadi: bir pallaga jism, ikkinchisiga toshlar qo‘yib, muvozanatga erishilganda m topiladi.","g"],
+["Hajmni o‘lchash","Suyuqlik hajmi <b>menzurka</b>da o‘lchanadi. Tartibsiz qattiq jism hajmi suvga cho‘ktirish orqali topiladi: <span class='f'>V = V₂ − V₁</span>.","h"],
+["Zichlikni aniqlash tartibi","Massani o‘lchang → hajmni o‘lchang → ρ = m/V ni hisoblang → jadvaldan solishtirib moddani aniqlang. Birliklarni bir tizimga keltirishni unutmang.","i"],
+["Misol: zichlikni topish","Jismning massasi 156 g, hajmi 20 cm³. ρ = 156/20 = <b>7,8 g/cm³</b> = 7800 kg/m³. Jadvalga ko‘ra bu temir.","j"],
+["Massani topish","Hajmi 2 m³ bo‘lgan alyuminiy bo‘lagining massasi: m = ρ·V = 2700·2 = <b>5400 kg</b>.","k"],
+["Hajmni topish","Massasi 1000 kg, zichligi 800 kg/m³ bo‘lgan kerosin hajmi: V = m/ρ = 1000/800 = <b>1,25 m³</b>.","l"],
+["Suyuqliklar qatlami","Aralashmaydigan suyuqliklardan zichligi kattasi pastga cho‘kadi: pastda simob (13600), o‘rtada suv (1000), yuqorida yog‘ (800 kg/m³).","m"],
+["Suzish va cho‘kish","Jism zichligi suyuqlik zichligidan <b>kichik</b> bo‘lsa — suzadi, <b>katta</b> bo‘lsa — cho‘kadi. Muz (900) suvda suzadi, temir (7800) cho‘kadi.","n"],
+["Gazlar zichligi","Gazlar zichligi juda kichik: havo ≈ 1,29 kg/m³. Geliy shari havodan engil bo‘lgani uchun yuqoriga ko‘tariladi.","o"],
+["Masala yechish namunasi","Jism hajmi 50 cm³, massasi 135 g. ρ = 135/50 = 2,7 g/cm³ = 2700 kg/m³ — alyuminiy. Jism ikkiga bo‘linsa ham, moddaning zichligi <b>o‘zgarmaydi</b>.","p"]
+];
+let si=+(G.v.si||0);
+function slide(){const s=S[si];$('#stt').textContent=(si+1)+'. '+s[0];$('#sbd').innerHTML=s[1];$('#fig').innerHTML=FIG[s[2]]();$('#sn').textContent=(si+1)+' / '+S.length;$('#sp').style.width=(si+1)/S.length*100+'%';$$('#dots b').forEach((d,i)=>d.classList.toggle('on',i==si));G.v.si=si;add('sl'+si,1);if('speechSynthesis' in window)speechSynthesis.cancel()}
+S.forEach((_,i)=>{const b=document.createElement('b');b.onclick=()=>{si=i;slide()};$('#dots').appendChild(b)});
+const nxt=()=>{si=Math.min(S.length-1,si+1);slide()},prv=()=>{si=Math.max(0,si-1);slide()};
+$('#nx').onclick=nxt;$('#pv').onclick=prv;
+document.addEventListener('keydown',e=>{if(cur!=0)return;if(e.key=='ArrowRight')nxt();if(e.key=='ArrowLeft')prv()});
+let tx=null;const s0=$('#s0');s0.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+s0.addEventListener('touchend',e=>{if(tx==null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)d<0?nxt():prv();tx=null},{passive:true});
+
+/* ---------- Simulations ---------- */
+const cv=$('#cv'),cx=cv.getContext('2d'),DK='#12263a';
+function cCar(c,x,y){c.fillStyle='#0b78d1';c.fillRect(x,y-22,56,22);c.fillStyle='#19b5c9';c.fillRect(x+12,y-36,30,14);c.fillStyle='#333';[x+12,x+44].forEach(w=>{c.beginPath();c.arc(w,y+2,7,0,7);c.fill()})}
+function tx_(c,s,x,y){c.fillStyle=DK;c.font='16px system-ui';c.fillText(s,x,y)}
+const MS=[["Yog‘och",.6,'#c9a06a'],["Muz",.9,'#9fd8ff'],["Suv",1,'#4aa3ff'],["Alyuminiy",2.7,'#b8c2cc'],["Temir",7.8,'#7d8791'],["Mis",8.9,'#c8753d'],["Oltin",19.3,'#e6b800']];
+const cl=(x,a,b)=>Math.max(a,Math.min(b,x));
+const SIMS=[
+{n:'Zichlikni hisoblash',p:[['m (g)',10,500,160,10],['V (cm³)',5,100,20,5]],d(c,t,m,V){const r=m/V;let b=MS[0];MS.forEach(q=>{if(Math.abs(Math.log(q[1]/r))<Math.abs(Math.log(b[1]/r)))b=q});const sd=30+Math.cbrt(V)*30,y=150+4*Math.sin(t*2);c.fillStyle=b[2];c.fillRect(430-sd/2,y-sd/2,sd,sd);c.strokeStyle=DK;c.lineWidth=2;c.strokeRect(430-sd/2,y-sd/2,sd,sd);tx_(c,'m = '+m+' g, V = '+V+' cm³',15,35);tx_(c,'ρ = m / V = '+r.toFixed(2)+' g/cm³',15,65);tx_(c,'= '+(r*1000).toFixed(0)+' kg/m³',15,95);tx_(c,'Eng yaqin modda: '+b[0]+' ('+b[1]+' g/cm³)',15,125)}},
+{n:'Cho‘ktirish usuli',p:[['V (cm³)',5,60,25,5],['m (g)',10,500,100,10]],d(c,t,V,m){const tt=t%8,f=cl((tt-1)/3,0,1),sd=Math.cbrt(V)*15,lv=100+V*f,top=260-lv;c.fillStyle='rgba(74,163,255,.6)';c.fillRect(400,top,100,lv);c.strokeStyle=DK;c.lineWidth=3;c.strokeRect(400,60,100,200);c.fillStyle='#7d8791';c.fillRect(450-sd/2,30+f*(230-sd),sd,sd);tx_(c,'V₁ = 100 mL',15,40);tx_(c,'V₂ = '+lv.toFixed(0)+' mL',15,70);tx_(c,'V = V₂ − V₁ = '+(lv-100).toFixed(0)+' cm³',15,100);tx_(c,'ρ = m/V = '+m+' / '+V+' = '+(m/V).toFixed(2)+' g/cm³',15,140)}},
+{n:'Suzish yoki cho‘kish',p:[['ρ jism (kg/m³)',100,3000,900,100]],d(c,t,r){const tt=t%7,f=cl(tt/2.5,0,1),e=f*f*(3-2*f),sd=60,wy=140,tg=r>1000?260-sd:wy+sd*r/1000-sd,y=30+(tg-30)*e+(r<=1000&&f>=1?3*Math.sin(tt*4):0);c.fillStyle='rgba(74,163,255,.45)';c.fillRect(150,wy,300,120);c.strokeStyle=DK;c.lineWidth=3;c.strokeRect(150,60,300,200);c.fillStyle=r>1000?'#d93c3c':'#1b9e55';c.fillRect(270,y,sd,sd);tx_(c,'ρ jism = '+r+' kg/m³',15,30);tx_(c,'ρ suv = 1000 kg/m³',15,55);tx_(c,r<1000?'Suzadi (suvda '+(r/10).toFixed(0)+'%)':r==1000?'Muallaq':'Cho‘kadi',460,160)}},
+{n:'Suyuqlik qatlamlari',p:[['ρ noma’lum (kg/m³)',100,14000,1260,100]],d(c,t,r){const L=[["Yog‘",800,'#f1d56a'],["Suv",1000,'#4aa3ff'],["Glitserin",1260,'#d6b3ff'],["Simob",13600,'#9aa3ad'],["Noma’lum",r,'#1b9e55']],o=[...L].sort((a,b)=>a[1]-b[1]),p=cl((t%9)/2.5,0,1),e=p*p*(3-2*p);c.strokeStyle=DK;c.lineWidth=3;c.strokeRect(200,30,200,230);L.forEach((q,i)=>{const rk=o.indexOf(q),slot=i+(rk-i)*e,y=40+slot*44;c.fillStyle=q[2];c.fillRect(203,y,194,42);c.fillStyle='#12263a';c.font='15px system-ui';c.fillText(q[0]+' '+q[1],212,y+26)});tx_(c,'Zichligi kattasi pastda',15,40);tx_(c,'Noma’lum: '+r+' kg/m³',15,70)}}
+];
+let simI=0,simT0=performance.now();
+SIMS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;b.onclick=()=>pickSim(i);$('#sTabs').appendChild(b);s.v=s.p.map(q=>q[3])});
+function pickSim(i){simI=i;simT0=performance.now();$$('#sTabs button').forEach((b,j)=>b.classList.toggle('on',j==i));const box=$('#sCtl');box.innerHTML='';SIMS[i].p.forEach((q,j)=>{const l=document.createElement('label'),o=document.createElement('b'),r=document.createElement('input');r.type='range';r.min=q[1];r.max=q[2];r.step=q[4];r.value=SIMS[i].v[j];o.textContent=' '+q[0]+' = '+r.value+' ';r.oninput=()=>{SIMS[i].v[j]=+r.value;o.textContent=' '+q[0]+' = '+r.value+' ';add('sim'+i,5)};l.append(o,r);box.appendChild(l)})}
+pickSim(0);$$('#sTabs button')[0].classList.add('on');
+/* ---------- VR ---------- */
+const vc=$('#vc'),vx=vc.getContext('2d'),V={yaw:.7,pit:.35,rho:900,run:true,auto:false,tt:0,y:5};
+const MATS=[["Yog'och",600],["Muz",900],["Alyuminiy",2700],["Temir",7800]];let mi=1;
+function pr(x,y,z){y-=2;const cy=Math.cos(V.yaw),sy=Math.sin(V.yaw),cp=Math.cos(V.pit),sp=Math.sin(V.pit);const x1=x*cy+z*sy,z1=-x*sy+z*cy,y2=y*cp-z1*sp,z2=y*sp+z1*cp,k=520/(z2+16);return[300+x1*k,175-y2*k]}
+function ln(a,b,col,w){const p=pr(...a),q=pr(...b);vx.strokeStyle=col;vx.lineWidth=w||1;vx.beginPath();vx.moveTo(p[0],p[1]);vx.lineTo(q[0],q[1]);vx.stroke()}
+function drawVR(dt){if(V.auto)V.yaw+=dt*.4;const S=1.6,W=3,r=V.rho,tgt=r>1000?0:3-S*r/1000;
+ if(V.run){V.tt+=dt;V.y+=(tgt-V.y)*Math.min(1,dt*2.5)}
+ const yb=V.y+(r<=1000&&V.run&&Math.abs(V.y-tgt)<.06?.05*Math.sin(V.tt*3):0);vx.clearRect(0,0,600,340);
+ const B=[[-W,0,-2],[W,0,-2],[W,0,2],[-W,0,2]];
+ const wp=[[-W,3,-2],[W,3,-2],[W,3,2],[-W,3,2]].map(p=>pr(...p));vx.fillStyle='rgba(25,181,201,.28)';vx.beginPath();wp.forEach((p,i)=>i?vx.lineTo(p[0],p[1]):vx.moveTo(p[0],p[1]));vx.closePath();vx.fill();
+ for(let i=0;i<4;i++){const a=B[i],b=B[(i+1)%4];ln(a,b,'#12263a',2);ln([a[0],4,a[2]],[b[0],4,b[2]],'#7aa7c7',1);ln(a,[a[0],4,a[2]],'#12263a',2);ln([a[0],3,a[2]],[b[0],3,b[2]],'#19b5c9',2)}
+ const q=.8,cc=r>1000?'#d93c3c':'#1b9e55',cb=[[-q,yb,-q],[q,yb,-q],[q,yb,q],[-q,yb,q],[-q,yb+S,-q],[q,yb+S,-q],[q,yb+S,q],[-q,yb+S,q]];
+ [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(e=>ln(cb[e[0]],cb[e[1]],cc,4));
+ $('#vo').textContent='ρ = '+r+' kg/m³ · '+(r<1000?'suzadi (hajmining '+(r/10).toFixed(0)+'% suvda)':r==1000?'suv ichida muallaq':'cho‘kadi')+' · m = ρV = '+(r/1000).toFixed(2)+' kg (V = 1000 cm³)'}
+let dr=null;vc.addEventListener('pointerdown',e=>{dr=[e.clientX,e.clientY];vc.setPointerCapture(e.pointerId);add('vr',5)});
+vc.addEventListener('pointermove',e=>{if(!dr)return;V.yaw+=(e.clientX-dr[0])*.01;V.pit=Math.max(-.2,Math.min(1.3,V.pit+(e.clientY-dr[1])*.01));dr=[e.clientX,e.clientY]});
+vc.addEventListener('pointerup',()=>dr=null);vc.addEventListener('pointercancel',()=>dr=null);
+function setRho(x){V.rho=x;$('#vv').value=x;$('#vvt').textContent=x+' kg/m³';V.y=5;add('vr',5)}
+$('#vv').oninput=e=>setRho(+e.target.value);$('#vvt').textContent='900 kg/m³';
+$('#vp').onclick=()=>{V.run=!V.run;$('#vp').textContent=V.run?'⏸ Pauza':'▶ Davom'};
+$('#va').onclick=()=>{V.auto=!V.auto;$('#va').classList.toggle('p',V.auto)};
+$('#vr').onclick=()=>{V.y=5;V.tt=0;V.yaw=.7;V.pit=.35};
+$('#vu').onclick=()=>{mi=(mi+1)%MATS.length;setRho(MATS[mi][1]);$('#vu').textContent='🧊 '+MATS[mi][0]};
+$('#vf').onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():$('#vw').requestFullscreen()}catch(e){alert("To'liq ekran qo'llanmaydi")}};
+/* ---------- Video ---------- */
+const mc=$('#mc'),mx=mc.getContext('2d'),M={t:0,play:false},DUR=24;
+const CAP=[[0,"1-qadam: jism massasini tarozida o‘lchaymiz: m = 156 g."],[8,"2-qadam: jismni menzurkaga tushiramiz. Suv sathi 100 dan 120 mL ga ko‘tarildi: V = 20 cm³."],[16,"3-qadam: ρ = m / V = 156 / 20 = 7,8 g/cm³ = 7800 kg/m³. Bu temirning zichligi."],[23.5,"Xulosa: zichlik = massa / hajm."]];
+function drawVid(){const t=M.t,c=mx,cl=(x,a,b)=>Math.max(a,Math.min(b,x));c.clearRect(0,0,600,300);
+ if(t<8){const f=cl(t/6,0,1),m=Math.round(156*f);c.strokeStyle=DK;c.lineWidth=4;c.beginPath();c.moveTo(300,100);c.lineTo(300,250);c.moveTo(210,250);c.lineTo(390,250);c.moveTo(150,100);c.lineTo(450,100);c.moveTo(150,100);c.lineTo(150,150);c.moveTo(450,100);c.lineTo(450,150);c.stroke();c.fillStyle='#7d8791';c.fillRect(125,106,50,44);c.fillStyle='#0b78d1';c.fillRect(105,150,90,6);c.fillRect(405,150,90,6);c.fillStyle='#d93c3c';for(let i=0;i<Math.ceil(f*8);i++)c.fillRect(412+i*10,128,8,22);tx_(c,'m = '+m+' g',240,50)}
+ else if(t<16){const f=cl((t-8.5)/3.5,0,1),lv=100+20*f;c.fillStyle='rgba(74,163,255,.6)';c.fillRect(250,260-lv*1.2,100,lv*1.2);c.strokeStyle=DK;c.lineWidth=3;c.strokeRect(250,40,100,220);c.fillStyle='#7d8791';c.fillRect(283,30+f*196,34,34);tx_(c,'V₁ = 100 mL',20,80);tx_(c,'V₂ = '+lv.toFixed(0)+' mL',20,110);if(t>13)tx_(c,'V = V₂ − V₁ = '+(lv-100).toFixed(0)+' cm³',20,150)}
+ else{[[16,'m = 156 g, V = 20 cm³'],[18,'ρ = 156 / 20 = 7,8 g/cm³'],[20,'7,8 g/cm³ = 7800 kg/m³'],[22,'Bu modda — temir!']].forEach((q,i)=>{if(t>=q[0]){c.fillStyle=i==3?'#1b9e55':DK;c.font='bold 22px system-ui';c.fillText(q[1],60,80+i*45)}})}
+ let cp=CAP[0][1];CAP.forEach(q=>{if(t>=q[0])cp=q[1]});$('#cap').textContent=cp;$('#mp').style.width=t/DUR*100+'%'}
+$('#mpl').onclick=()=>{if(M.t>=DUR)M.t=0;M.play=!M.play;$('#mpl').textContent=M.play?'⏸ Pauza':'▶ Davom';if(M.play)add('vid',5)};
+$('#mre').onclick=()=>{M.t=0;M.play=true;$('#mpl').textContent='⏸ Pauza';drawVid()};
+/* ---------- Master loop ---------- */
+let last=performance.now();
+function loop(ts){const dt=Math.min(.1,(ts-last)/1000);last=ts;
+ if(cur==1){cx.clearRect(0,0,600,300);const s=SIMS[simI];s.d(cx,(ts-simT0)/1000,...s.v)}
+ else if(cur==2)drawVR(dt);
+ else if(cur==3){if(M.play){M.t+=dt;if(M.t>=DUR){M.t=DUR;M.play=false;$('#mpl').textContent='▶ Qayta ko‘rish';add('vid',5)}}drawVid()}
+ requestAnimationFrame(loop)}
+/* ---------- Quiz engine ---------- */
+function quiz(el,qs,key,pts,end){let i=0,c=0;(function r(){
+ if(i>=qs.length){const p=Math.round(c/qs.length*100);el.innerHTML=`<h3>Natija: ${c}/${qs.length} to'g'ri (${p}%)</h3><p>${end(c,p)}</p><button class="p" id="rs">Qayta boshlash</button>`;$('#rs').onclick=()=>{i=0;c=0;r()};return}
+ const q=qs[i];el.innerHTML=`<div class="bar"><i style="width:${i/qs.length*100}%"></i></div><p><b>${i+1}/${qs.length}.</b> ${q[0]}</p><div class="opts">${q[1].map((o,j)=>`<button>${o}</button>`).join('')}</div><p class="ex"></p>`;
+ const bs=[...el.querySelectorAll('.opts button')];
+ bs.forEach((b,j)=>b.onclick=()=>{bs.forEach(x=>x.disabled=true);bs[q[2]].classList.add('ok');if(j==q[2]){c++;add(key+i,pts)}else b.classList.add('no');
+  const ex=el.querySelector('.ex');ex.innerHTML=(j==q[2]?"✅ To'g'ri! ":"❌ Xato. ")+(q[3]||'')+'<br><button class="p" id="nq">'+(i==qs.length-1?'Natijani ko\'rish':'Keyingisi')+'</button>';$('#nq').onclick=()=>{i++;r()}})})()}
+const Q=[
+["Zichlik formulasi qaysi?",["ρ = m·V","ρ = V/m","ρ = m/V","ρ = m+V"],2,"Zichlik = massa / hajm."],
+["SI da zichlik birligi qaysi?",["g/cm³","kg/m³","kg/m²","m³/kg"],1,"SI da zichlik kg/m³ da o‘lchanadi."],
+["1 g/cm³ necha kg/m³?",["1","10","100","1000"],3,"1 g/cm³ = 1000 kg/m³."],
+["m = 156 g, V = 20 cm³. Zichlik?",["7,8 g/cm³","0,13 g/cm³","176 g/cm³","3120 g/cm³"],0,"ρ = 156/20 = 7,8 g/cm³."],
+["ρ = 2700 kg/m³, V = 2 m³. Massa?",["1350 kg","5400 kg","2702 kg","0,0007 kg"],1,"m = ρ·V = 5400 kg."],
+["m = 1000 kg, ρ = 800 kg/m³. Hajm?",["0,8 m³","800000 m³","1,25 m³","200 m³"],2,"V = m/ρ = 1,25 m³."],
+["Tartibsiz shakldagi jism hajmi qanday topiladi?",["Tarozida","Menzurkada suvga cho‘ktirib","Termometr bilan","Dinamometr bilan"],1,"V = V₂ − V₁."],
+["Qaysi modda zichligi eng katta?",["Suv","Yog‘och","Havo","Temir"],3,"Temir 7800 kg/m³."],
+["Jism zichligi suyuqlikdan kichik bo‘lsa, u...",["Cho‘kadi","Suzadi","Erib ketadi","Yo‘qoladi"],1,"ρ jism < ρ suyuqlik — suzadi."],
+["Simob, suv, yog‘ aralashmasida eng pastda nima bo‘ladi?",["Yog‘","Suv","Simob","Hammasi aralashadi"],2,"Simob eng zich."],
+["Moddaning hajmi 2 marta ortsa, zichligi...",["2 marta ortadi","2 marta kamayadi","O‘zgarmaydi","Nolga teng"],2,"Zichlik moddaga xos, hajmga bog‘liq emas."]
+];
+quiz($('#tq'),Q,'q',2,(c,p)=>(p>=80?'🌟 Ajoyib!':p>=50?'👍 Yaxshi, yana mashq qiling.':"📚 Slaydlarni qayta ko'rib chiqing."));
+/* ---------- Games ---------- */
+const PAIRS=[["Zichlik","ρ = m / V"],["Massa","m = ρ · V"],["Hajm","V = m / ρ"],["SI da zichlik","kg/m³"],["1 g/cm³","1000 kg/m³"],["Menzurka","Hajmni o'lchaydi"]];
+const TF=["Rost","Yolg'on"];
+const OG=[
+["🔗 Moslashtirish",el=>{let sel=-1,d=0;const R=sh(PAIRS.map((_,i)=>i));el.innerHTML=`<p>Avval chapdan, so'ng o'ngdan mos javobni tanlang.</p><div class="row" style="align-items:flex-start"><div class="opts" style="flex:1" id="gl">${PAIRS.map((p,i)=>`<button data-i="${i}">${p[0]}</button>`).join('')}</div><div class="opts" style="flex:1" id="gr">${R.map(i=>`<button data-i="${i}">${PAIRS[i][1]}</button>`).join('')}</div></div><p id="gm"></p>`;
+ const lb=[...el.querySelectorAll('#gl button')];lb.forEach(b=>b.onclick=()=>{if(b.classList.contains('ok'))return;lb.forEach(x=>x.style.outline='');sel=+b.dataset.i;b.style.outline='3px solid #0b78d1'});
+ el.querySelectorAll('#gr button').forEach(b=>b.onclick=()=>{if(sel<0||b.classList.contains('ok'))return;if(+b.dataset.i==sel){b.classList.add('ok');lb[sel].classList.add('ok');lb[sel].style.outline='';sel=-1;if(++d==PAIRS.length){add('g0',10);$('#gm').textContent="🎉 Barcha juftliklar topildi! +10 ball"}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}})}],
+["⚡ Rost / Yolg'on",el=>quiz(el,[["Zichlik massaning hajmga nisbatiga teng.",TF,0,"Rost: ρ = m/V."],["SI da zichlik birligi g/cm³.",TF,1,"SI da kg/m³."],["Suvning zichligi 1000 kg/m³.",TF,0,""],["Temir suvdan zichroq.",TF,0,"7800 > 1000."],["Yog' suvdan zichroq, shuning uchun cho'kadi.",TF,1,"Yog' suvdan yengil, suzadi."],["Bir xil moddaning zichligi hajmga bog'liq emas.",TF,0,""],["Massa tarozida o'lchanadi.",TF,0,""],["2,7 g/cm³ = 270 kg/m³.",TF,1,"2,7 g/cm³ = 2700 kg/m³."]],'g1x',0,c=>{if(c>=6){add('g1',10);return"🎉 Tezkor g'olib! +10 ball"}return"Yana urinib ko'ring (kamida 6 ta to'g'ri kerak)."})],
+["✏️ Bo'sh joy",el=>{const F=[["Zichlik formulasi: ρ = m / ___.","v|hajm"],["SI da zichlik birligi: kg/___.","m³|m3"],["1 g/cm³ = ___ kg/m³.","1000"],["m = 200 g, V = 50 cm³: ρ = ___ g/cm³.","4"],["Massa: m = ρ · ___.","v|hajm"]];
+ el.innerHTML=F.map((f,i)=>`<p>${f[0].replace('___',`<input data-i="${i}" size="10" placeholder="...">`)}</p>`).join('')+`<button class="p" id="gc">Tekshirish</button><p id="gm"></p>`;
+ $('#gc').onclick=()=>{let ok=0;el.querySelectorAll('input').forEach(inp=>{const a=F[+inp.dataset.i][1].split('|'),g=inp.value.trim().toLowerCase();const y=a.includes(g);inp.classList.toggle('ok',y);inp.classList.toggle('no',!y);if(y)ok++});$('#gm').textContent=ok+'/'+F.length+" to'g'ri";if(ok==F.length){add('g2',10);$('#gm').textContent+=' 🎉 +10 ball'}}}],
+["📶 Tartiblash",el=>{const I=[["Havo",1.29],["Yog'och",600],["Suv",1000],["Alyuminiy",2700],["Temir",7800]];let ans=[];
+ (function r(){const pool=I.filter(x=>!ans.includes(x));el.innerHTML=`<p>Zichligi kichigidan kattasiga tartiblang (bosish tartibida):</p><div class="row">${sh(pool).map(x=>`<button class="p" data-n="${x[0]}">${x[0]}</button>`).join('')}</div><p><b>Javob:</b> ${ans.map(x=>x[0]+' ('+x[1]+' kg/m³)').join(' → ')}</p><button id="gu">↺ Qaytadan</button><p id="gm"></p>`;
+ el.querySelectorAll('.p').forEach(b=>b.onclick=()=>{ans.push(I.find(x=>x[0]==b.dataset.n));r();if(ans.length==I.length){const ok=ans.every((x,i)=>i==0||ans[i-1][1]<x[1]);$('#gm').textContent=ok?"🎉 To'g'ri tartib! +10 ball":"❌ Tartib noto'g'ri";$('#gm').className=ok?'ok':'no';if(ok)add('g3',10)}});
+ $('#gu').onclick=()=>{ans=[];r()}})()}],
+["🃏 Xotira kartalari",el=>{const D=[["ρ","Zichlik"],["m","Massa"],["V","Hajm"],["kg/m³","SI zichlik birligi"],["Menzurka","Hajm o'lchaydi"],["Tarozi","Massa o'lchaydi"]];const cards=sh(D.flatMap((d,i)=>[[i,d[0]],[i,d[1]]]));let open=[],lock=false,done=0;
+ el.innerHTML=`<div class="grid">${cards.map((c,i)=>`<button data-i="${i}" style="height:64px">❓</button>`).join('')}</div><p id="gm"></p>`;
+ const bs=[...el.querySelectorAll('.grid button')];bs.forEach((b,i)=>b.onclick=()=>{if(lock||b.classList.contains('ok')||open.includes(i))return;b.textContent=cards[i][1];b.classList.add('p');open.push(i);if(open.length==2){const[a,c]=open;if(cards[a][0]==cards[c][0]){bs[a].className=bs[c].className='ok';open=[];if(++done==D.length){add('g4',10);$('#gm').textContent='🎉 Barcha juftliklar topildi! +10 ball'}}else{lock=true;setTimeout(()=>{[a,c].forEach(k=>{bs[k].textContent='❓';bs[k].classList.remove('p')});open=[];lock=false},800)}}})}],
+["🏆 Viktorina",el=>quiz(el,[["m = 300 g, V = 100 cm³. Zichlik?",["3 g/cm³","0,33 g/cm³","30 g/cm³"],0,"300/100 = 3."],["ρ = 800 kg/m³, V = 0,5 m³. Massa?",["400 kg","1600 kg","0,6 kg"],0,"800·0,5 = 400."],["m = 2700 kg, ρ = 2700 kg/m³. Hajm?",["1 m³","2700 m³","7290000 m³"],0,"V = m/ρ = 1."],["8,9 g/cm³ necha kg/m³?",["89","890","8900"],2,"×1000."],["Muz (900 kg/m³) suvda...",["Suzadi","Cho'kadi","Erib ketadi"],0,"900 < 1000."]],'g5x',0,c=>{if(c>=4){add('g5',10);return"🏆 Viktorina chempioni! +10 ball"}return"Kamida 4 ta to'g'ri javob kerak."})]
+];
+OG.forEach((g,i)=>{const b=document.createElement('button');b.textContent=g[0];b.onclick=()=>{$$('#gTabs button').forEach((x,j)=>x.classList.toggle('on',j==i));$('#gb').innerHTML='';g[1]($('#gb'))};$('#gTabs').appendChild(b)});
+$$('#gTabs button')[0].click();
+/* ---------- Init ---------- */
+slide();upd();go(0);requestAnimationFrame(t=>{last=t;loop(t)});
+</script>
+
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

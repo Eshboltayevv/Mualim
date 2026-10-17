@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elastiklik kuchi. Guk qonuni — 7-sinf fizika</title>
+<style>
+:root{--bg:#e6f3ff;--c:rgba(255,255,255,.72);--tx:#12324d;--p:#0b78d1;--ok:#1b9e55;--er:#d93c3c;--bd:rgba(255,255,255,.9);--g:linear-gradient(120deg,#0b78d1,#19b5c9)}
+[data-t=d]{--bg:#0c1a2b;--c:rgba(28,48,74,.72);--tx:#e6f2ff;--bd:rgba(255,255,255,.1)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+.w{max-width:960px;margin:auto;padding:10px}
+.card{background:var(--c);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--bd);border-radius:20px;padding:14px;margin:10px 0;box-shadow:0 8px 24px rgba(11,120,209,.15)}
+h1,h2,h3{margin:.2em 0;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:1.4rem}
+button,select{min-height:44px;border-radius:14px;border:1px solid rgba(11,120,209,.35);background:var(--c);color:var(--tx);font:inherit;padding:0 14px;cursor:pointer}
+button:hover{border-color:var(--p)}
+button.pb,nav button.on,.tab.on{background:var(--p);color:#fff;border-color:var(--p)}
+button:disabled{opacity:.7;cursor:default}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+nav button{flex:1;white-space:nowrap;font-weight:600}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stat{font-weight:700}
+.pr{height:10px;border-radius:9px;background:rgba(11,120,209,.2);overflow:hidden;flex:1;min-width:80px}
+.pr i{display:block;height:100%;width:0;background:var(--g);transition:width .3s}
+section{display:none}section.on{display:block}
+canvas{width:100%;height:auto;border-radius:16px;background:rgba(255,255,255,.6);display:block;touch-action:manipulation}
+[data-t=d] canvas{background:rgba(10,25,45,.7)}
+#vc{touch-action:none;cursor:grab}
+.sv{min-height:150px}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.dots b{width:14px;height:14px;border-radius:50%;background:rgba(11,120,209,.25);cursor:pointer;border:0}
+.dots b.on{background:var(--p);transform:scale(1.3)}
+.o{display:block;width:100%;text-align:left;margin:6px 0}
+.o.ok,.ok{border-color:var(--ok)}.o.ok{background:rgba(27,158,85,.25)}
+.o.no,.no{border-color:var(--er)}.o.no{background:rgba(217,60,60,.25)}
+p.ok{color:var(--ok);font-weight:700}p.no{color:var(--er);font-weight:700}
+.ct{display:flex;align-items:center;gap:8px;margin:6px 0;flex-wrap:wrap}
+.ct label{min-width:110px}.ct input[type=range]{flex:1;min-width:120px;height:32px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mc{min-height:70px;font-size:1.15rem;font-weight:700}
+.fs:fullscreen,.fake{background:var(--bg);padding:10px;overflow:auto}
+.fake{position:fixed;inset:0;z-index:50}
+.sub{min-height:48px;padding:8px;border-radius:12px;background:rgba(11,120,209,.12);font-weight:600;margin-top:6px}
+@media(max-width:560px){h1{font-size:1.15rem}.g2{grid-template-columns:1fr 1fr}.ct label{min-width:100%}}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="card">
+<h1>⚙️ Elastiklik kuchi. Guk qonuni</h1>
+<div class="bar" style="margin-top:6px">
+<span class="stat">Ball: <span id="sc">0</span></span><span class="stat" id="st">☆☆☆☆☆</span><span class="stat">⏱ <span id="tm">00:00</span></span>
+<div class="pr"><i id="pg"></i></div>
+</div>
+<div class="bar" style="margin-top:8px">
+<button id="th" aria-label="Rejim">🌙</button>
+<button id="sp">🔊 O‘qish</button>
+<select id="lg" aria-label="Til"><option value="uz-UZ">O‘zbek</option><option value="ru-RU">Русский</option><option value="en-US">English</option></select>
+<select id="rt" aria-label="Tezlik"><option value="0.7">Sekin</option><option value="1" selected>Normal</option><option value="1.3">Tez</option></select>
+</div>
+</div>
+<nav id="nv"></nav>
+
+<section id="s0" class="on card">
+<div id="sl"></div>
+<div class="dots" id="dt"></div>
+<div class="bar"><button id="pv">← Orqaga</button><div class="pr"><i id="sp2"></i></div><span id="sn" class="stat"></span><button id="nx" class="pb">Oldinga →</button></div>
+</section>
+
+<section id="s1" class="card">
+<h2>Simulyatsiyalar</h2>
+<div class="bar" id="stb"></div>
+<canvas id="sc1" width="600" height="340"></canvas>
+<div id="sct"></div>
+</section>
+
+<section id="s2" class="card">
+<div id="vw" class="fs">
+<h2>VR laboratoriya</h2>
+<canvas id="vc" width="600" height="380"></canvas>
+<div class="bar" style="margin-top:8px">
+<button id="v1" class="pb">+ 100 g</button><button id="v2">− 100 g</button><button id="v3">⟳ Ko‘rinish</button><button id="v4">⛶ To‘liq ekran</button>
+</div>
+<p>Sichqoncha yoki barmoq bilan sahnani aylantiring, g‘ildirak bilan yaqinlashtiring. Yuk qo‘shib, prujina cho‘zilishini kuzating.</p>
+</div>
+</section>
+
+<section id="s3" class="card">
+<h2>Video-dars</h2>
+<canvas id="vd" width="600" height="340"></canvas>
+<div class="sub" id="sb"></div>
+<input type="range" id="vs" min="0" max="300" value="0" style="width:100%;height:32px">
+<div class="bar"><button id="vp" class="pb">▶ Boshlash</button><button id="vr">↺ Qaytadan</button></div>
+</section>
+
+<section id="s4" class="card">
+<h2>Test</h2>
+<div id="tq"></div>
+</section>
+
+<section id="s5" class="card">
+<h2>O‘yinlar</h2>
+<div class="bar" id="gtb"></div>
+<div id="gm" style="margin-top:10px"></div>
+</section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const MAX=105;
+let st={s:0,d:{},t:0};
+try{const x=JSON.parse(localStorage.getItem('guk'));if(x&&x.d)st=x}catch(e){}
+function save(){try{localStorage.setItem('guk',JSON.stringify(st))}catch(e){}}
+function upd(){
+ $('#sc').textContent=st.s;
+ const n=Math.min(5,Math.round(st.s/MAX*5));
+ $('#st').textContent='★'.repeat(n)+'☆'.repeat(5-n);
+ $('#pg').style.width=Math.min(100,st.s/MAX*100)+'%';save();
+}
+function add(p,k){if(st.d[k])return;st.d[k]=1;st.s+=p;upd()}
+setInterval(()=>{st.t++;const m=Math.floor(st.t/60),s=st.t%60;$('#tm').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(st.t%5==0)save()},1000);
+
+/* theme */
+let TC='#12324d';
+function setTh(d){document.documentElement.dataset.t=d?'d':'l';$('#th').textContent=d?'☀️':'🌙';TC=d?'#e6f2ff':'#12324d';try{localStorage.setItem('gukth',d?1:0)}catch(e){}}
+$('#th').onclick=()=>setTh(document.documentElement.dataset.t!='d');
+let sd=0;try{sd=+localStorage.getItem('gukth')}catch(e){}
+setTh(!!sd);
+
+/* speech */
+$('#sp').onclick=()=>{
+ if(!('speechSynthesis' in window)){alert('Brauzeringiz ovozli o‘qishni qo‘llamaydi');return}
+ if(speechSynthesis.speaking){speechSynthesis.cancel();$('#sp').textContent='🔊 O‘qish';return}
+ const u=new SpeechSynthesisUtterance(document.querySelector('section.on').innerText.slice(0,2500));
+ u.lang=$('#lg').value;u.rate=+$('#rt').value;
+ u.onend=u.onerror=()=>{$('#sp').textContent='🔊 O‘qish'};
+ $('#sp').textContent='⏹ To‘xtatish';speechSynthesis.speak(u);
+};
+
+/* nav */
+const NAMES=['📖 Slaydlar','🧪 Simulyatsiya','🥽 VR','🎬 Video','📝 Test','🎮 O‘yinlar'];
+let cs=0;
+NAMES.forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>show(i);$('#nv').appendChild(b)});
+function show(i){
+ cs=i;if('speechSynthesis' in window){speechSynthesis.cancel();$('#sp').textContent='🔊 O‘qish'}
+ document.querySelectorAll('section').forEach((s,j)=>s.classList.toggle('on',j==i));
+ document.querySelectorAll('#nv button').forEach((b,j)=>b.classList.toggle('on',j==i));
+ if(i==2)add(5,'vr');
+}
+
+/* SVG helpers */
+const W=b=>`<svg viewBox="0 0 300 150" width="100%" role="img" style="max-height:200px">${b}</svg>`;
+const sp=(x1,y1,x2,y2,n=8)=>{const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy)||1,px=-dy/L*11,py=dx/L*11;let d=`M${x1} ${y1}L${x1+dx*.1} ${y1+dy*.1}`;for(let i=0;i<n;i++){const f=.1+.8*(i+.5)/n,s=i%2?-1:1;d+=`L${(x1+dx*f+px*s).toFixed(1)} ${(y1+dy*f+py*s).toFixed(1)}`}d+=`L${x1+dx*.9} ${y1+dy*.9}L${x2} ${y2}`;return `<path d="${d}" fill="none" stroke="#0b78d1" stroke-width="2.5" stroke-linejoin="round"/>`};
+const ar=(x1,y1,x2,y2,c='#d93c3c')=>{const a=Math.atan2(y2-y1,x2-x1),h=d=>`${x2-9*Math.cos(a+d)},${y2-9*Math.sin(a+d)}`;return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="${c}" stroke-width="3"/><polygon points="${x2},${y2} ${h(.4)} ${h(-.4)}" fill="${c}"/>`};
+const tx=(x,y,t,s=11)=>`<text x="${x}" y="${y}" text-anchor="middle" fill="currentColor" font-size="${s}">${t}</text>`;
+const bx=(x,y,w,h,c='#19b5c9')=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${c}"/>`;
+const ce=x=>bx(x-25,8,50,8,'#7a8a99');
+const AX=`<path d="M40 128V15M40 128H285" stroke="currentColor" fill="none" stroke-width="1.5"/>`+tx(28,22,'F')+tx(280,142,'Δl');
+const FIG=[
+()=>W(ce(70)+sp(70,16,70,70)+bx(55,70,30,18)+tx(70,110,'Deformatsiyasiz')+ce(220)+sp(220,16,220,115)+bx(205,115,30,18)+tx(220,145,'Cho‘zilgan')+ar(260,70,260,115,'#1b9e55')+tx(278,95,'Δl',12)),
+()=>W([50,150,250].map((x,i)=>ce(x)+sp(x,16,x,[60,105,60][i])+bx(x-12,[60,105,60][i],24,14)).join('')+tx(50,125,'Boshlang‘ich')+tx(150,138,'Cho‘zilgan')+tx(250,125,'Qaytdi ✓')+ar(100,70,200,70,'#1b9e55')),
+()=>W(`<ellipse cx="70" cy="75" rx="32" ry="32" fill="#c58a52"/><ellipse cx="225" cy="95" rx="55" ry="14" fill="#c58a52"/>`+ar(70,20,70,42)+ar(225,45,225,78)+ar(120,75,170,90,'#1b9e55')+tx(150,135,'Shakl tiklanmaydi',12)),
+()=>W(`${bx(8,30,45,16)}${ar(5,38,-2,38)}${ar(56,38,66,38)}${tx(30,70,'Cho‘zilish',9)}${bx(78,30,45,16)}${ar(70,38,78,38)}${ar(131,38,123,38)}${tx(100,70,'Siqilish',9)}<path d="M138 46Q165 20 192 46" stroke="#0b78d1" stroke-width="8" fill="none"/>${tx(165,70,'Egilish',9)}<path d="M205 30l40 16M205 46l40-16" stroke="#0b78d1" stroke-width="4"/>${tx(225,70,'Buralish',9)}<polygon points="255,46 270,30 295,30 280,46" fill="#19b5c9"/>${tx(272,70,'Siljish',9)}${tx(150,115,'5 xil deformatsiya',13)}`),
+()=>W(ce(110)+sp(110,16,110,85)+bx(95,85,30,24)+ar(110,85,110,35,'#1b9e55')+tx(165,55,'F<tspan font-size="8" dy="3">el</tspan>',13)+ar(110,110,110,145)+tx(150,135,'mg',13)),
+()=>W(`${bx(10,40,10,70,'#7a8a99')}${sp(20,75,120,75)}${bx(120,60,32,30)}${ar(190,75,250,75)}${tx(222,62,'F tashqi')}${ar(120,40,75,40,'#1b9e55')}${tx(95,30,'F el')}${tx(150,135,'F el — deformatsiyaga qarama-qarshi')}`),
+()=>W(`<rect x="40" y="25" width="220" height="60" rx="14" fill="#0b78d1" opacity=".18"/>`+tx(150,67,'F = k · Δl',30)+tx(150,110,'F — elastiklik kuchi (N)',12)+tx(150,126,'k — bikrlik (N/m), Δl — uzayish (m)',12)),
+()=>W(ce(80)+sp(80,16,80,70,5)+bx(66,70,28,16)+tx(80,110,'k kichik (yumshoq)')+ce(220)+sp(220,16,220,40,14)+bx(206,40,28,16)+tx(220,80,'k katta (qattiq)')+tx(150,140,'Bir xil yuk — har xil uzayish')),
+()=>W(AX+`<path d="M40 128L260 28" stroke="#0b78d1" stroke-width="3"/>`+[[100,101],[150,78],[200,55],[250,33]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#d93c3c"/>`).join('')+tx(215,100,'qiyalik = k')),
+()=>W(bx(115,10,70,100,'#cfd8e0')+`<path d="M150 14V60" stroke="#0b78d1" stroke-width="4"/>`+[0,1,2,3,4].map(i=>`<path d="M185 ${25+i*18}h-14" stroke="#333"/>${tx(200,29+i*18,i+' N',9)}`).join('')+`<polygon points="130,60 118,54 118,66" fill="#d93c3c"/>`+`<path d="M150 110v15" stroke="#333" stroke-width="2"/>`+bx(138,125,24,18)+tx(60,60,'Dinamometr',12)),
+()=>W(ce(110)+sp(110,16,110,100)+bx(95,100,30,22)+ar(110,100,110,60,'#1b9e55')+tx(170,50,'k = 100 N/m',11)+tx(170,70,'Δl = 0,02 m',11)+tx(170,95,'F = 2 N',14)),
+()=>W(AX+`<path d="M40 128L260 33" stroke="#0b78d1" stroke-width="3"/><path d="M135 128V87M40 87H135" stroke="#d93c3c" stroke-dasharray="4"/><circle cx="135" cy="87" r="5" fill="#d93c3c"/>`+tx(135,142,'4 sm')+tx(22,90,'8 N')+tx(220,110,'k = 8/0,04 = 200')),
+()=>W(ce(110)+sp(110,16,110,85)+bx(95,85,30,24)+ar(110,85,110,40,'#1b9e55')+ar(110,110,110,145)+tx(190,55,'F el = mg')+tx(190,75,'Δl = mg / k')+tx(190,125,'m = 0,5 kg → Δl = 5 sm')),
+()=>W(bx(80,10,140,10,'#7a8a99')+sp(110,20,110,100,7)+sp(190,20,190,100,7)+bx(80,100,140,12,'#19b5c9')+tx(150,135,'Amortizator / matras prujinalari',12)),
+()=>W(AX+`<path d="M40 128L150 70Q190 55 230 52" stroke="#0b78d1" stroke-width="3" fill="none"/><path d="M150 128V70" stroke="#d93c3c" stroke-dasharray="4"/>`+tx(100,50,'Guk qonuni o‘rinli')+tx(220,40,'plastik')+tx(150,142,'chegara'))
+];
+const S=[
+['Deformatsiya nima?',`Jismga kuch ta’sir qilganda uning shakli yoki o‘lchami o‘zgarishi <b>deformatsiya</b> deyiladi. Prujina cho‘zilganda uzunligi o‘zgaradi. O‘zgarish miqdori <b>uzayish</b> deyiladi: Δl = l − l₀.`],
+['Elastik deformatsiya',`Kuch olingach jism avvalgi shaklini tiklasa, bunday deformatsiya <b>elastik</b> deyiladi. Misol: prujina, rezina, po‘lat sim.`],
+['Plastik deformatsiya',`Kuch olingandan keyin jism shaklini tiklamasa, deformatsiya <b>plastik</b> deyiladi. Misol: plastilin, nam loy, qo‘rg‘oshin.`],
+['Deformatsiya turlari',`Cho‘zilish, siqilish, egilish, buralish va siljish — deformatsiyaning asosiy turlari. Prujinada asosan cho‘zilish va siqilish kuzatiladi.`],
+['Elastiklik kuchi',`Deformatsiyalangan jismda paydo bo‘lib, uni avvalgi holatiga qaytarishga intiluvchi kuch <b>elastiklik kuchi</b> (F<sub>el</sub>) deyiladi. Birligi — nyuton (N).`],
+['Kuchning yo‘nalishi',`Elastiklik kuchi deformatsiyaga qarama-qarshi yo‘nalgan: cho‘zilgan prujina qisqarishga, siqilgan prujina cho‘zilishga intiladi.`],
+['Guk qonuni',`Ingliz olimi Robert Guk (XVII asr) qonuni: kichik elastik deformatsiyada elastiklik kuchi jismning uzayishiga to‘g‘ri proporsional.<br><b>F = k · Δl</b>`],
+['Bikrlik koeffitsiyenti k',`k — jismning bikrligi, birligi N/m. k qancha katta bo‘lsa, prujina shuncha qattiq. Formula: <b>k = F / Δl</b>. U material, o‘lcham va shaklga bog‘liq.`],
+['F(Δl) grafigi',`Guk qonuni grafigi koordinata boshidan o‘tuvchi to‘g‘ri chiziqdir. Chiziqning qiyaligi bikrlik k ni bildiradi.`],
+['Dinamometr',`Kuchni o‘lchaydigan asbob — <b>dinamometr</b>. U Guk qonuniga asoslangan: prujinaning uzayishi kuchga proporsional, shkala nyutonlarda darajalangan.`],
+['Masala 1',`Berilgan: k = 100 N/m, Δl = 2 sm = 0,02 m. Topish: F.<br>Yechish: F = k·Δl = 100 · 0,02 = <b>2 N</b>.`],
+['Masala 2',`Prujinani 4 sm cho‘zish uchun 8 N kuch kerak. k topilsin.<br>k = F/Δl = 8 / 0,04 = <b>200 N/m</b>.`],
+['Muvozanat va og‘irlik',`Prujinaga osilgan yuk tinch tursa, F<sub>el</sub> = mg. Demak, Δl = mg/k. m = 0,5 kg, k = 100 N/m bo‘lsa: Δl = 5/100 = 0,05 m = <b>5 sm</b> (g ≈ 10 m/s²).`],
+['Amaliy qo‘llanilishi',`Avtomobil amortizatorlari, matras va trampolin prujinalari, dinamometr, mexanik soatlar — hammasida elastiklik kuchidan foydalaniladi.`],
+['Guk qonuni chegarasi',`Guk qonuni faqat <b>elastiklik chegarasigacha</b> o‘rinli. Undan oshsa, deformatsiya plastik bo‘ladi va F ∝ Δl munosabati buziladi.`]
+].map((s,i)=>[s[0],s[1],i]);
+let si=0;
+S.forEach((s,i)=>{const b=document.createElement('b');b.onclick=()=>goS(i);b.setAttribute('role','button');b.setAttribute('aria-label','Slayd '+(i+1));$('#dt').appendChild(b)});
+function goS(i){
+ si=Math.max(0,Math.min(S.length-1,i));
+ const s=S[si];
+ $('#sl').innerHTML=`<h2>${si+1}. ${s[0]}</h2><div class="sv">${FIG[s[2]]()}</div><p>${s[1]}</p>`;
+ document.querySelectorAll('#dt b').forEach((d,j)=>d.classList.toggle('on',j==si));
+ $('#sn').textContent=(si+1)+' / '+S.length;
+ $('#sp2').style.width=(si+1)/S.length*100+'%';
+ $('#pv').disabled=si==0;$('#nx').disabled=si==S.length-1;
+ add(1,'s'+si);
+}
+$('#pv').onclick=()=>goS(si-1);$('#nx').onclick=()=>goS(si+1);
+document.addEventListener('keydown',e=>{if(cs!=0)return;if(e.key=='ArrowRight')goS(si+1);if(e.key=='ArrowLeft')goS(si-1)});
+let x0=0;
+$('#s0').addEventListener('touchstart',e=>{x0=e.touches[0].clientX},{passive:true});
+$('#s0').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)goS(si+(d<0?1:-1))},{passive:true});
+
+/* canvas helpers */
+function cSp(c,x,y1,y2,n,w){c.beginPath();c.moveTo(x,y1);const h=Math.min(12,(y2-y1)/4),L=y2-y1-2*h;c.lineTo(x,y1+h);for(let i=0;i<n;i++)c.lineTo(x+(i%2?-w:w),y1+h+L*(i+.5)/n);c.lineTo(x,y2-h);c.lineTo(x,y2);c.strokeStyle='#0b78d1';c.lineWidth=3;c.lineJoin='round';c.stroke()}
+function cT(c,t,x,y,s=16,col){c.fillStyle=col||TC;c.font=`600 ${s}px system-ui`;c.textAlign='left';c.fillText(t,x,y)}
+function cBox(c,x,y,w,h,col='#19b5c9'){c.fillStyle=col;c.fillRect(x,y,w,h);c.strokeStyle='rgba(0,0,0,.35)';c.lineWidth=1;c.strokeRect(x,y,w,h)}
+function cCe(c,x){c.fillStyle='#7a8a99';c.fillRect(x-50,10,100,12)}
+function cAx(c,ox,oy,w,h,lx,ly){c.strokeStyle=TC;c.lineWidth=2;c.beginPath();c.moveTo(ox,oy-h);c.lineTo(ox,oy);c.lineTo(ox+w,oy);c.stroke();cT(c,ly,ox-6,oy-h-8,14);cT(c,lx,ox+w-60,oy+26,14)}
+
+/* SIMULATIONS */
+const SIMS=[
+{n:'Prujina va yuk',c:[['m','Massa m (kg)',.1,2,.5,.1],['k','Bikrlik k (N/m)',20,200,80,5]],
+ d(c,p,S,dt){S.y=S.y||0;S.v=S.v||0;const eq=p.m*10/p.k;S.v+=(-(p.k/p.m)*(S.y-eq)-1.2*S.v)*dt;S.y+=S.v*dt;
+  const e=Math.max(0,Math.min(S.y*200,235)),y2=70+e;cCe(c,200);cSp(c,200,22,y2,10,18);const s=28+p.m*14;cBox(c,200-s/2,y2,s,s*.8);
+  c.setLineDash([5,4]);c.strokeStyle='#1b9e55';c.beginPath();c.moveTo(120,70+Math.min(eq*200,235));c.lineTo(280,70+Math.min(eq*200,235));c.stroke();c.setLineDash([]);
+  cT(c,'F = mg = '+(p.m*10).toFixed(1)+' N',340,90,18);cT(c,'Δl = F/k = '+(eq*100).toFixed(1)+' sm',340,125,18,'#0b78d1');cT(c,'k = '+p.k+' N/m',340,160,18);cT(c,'Yashil chiziq — muvozanat',340,200,14)}},
+{n:'F(Δl) grafigi',c:[['k','Bikrlik k (N/m)',20,200,100,5],['x','Uzayish Δl (m)',0,.2,.1,.005]],
+ d(c,p,S,dt,t){const ox=80,oy=290,sx=2400,sy=6;cAx(c,ox,oy,500,250,'Δl (m)','F (N)');
+  c.strokeStyle='#0b78d1';c.lineWidth=4;c.beginPath();c.moveTo(ox,oy);c.lineTo(ox+.2*sx,oy-p.k*.2*sy);c.stroke();
+  const X=ox+p.x*sx,Y=oy-p.k*p.x*sy;c.setLineDash([5,4]);c.strokeStyle='#d93c3c';c.lineWidth=2;c.beginPath();c.moveTo(X,oy);c.lineTo(X,Y);c.lineTo(ox,Y);c.stroke();c.setLineDash([]);
+  c.fillStyle='#d93c3c';c.beginPath();c.arc(X,Y,7+Math.sin(t*5)*2,0,7);c.fill();
+  cT(c,'F = '+(p.k*p.x).toFixed(1)+' N',ox+20,50,18);cT(c,'Δl = '+(p.x*100).toFixed(1)+' sm',ox+20,76,16,'#0b78d1');cT(c,'k = F/Δl = '+p.k+' N/m',ox+200,50,16)}},
+{n:'Dinamometr',c:[['m','Yuk massasi (kg)',0,1,.3,.05]],
+ d(c,p,S,dt){const F=p.m*10;S.f=S.f||0;S.f+=(F-S.f)*Math.min(1,dt*8);const py=40+S.f*20;
+  c.fillStyle='rgba(180,200,220,.6)';c.fillRect(250,15,100,250);c.strokeStyle=TC;c.strokeRect(250,15,100,250);
+  cSp(c,300,22,py,7,14);for(let i=0;i<=10;i++){c.strokeStyle=TC;c.beginPath();c.moveTo(335,40+i*20);c.lineTo(350,40+i*20);c.stroke();if(i%2==0)cT(c,i+' N',360,45+i*20,13)}
+  c.fillStyle='#d93c3c';c.beginPath();c.moveTo(325,py);c.lineTo(340,py-7);c.lineTo(340,py+7);c.fill();
+  c.strokeStyle=TC;c.lineWidth=3;c.beginPath();c.moveTo(300,265);c.lineTo(300,285);c.stroke();const s=24+p.m*30;cBox(c,300-s/2,285,s,Math.min(50,s));
+  cT(c,'m = '+p.m.toFixed(2)+' kg',40,100,18);cT(c,'Ko‘rsatish: '+S.f.toFixed(1)+' N',40,135,18,'#0b78d1');cT(c,'F = mg',40,170,16)}},
+{n:'Elastiklik chegarasi',c:[['x','Cho‘zish (sm)',0,10,0,.1]],
+ d(c,p,S,dt){S.max=Math.max(S.max||0,p.x);const lim=6,perm=S.max>lim?(S.max-lim)*.5:0,y0=30,L=80;
+  cCe(c,200);cSp(c,200,22,y0+L+p.x*15,9,16);cBox(c,180,y0+L+p.x*15,40,28);
+  c.setLineDash([6,4]);c.strokeStyle='#d93c3c';c.beginPath();c.moveTo(100,y0+L+lim*15);c.lineTo(300,y0+L+lim*15);c.stroke();c.strokeStyle='#1b9e55';c.beginPath();c.moveTo(120,y0+L+perm*15);c.lineTo(280,y0+L+perm*15);c.stroke();c.setLineDash([]);
+  cT(c,'Elastiklik chegarasi (6 sm)',310,y0+L+lim*15+5,14,'#d93c3c');cT(c,'Bo‘shatilgandagi uzunlik',290,y0+L+perm*15-6,13,'#1b9e55');
+  cT(c,'Cho‘zish: '+p.x.toFixed(1)+' sm',380,70,18);
+  if(S.max<=lim)cT(c,'✓ Elastik: kuch olinsa tiklanadi',330,250,16,'#1b9e55');else{cT(c,'✗ Plastik deformatsiya!',330,250,16,'#d93c3c');cT(c,'Qoldiq uzayish: '+perm.toFixed(1)+' sm',330,280,16,'#d93c3c')}}}
+];
+const SS=SIMS.map(()=>({}));
+let sci=0;const P={};
+function buildSim(i){
+ sci=i;SS[i]={};
+ document.querySelectorAll('#stb .tab').forEach((b,j)=>b.classList.toggle('on',j==i));
+ $('#sct').innerHTML=SIMS[i].c.map(a=>`<div class="ct"><label>${a[1]}</label><input type="range" id="r_${a[0]}" min="${a[2]}" max="${a[3]}" step="${a[5]}" value="${a[4]}"><b id="v_${a[0]}"></b></div>`).join('')+'<button id="rs">↺ Qayta boshlash</button>';
+ SIMS[i].c.forEach(a=>{const r=$('#r_'+a[0]),f=()=>{P[a[0]]=+r.value;$('#v_'+a[0]).textContent=(+r.value).toFixed(a[5]<.1?3:a[5]<1?2:0)};r.oninput=()=>{f();add(5,'sim'+i)};f()});
+ $('#rs').onclick=()=>{SS[i]={}};
+}
+SIMS.forEach((s,i)=>{const b=document.createElement('button');b.className='tab';b.textContent=(i+1)+'. '+s.n;b.onclick=()=>buildSim(i);$('#stb').appendChild(b)});
+
+/* VR */
+const R={yaw:.7,pit:.3,z:1,n:2,y:0,v:0};
+const vc=$('#vc'),vx=vc.getContext('2d');
+function pj(x,y,z){const cy=Math.cos(R.yaw),sy=Math.sin(R.yaw),x1=x*cy+z*sy,z1=-x*sy+z*cy,cp=Math.cos(R.pit),sp_=Math.sin(R.pit),y1=y*cp-z1*sp_,z2=y*sp_+z1*cp,f=5/(5+z2);return[300+x1*f*110*R.z,190+y1*f*110*R.z]}
+function l3(a,b,col,w=2){const p=pj(...a),q=pj(...b);vx.strokeStyle=col;vx.lineWidth=w;vx.beginPath();vx.moveTo(p[0],p[1]);vx.lineTo(q[0],q[1]);vx.stroke()}
+function box3(x,y,z,w,h,d,col){const X=[x-w,x+w],Y=[y,y+h],Z=[z-d,z+d],v=[];for(const a of X)for(const b of Y)for(const c of Z)v.push([a,b,c]);[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]].forEach(e=>l3(v[e[0]],v[e[1]],col,2))}
+function drawVR(dt){
+ const n=R.n,tgt=.2*n,M=.1*n+.1;R.v+=(-(50/M)*(R.y-tgt)-1.5*R.v)*dt;R.y+=R.v*dt;
+ const g=vx.createLinearGradient(0,0,0,380);g.addColorStop(0,'#0e2a47');g.addColorStop(1,'#1a5a8a');vx.fillStyle=g;vx.fillRect(0,0,600,380);
+ for(let i=-4;i<=4;i++){l3([i*.5,1.8,-2],[i*.5,1.8,2],'rgba(120,200,255,.35)',1);l3([-2,1.8,i*.5],[2,1.8,i*.5],'rgba(120,200,255,.35)',1)}
+ l3([-1.2,1.8,0],[-1.2,-1.6,0],'#aab',4);l3([-1.2,-1.6,0],[0,-1.6,0],'#aab',4);
+ const L=1.2+R.y,N=120,top=-1.6;let prev=null;
+ for(let i=0;i<=N;i++){const f=i/N,a=f*Math.PI*2*12,p=[.22*Math.cos(a)*(f>0&&f<1?1:0),top+L*f,.22*Math.sin(a)*(f>0&&f<1?1:0)];if(prev)l3(prev,p,'#4fd0ff',2.5);prev=p}
+ const by=top+L;l3([0,by,0],[0,by+.08,0],'#ccc',3);box3(0,by+.08,0,.25,.1,.25,'#ffd24d');
+ for(let i=0;i<n;i++)box3(0,by+.18+i*.12,0,.3,.11,.3,'#19b5c9');
+ vx.fillStyle='#fff';vx.font='600 16px system-ui';vx.textAlign='left';
+ vx.fillText('Yuk: '+n*100+' g   F = '+n+' N',14,28);vx.fillText('Δl = '+(n*2)+' sm   (k = 50 N/m)',14,52);
+}
+let dr=false,lx=0,ly=0;
+vc.addEventListener('pointerdown',e=>{dr=true;lx=e.clientX;ly=e.clientY;vc.setPointerCapture(e.pointerId);vc.style.cursor='grabbing'});
+vc.addEventListener('pointermove',e=>{if(!dr)return;R.yaw+=(e.clientX-lx)*.01;R.pit=Math.max(-.2,Math.min(1.2,R.pit+(e.clientY-ly)*.01));lx=e.clientX;ly=e.clientY});
+vc.addEventListener('pointerup',()=>{dr=false;vc.style.cursor='grab'});
+vc.addEventListener('wheel',e=>{e.preventDefault();R.z=Math.max(.6,Math.min(1.8,R.z-e.deltaY*.001))},{passive:false});
+$('#v1').onclick=()=>{R.n=Math.min(5,R.n+1);add(5,'vrw')};
+$('#v2').onclick=()=>{R.n=Math.max(0,R.n-1)};
+$('#v3').onclick=()=>{R.yaw=.7;R.pit=.3;R.z=1};
+$('#v4').onclick=()=>{const w=$('#vw');
+ if(document.fullscreenElement){document.exitFullscreen();return}
+ if(w.classList.contains('fake')){w.classList.remove('fake');return}
+ if(w.requestFullscreen){w.requestFullscreen().catch(()=>w.classList.add('fake'))}else w.classList.add('fake')};
+
+/* VIDEO */
+const V={t:0,play:false};
+const vd=$('#vd'),vdx=vd.getContext('2d');
+const SUB=['Prujina yuksiz holatda: uzayish Δl = 0.','1 ta yuk (F = 1 N) osildi — prujina 2 sm cho‘zildi.','Yuklarni 2 taga oshirdik: F = 2 N, Δl = 4 sm.','Kuch 3 marta ortdi (F = 3 N) — uzayish ham 3 marta ortdi (6 sm).','F = 4 N va Δl = 8 sm — grafikdagi nuqtalar bir to‘g‘ri chiziqda.','Xulosa: F = k·Δl, k = F/Δl = 50 N/m. Bu — Guk qonuni!'];
+function drawVid(){
+ const c=vdx,t=V.t,k=Math.min(5,Math.floor(t/5)),fr=Math.min(1,(t%5)/5*3),ease=1-Math.pow(1-fr,2);
+ const ext=k==0?0:(k-1+ease)*14;c.clearRect(0,0,600,340);
+ cCe(c,120);cSp(c,120,22,110+ext,9,16);const by=110+ext;c.strokeStyle='#888';c.lineWidth=1;c.strokeRect(105,by,30,6);
+ for(let i=0;i<k;i++)cBox(c,100,by+8+i*18,40,16);
+ cT(c,'F = '+k+' N',20,300,16);cT(c,'Δl = '+(k*2)+' sm',20,322,16,'#0b78d1');
+ const ox=330,oy=270;cAx(c,ox,oy,240,220,'Δl (sm)','F (N)');
+ const pts=[];for(let j=1;j<=k;j++)if(j<k||fr>=1||true)pts.push([ox+j*2*22,oy-j*40]);
+ if(pts.length>1){c.strokeStyle='#0b78d1';c.lineWidth=3;c.beginPath();c.moveTo(ox,oy);pts.forEach(p=>c.lineTo(p[0],p[1]));c.stroke()}
+ pts.forEach(p=>{c.fillStyle='#d93c3c';c.beginPath();c.arc(p[0],p[1],6,0,7);c.fill()});
+ cT(c,Math.floor(t)+' / 30 s',500,24,14);
+ $('#sb').textContent=SUB[k];$('#vs').value=Math.round(t*10);
+}
+$('#vp').onclick=()=>{if(V.t>=30)V.t=0;V.play=!V.play;$('#vp').textContent=V.play?'⏸ Pauza':'▶ Davom etish'};
+$('#vr').onclick=()=>{V.t=0;V.play=true;$('#vp').textContent='⏸ Pauza'};
+$('#vs').oninput=e=>{V.t=+e.target.value/10;drawVid()};
+
+/* MAIN LOOP */
+let lt=0;
+function loop(ts){
+ const dt=Math.min(.03,(ts-lt)/1000||.016);lt=ts;
+ try{
+ if(cs==1){const c=$('#sc1').getContext('2d');c.clearRect(0,0,600,340);SIMS[sci].d(c,P,SS[sci],dt,ts/1000)}
+ else if(cs==2)drawVR(dt);
+ else if(cs==3){if(V.play){V.t+=dt;if(V.t>=30){V.t=30;V.play=false;$('#vp').textContent='▶ Qayta ko‘rish';add(5,'vid')}}drawVid()}
+ }catch(e){console.error(e)}
+ requestAnimationFrame(loop);
+}
+
+/* QUIZ ENGINE */
+function mq(el,items,end){let i=0,s=0;
+ const r=()=>{if(i>=items.length){end(s);return}
+  const[q,o,a,e]=items[i];
+  el.innerHTML=`<p><b>${i+1}/${items.length}.</b> ${q}</p>`+o.map((x,j)=>`<button class="o" data-j="${j}">${x}</button>`).join('')+'<p class="fb"></p>';
+  el.querySelectorAll('.o').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;
+   el.querySelectorAll('.o').forEach(x=>{x.disabled=true;if(+x.dataset.j==a)x.classList.add('ok')});
+   if(j==a)s++;else b.classList.add('no');
+   el.querySelector('.fb').innerHTML=(j==a?'✅ To‘g‘ri! ':'❌ Xato. ')+(e||'')+'<br><button class="pb nq">'+(i+1<items.length?'Keyingisi →':'Natija')+'</button>';
+   el.querySelector('.nq').onclick=()=>{i++;r()}})};
+ r()}
+const Q=[
+['Deformatsiya nima?',['Jism shakli yoki o‘lchamining o‘zgarishi','Jism rangining o‘zgarishi','Jism massasining o‘zgarishi','Jism haroratining o‘zgarishi'],0,'Kuch ta’sirida shakl/o‘lcham o‘zgarishi deformatsiya.'],
+['Elastiklik kuchining birligi qaysi?',['kg','N','m/s','N/m'],1,'Har qanday kuch kabi nyutonda (N) o‘lchanadi.'],
+['Guk qonunining formulasi qaysi?',['F = mg','F = k·Δl','F = ma','F = k/Δl'],1,'F = k·Δl.'],
+['Bikrlik koeffitsiyenti k ning birligi?',['N/m','N','m/N','kg'],0,'k = F/Δl → N/m.'],
+['k = 50 N/m, Δl = 0,2 m bo‘lsa, F = ?',['10 N','250 N','0,25 N','5 N'],0,'F = 50·0,2 = 10 N.'],
+['Qaysi biri plastik deformatsiyaga misol?',['Po‘lat prujina','Plastilinni ezish','Rezina shnur','Dinamometr prujinasi'],1,'Plastilin shaklini tiklamaydi.'],
+['Uzayish 2 marta ortsa, elastiklik kuchi...',['2 marta ortadi','2 marta kamayadi','o‘zgarmaydi','4 marta ortadi'],0,'F ∝ Δl.'],
+['Kuchni o‘lchaydigan asbob qaysi?',['Termometr','Dinamometr','Barometr','Spidometr'],1,'Dinamometr kuchni o‘lchaydi.'],
+['F(Δl) grafigi qanday ko‘rinishda?',['Parabola','Giperbola','Koordinata boshidan o‘tuvchi to‘g‘ri chiziq','Gorizontal chiziq'],2,'F va Δl to‘g‘ri proporsional.'],
+['Guk qonuni qachon o‘rinli?',['Istalgan deformatsiyada','Elastiklik chegarasigacha','Faqat plastik deformatsiyada','Faqat siqilishda'],1,'Chegaradan oshsa, qonun buziladi.'],
+['F = 12 N, Δl = 0,03 m bo‘lsa, k = ?',['400 N/m','36 N/m','0,0025 N/m','4 N/m'],0,'k = 12/0,03 = 400 N/m.']
+];
+function res(el,s,n,msg,again){const pc=Math.round(s/n*100),st_=Math.round(pc/20);
+ el.innerHTML=`<h3>Natija: ${s} / ${n} (${pc}%)</h3><p style="font-size:1.6rem">${'★'.repeat(st_)}${'☆'.repeat(5-st_)}</p><p>${msg}</p><button class="pb" id="ag">↺ Qayta urinish</button>`;$('#ag').onclick=again}
+function runTest(){mq($('#tq'),Q,s=>{add(s*3,'test');res($('#tq'),s,Q.length,s>=9?'Ajoyib! Mavzuni a’lo o‘zlashtirdingiz.':s>=6?'Yaxshi! Slaydlarni yana ko‘rib chiqing.':'Mavzuni qayta o‘rganib, yana urinib ko‘ring.',runTest)})}
+
+/* GAMES */
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const PR=[['F','Elastiklik kuchi'],['k','Bikrlik koeffitsiyenti'],['Δl','Uzayish'],['N/m','Bikrlik birligi']];
+const OG=[
+['🔗 Moslashtirish',(el,w)=>{let sel=-1,done=0;const rd=sh([0,1,2,3]);
+ el.innerHTML='<p>Belgini tanlang, so‘ng mos ma’noni bosing.</p><div class="g2"><div id="ml"></div><div id="mr"></div></div><p id="mf"></p>';
+ PR.forEach((p,i)=>{const b=document.createElement('button');b.className='o';b.textContent=p[0];b.onclick=()=>{if(b.disabled)return;sel=i;el.querySelectorAll('#ml .o').forEach(x=>x.style.outline='');b.style.outline='3px solid #0b78d1'};b.dataset.i=i;$('#ml').appendChild(b)});
+ rd.forEach(i=>{const b=document.createElement('button');b.className='o';b.textContent=PR[i][1];b.onclick=()=>{if(sel<0||b.disabled)return;if(sel==i){b.classList.add('ok');b.disabled=true;const l=el.querySelector('#ml [data-i="'+i+'"]');l.classList.add('ok');l.disabled=true;l.style.outline='';sel=-1;if(++done==4)w()}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}};$('#mr').appendChild(b)})}],
+['⚡ To‘g‘ri/Noto‘g‘ri',(el,w)=>{const it=[['Guk qonuni: F = k·Δl',['Rost','Yolg‘on'],0],['Plastik deformatsiyada jism shaklini tiklaydi',['Rost','Yolg‘on'],1],['k ning birligi N/m',['Rost','Yolg‘on'],0],['Dinamometr massani o‘lchaydi',['Rost','Yolg‘on'],1],['Uzayish ortsa, F ham ortadi',['Rost','Yolg‘on'],0],['Elastiklik kuchi deformatsiya bilan bir yo‘nalgan',['Rost','Yolg‘on'],1]];
+ mq(el,it,s=>{res(el,s,6,s>=5?'Zo‘r!':'Yana urinib ko‘ring.',()=>OGR(1));if(s>=5)w()})}],
+['✏️ Bo‘sh joyni to‘ldirish',(el,w)=>{const it=[['F = k · ___ (bo‘sh joyga qo‘ying)',['Δl','m','g','t'],0],['Bikrlik birligi: ___',['N','N/m','kg','m/s'],1],['Elastiklik kuchi deformatsiyaga ___ yo‘nalgan',['qarama-qarshi','bir xil','perpendikulyar','tasodifiy'],0],['Kuch o‘lchanadigan asbob: ___',['Dinamometr','Termometr','Barometr','Chizg‘ich'],0]];
+ mq(el,it,s=>{res(el,s,4,s==4?'Mukammal!':'Yana urinib ko‘ring.',()=>OGR(2));if(s>=3)w()})}],
+['🔢 Tartiblash',(el,w)=>{const cr=['Prujinaning uzunligini o‘lchaymiz','Yukni osamiz','Yangi uzunlikni o‘lchaymiz','Δl = l − l₀ ni hisoblaymiz','F = k·Δl bilan tekshiramiz'];let ix=0;
+ el.innerHTML='<p>Tajriba bosqichlarini to‘g‘ri tartibda bosing.</p><div id="so"></div>';
+ sh(cr).forEach(t=>{const b=document.createElement('button');b.className='o';b.textContent=t;b.onclick=()=>{if(b.disabled)return;if(t==cr[ix]){ix++;b.classList.add('ok');b.disabled=true;b.textContent=ix+'. '+t;if(ix==cr.length)w()}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}};$('#so').appendChild(b)})}],
+['🃏 Xotira juftlari',(el,w)=>{const cd=sh([].concat(...[['F','Elastiklik kuchi'],['k','Bikrlik'],['Δl','Uzayish'],['N','Nyuton']].map((p,i)=>[[i,p[0]],[i,p[1]]])));let a=null,lock=false,ok=0;
+ el.innerHTML='<p>Juftliklarni toping.</p><div class="g2" style="grid-template-columns:repeat(4,1fr)" id="mm"></div>';
+ cd.forEach(c=>{const b=document.createElement('button');b.className='mc';b.textContent='?';b.onclick=()=>{if(lock||b.disabled||b===a)return;b.textContent=c[1];b.style.fontSize='.8rem';
+  if(!a){a=b;b.cid=c[0];return}
+  if(a.cid==c[0]){a.disabled=b.disabled=true;a.classList.add('ok');b.classList.add('ok');a=null;if(++ok==4)w()}
+  else{lock=true;const x=a;a=null;setTimeout(()=>{x.textContent=b.textContent='?';x.style.fontSize=b.style.fontSize='';lock=false},700)}};$('#mm').appendChild(b)})}],
+['🏆 Viktorina (hisoblash)',(el,w)=>{const it=[['k = 100 N/m, Δl = 0,05 m. F = ?',['5 N','2 N','500 N','0,5 N'],0,'F = 100·0,05 = 5 N'],['F = 12 N, Δl = 0,03 m. k = ?',['400 N/m','36 N/m','0,0025 N/m','4 N/m'],0,'k = 12/0,03 = 400'],['k = 200 N/m, F = 10 N. Δl = ?',['0,05 m','20 m','2000 m','0,5 m'],0,'Δl = 10/200 = 0,05 m']];
+ mq(el,it,s=>{res(el,s,3,s==3?'Barakalla!':'Yana urinib ko‘ring.',()=>OGR(5));if(s>=2)w()})}]
+];
+function OGR(i){
+ document.querySelectorAll('#gtb .tab').forEach((b,j)=>b.classList.toggle('on',j==i));
+ const el=$('#gm');el.innerHTML='';
+ OG[i][1](el,()=>{add(5,'g'+i);const p=document.createElement('p');p.className='ok';p.textContent='🎉 Barakalla! O‘yin yakunlandi (+5 ball).';el.appendChild(p)});
+}
+OG.forEach((g,i)=>{const b=document.createElement('button');b.className='tab';b.textContent=g[0];b.onclick=()=>OGR(i);$('#gtb').appendChild(b)});
+
+/* INIT */
+upd();goS(0);buildSim(0);OGR(0);runTest();show(0);
+requestAnimationFrame(loop);
+</script>
+
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

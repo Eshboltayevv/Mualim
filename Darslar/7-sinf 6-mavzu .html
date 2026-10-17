@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moddalarning o‘zaro ta’sirlashuvi — 7-sinf fizika</title>
+<style>
+:root{--p:#0b78d1;--ok:#1b9e55;--no:#d93c3c;--bg:#e3f2fd;--bg2:#cdeafc;--card:rgba(255,255,255,.72);--tx:#12324a;--mu:#587186;--sh:0 8px 28px rgba(11,120,209,.16)}
+body.dark{--bg:#0c1a2a;--bg2:#10263c;--card:rgba(24,44,66,.72);--tx:#e6f1fb;--mu:#9db6cc;--sh:0 8px 28px rgba(0,0,0,.4)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;color:var(--tx);background:linear-gradient(160deg,var(--bg),var(--bg2));min-height:100vh}
+.wrap{max-width:1000px;margin:auto;padding:12px}
+.card{background:var(--card);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.5);border-radius:20px;box-shadow:var(--sh);padding:16px;margin-bottom:12px}
+h1,h2,h3{margin:.2em 0;background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:1.35rem}
+button,select{min-height:44px;border-radius:14px;border:1px solid rgba(11,120,209,.3);background:var(--card);color:var(--tx);font:inherit;padding:0 14px;cursor:pointer}
+button.pr,nav button.on{background:var(--p);color:#fff;border-color:var(--p)}
+.top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.top>div{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+nav{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}nav button{padding:0 4px;font-size:.85rem}
+.sec{display:none}.sec.on{display:block}
+.bar{height:10px;border-radius:9px;background:rgba(11,120,209,.18);overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0b78d1,#19b5c9);transition:width .3s}
+svg,canvas{width:100%;height:auto;display:block;border-radius:14px;background:rgba(255,255,255,.45)}
+body.dark svg,body.dark canvas{background:rgba(255,255,255,.07)}
+.muted{color:var(--mu)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0}.dots b{width:14px;height:14px;border-radius:50%;background:rgba(11,120,209,.25);cursor:pointer;border:0}.dots b.on{background:var(--p)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.ok,.g.ok{background:var(--ok)!important;color:#fff!important}.opt.no,.g.no{background:var(--no)!important;color:#fff!important}
+.g{margin:4px;min-width:44px}.fb{min-height:24px;margin:6px 0}
+input[type=range]{width:180px;min-height:44px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mem{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mem button{min-height:64px}
+#vrw{position:relative}#vrw canvas{touch-action:none;cursor:grab}
+@media(min-width:760px){.sl{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}.mem{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){nav button{font-size:.7rem}h1{font-size:1.1rem}}
+</style></head><body>
+<div class="wrap">
+<div class="card"><div class="top"><h1>Moddalarning o‘zaro ta’sirlashuvi</h1>
+<div><span id="stars" title="Reyting">☆☆☆☆☆</span><b>Ball: <span id="sc">0</span></b><span>⏱ <span id="tm">0:00</span></span><button id="th">🌓</button></div></div>
+<div class="bar" style="margin-top:8px"><i id="pg"></i></div>
+<div class="row"><button id="rd" class="pr">🔊 O‘qish</button><button id="st">⏹</button><label>Tezlik <input type="range" id="rt" min=".6" max="1.6" step=".1" value="1"></label>
+<select id="lg"><option value="uz-UZ">O‘zbek</option><option value="ru-RU">Русский</option><option value="en-US">English</option></select></div></div>
+<nav id="nav"></nav>
+
+<section class="sec card" id="slides"><div id="sl"></div><div class="dots" id="sd"></div><div class="bar"><i id="sp"></i></div>
+<div class="row" style="justify-content:space-between"><button id="pv">← Orqaga</button><b id="sn"></b><button id="nx" class="pr">Oldinga →</button></div></section>
+
+<section class="sec card" id="sim"><h2>Simulyatsiyalar</h2><div class="row" id="sb"></div><canvas id="cv" width="600" height="340"></canvas>
+<div class="row"><label id="sll"></label><input type="range" id="sr"><b id="sv"></b><span id="sx"></span></div><p class="muted" id="so"></p></section>
+
+<section class="sec card" id="vr"><h2>VR laboratoriya</h2><div id="vrw"><canvas id="vc" width="600" height="380"></canvas></div>
+<div class="row"><button class="vm" data-e="-0.8">Siqish</button><button class="vm pr" data-e="0">Muvozanat</button><button class="vm" data-e="0.6">Cho‘zish</button><button class="vm" data-e="1">Uzish</button>
+<button id="ar">🔄 Avto-aylanish</button><button id="fs">⛶ To‘liq ekran</button></div>
+<div class="row"><label>Deformatsiya (siqish ← → cho‘zish) <input type="range" id="vs" min="-1" max="1" step=".01" value="0"></label><label>Masshtab <input type="range" id="vz" min=".6" max="2" step=".1" value="1.2"></label></div>
+<p class="muted">Kristall panjarani sichqoncha yoki barmoq bilan aylantiring. Siqilganda bog‘lar qizil (itarilish), cho‘zilganda ko‘k (tortishish) bo‘ladi; juda cho‘zilsa jism uziladi.</p></section>
+
+<section class="sec card" id="video"><h2>Video-dars</h2><canvas id="dc" width="600" height="340"></canvas>
+<div class="bar" style="margin:8px 0"><i id="vp"></i></div><p id="sub" style="font-weight:600;min-height:3em"></p>
+<div class="row"><button id="pl" class="pr">▶ Boshlash</button><button id="rs">↺ Qaytadan</button><span id="vt" class="muted">0:00 / 0:32</span></div></section>
+
+<section class="sec card" id="test"><h2>Test</h2><div id="tq"></div></section>
+<section class="sec card" id="games"><h2>O‘yinlar</h2><div class="row" id="gb"></div><div id="gq"></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let ST=Object.assign({score:0,time:0,dark:0,done:0},JSON.parse(localStorage.getItem('fz7b')||'{}'));
+function save(){try{localStorage.setItem('fz7b',JSON.stringify(ST))}catch(e){}}
+function ui(){$('#sc').textContent=ST.score;const n=Math.min(5,Math.floor(ST.score/25));$('#stars').textContent='★'.repeat(n)+'☆'.repeat(5-n);$('#pg').style.width=Math.min(100,ST.score/2)+'%';document.body.classList.toggle('dark',!!ST.dark)}
+function add(n){ST.score+=n;save();ui()}
+setInterval(()=>{ST.time++;const t=ST.time;$('#tm').textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');if(t%10==0)save()},1000);
+$('#th').onclick=()=>{ST.dark=ST.dark?0:1;save();ui()};
+$('#rd').onclick=()=>{if(!('speechSynthesis' in window)){alert('Brauzer ovozli o‘qishni qo‘llamaydi');return}
+speechSynthesis.cancel();const el=$('.sec.on'),t=(el.id=='slides'?$('#sl'):el).innerText.slice(0,1800);const u=new SpeechSynthesisUtterance(t);u.lang=$('#lg').value;u.rate=+$('#rt').value;speechSynthesis.speak(u)};
+$('#st').onclick=()=>{if('speechSynthesis' in window)speechSynthesis.cancel()};
+const SEC=[['slides','📘 Slayd'],['sim','🧪 Sim'],['vr','🥽 VR'],['video','🎬 Video'],['test','📝 Test'],['games','🎮 O‘yin']];
+SEC.forEach(([id,l])=>{const b=document.createElement('button');b.textContent=l;b.dataset.s=id;b.onclick=()=>show(id);$('#nav').appendChild(b)});
+let cur='slides';function show(id){cur=id;$$('.sec').forEach(s=>s.classList.toggle('on',s.id==id));$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s==id));if('speechSynthesis' in window)speechSynthesis.cancel();if(id!='video')vid.play=false,$('#pl').textContent='▶ Davom'}
+
+/* ---------- SVG helpers ---------- */
+const R=s=>()=>(s=s*16807%2147483647)/2147483647;
+const dots=(n,x,y,w,h,s,c,r=4)=>{const q=R(s);let o='';for(let i=0;i<n;i++)o+=`<circle cx="${x+q()*w|0}" cy="${y+q()*h|0}" r="${r}" fill="${c}"/>`;return o};
+const lat=(cs,rs,x,y,d,c,r=5)=>{let o='';for(let i=0;i<cs;i++)for(let j=0;j<rs;j++)o+=`<circle cx="${x+i*d}" cy="${y+j*d}" r="${r}" fill="${c}"/>`;return o};
+const sv=i=>`<svg viewBox="0 0 300 160">${i}</svg>`;
+const T=(x,y,t,s=11)=>`<text x="${x}" y="${y}" font-size="${s}" fill="currentColor" text-anchor="middle">${t}</text>`;
+const box=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="none" stroke="#0b78d1" stroke-width="2"/>`;
+const B='#0b78d1',RD='#d93c3c',G='#1b9e55',C='#19b5c9';
+const ar=(x1,y1,x2,y2,c)=>{const a=Math.atan2(y2-y1,x2-x1),h=7,f=v=>v.toFixed(0);return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="2.5"/><polygon points="${x2},${y2} ${f(x2-h*Math.cos(a-.5))},${f(y2-h*Math.sin(a-.5))} ${f(x2-h*Math.cos(a+.5))},${f(y2-h*Math.sin(a+.5))}" fill="${c}"/>`};
+const bl=(x,y,w,h,c,o=1)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}" opacity="${o}"/>`;
+const FIG={
+int:()=>sv(`<circle cx="90" cy="70" r="24" fill="${B}"/><circle cx="210" cy="70" r="24" fill="${B}"/>`+ar(118,70,144,70,G)+ar(182,70,156,70,G)+T(150,52,'tortishish',10)+T(150,148,'Molekulalar bir-birini tortadi va itaradi')),
+force:()=>sv(`<line x1="20" y1="85" x2="285" y2="85" stroke="#888"/><line x1="30" y1="8" x2="30" y2="150" stroke="#888"/><path d="M40 8 C58 30 70 80 78 85 C90 135 150 108 285 88" fill="none" stroke="${B}" stroke-width="3"/><line x1="78" y1="20" x2="78" y2="140" stroke="${G}" stroke-dasharray="4"/>`+T(52,24,'itarilish',10)+T(170,118,'tortishish',10)+T(78,152,'r₀',11)+T(272,100,'r',11)),
+dist:()=>{let o='';[[18,RD,'r < r₀: itarilish'],[26,G,'r = r₀: muvozanat'],[50,B,'r > r₀: tortishish'],[120,'#888','r ≫ r₀: ta’sir yo‘q']].forEach(([d,c,t],k)=>{const y=25+k*35,x1=100-d/2,x2=100+d/2;o+=`<circle cx="${x1}" cy="${y}" r="10" fill="${B}"/><circle cx="${x2}" cy="${y}" r="10" fill="${B}"/>`;if(k==0)o+=ar(x1-12,y,x1-30,y,RD)+ar(x2+12,y,x2+30,y,RD);if(k==2)o+=ar(x1+12,y,x1+24,y,G)+ar(x2-12,y,x2-24,y,G);o+=T(238,y+4,t,10)});return sv(o)},
+rope:()=>sv(`<line x1="50" y1="70" x2="246" y2="70" stroke="#888" stroke-width="3"/>`+lat(8,1,50,70,28,B,9)+ar(40,70,10,70,RD)+ar(256,70,286,70,RD)+T(150,115,'Cho‘zishga qarshilik — tortishish kuchi',11)+T(150,140,'Qattiq jismni uzish qiyin',10)),
+press:()=>sv(lat(5,3,100,80,25,B,8)+bl(70,62,160,6,'#888')+ar(150,8,150,56,RD)+T(150,148,'Siqish: itarilish kuchlari qarshilik qiladi',10)),
+coh:()=>sv(bl(100,25,100,50,'#8a8f98')+bl(100,75,100,50,'#8a8f98',.8)+`<line x1="100" y1="75" x2="200" y2="75" stroke="#fff" stroke-dasharray="3"/>`+ar(125,100,125,79,G)+ar(125,50,125,71,G)+ar(175,100,175,79,G)+ar(175,50,175,71,G)+T(150,15,'Qo‘rg‘oshin silindrlar',10)+T(150,145,'Kogeziya: bir xil modda zarralari tortishadi',10)),
+adh:()=>sv(bl(80,25,140,45,'#a1795c')+bl(80,70,140,8,'#e0b040')+bl(80,78,140,45,'#5a7fa8')+T(150,52,'yog‘och',11)+T(150,106,'metall',11)+T(262,78,'yelim',10)+T(150,148,'Adgeziya: turli modda zarralari tortishadi',10)),
+wet:()=>sv(bl(10,110,130,10,'#9aa5b1')+bl(160,110,130,10,'#c9b27a')+`<path d="M25 110 Q75 78 125 110Z" fill="${C}"/><circle cx="225" cy="88" r="22" fill="${C}"/>`+T(75,140,'Ho‘llaydi (suv–shisha)',9)+T(225,140,'Ho‘llamaydi (suv–mum)',9)+T(150,20,'Suv tomchisi',11)),
+men:()=>sv(`<rect x="30" y="20" width="40" height="100" fill="none" stroke="#888" stroke-width="2"/><rect x="130" y="20" width="40" height="100" fill="none" stroke="#888" stroke-width="2"/><path d="M31 60 Q50 76 69 60 L69 119 L31 119Z" fill="${C}"/><path d="M131 70 Q150 52 169 70 L169 119 L131 119Z" fill="#888"/>`+T(50,138,'Suv: botiq',9)+T(150,138,'Simob: qavariq',9)+T(240,70,'Menisk —',11)+T(240,86,'suyuqlik sirti',10)+T(240,100,'egriligi',10)),
+tens:()=>sv(bl(10,50,150,95,C,.35)+`<circle cx="85" cy="105" r="9" fill="${B}"/><circle cx="55" cy="50" r="9" fill="${B}"/>`+ar(94,105,115,105,'#888')+ar(76,105,55,105,'#888')+ar(85,96,85,75,'#888')+ar(85,114,85,135,'#888')+ar(46,50,25,50,'#888')+ar(64,50,85,50,'#888')+ar(55,59,55,92,RD)+`<circle cx="230" cy="80" r="40" fill="${C}" opacity=".8"/>`+T(230,140,'Tomchi — sharsimon',10)+T(85,20,'Sirt taranglashadi',10)),
+cap:()=>sv(bl(10,125,280,25,C,.5)+[[40,10,70],[100,22,95],[170,40,112]].map(([x,w,t])=>`<rect x="${x}" y="20" width="${w}" height="110" fill="none" stroke="#888" stroke-width="2"/>`+bl(x+1,t,w-2,128-t,C,.7)).join('')+T(45,14,'ingichka',9)+T(111,14,'o‘rta',9)+T(190,14,'keng',9)),
+def:()=>sv(`<polyline points="30,40 40,25 50,55 60,25 70,55 80,25 90,55 100,25 110,40" fill="none" stroke="${B}" stroke-width="3"/><polyline points="30,100 36,90 42,110 48,90 54,110 60,90 66,110 72,100" fill="none" stroke="${B}" stroke-width="3"/><circle cx="215" cy="40" r="22" fill="${RD}"/><ellipse cx="215" cy="105" rx="40" ry="12" fill="${RD}"/>`+T(75,70,'↓ kuch olinsa',9)+T(75,140,'Elastik: shakl tiklanadi',9)+T(215,70,'↓ bosim',9)+T(215,140,'Plastik: shakl qoladi',9)),
+app:()=>sv(['Yelim, bo‘yoq — adgeziya','Qalam izi — adgeziya','Sochiq suv shimishi — kapillyarlik','Payvandlash — kogeziya'].map((t,i)=>`<circle cx="30" cy="${28+i*32}" r="8" fill="${[G,B,C,RD][i]}"/><text x="48" y="${32+i*32}" font-size="12" fill="currentColor">${t}</text>`).join('')),
+cmp:()=>sv(box(5,15,90,100)+box(105,15,90,100)+box(205,15,90,100)+lat(4,4,20,30,20,B,5)+dots(18,112,60,76,50,2,C,5)+dots(6,212,25,76,85,5,RD,5)+T(50,135,'Qattiq: kuchli',10)+T(150,135,'Suyuq: o‘rtacha',10)+T(250,135,'Gaz: juda kuchsiz',10)+T(150,153,'Zarralar o‘zaro ta’siri',10)),
+sum:()=>sv(T(150,25,'Molekulalar tortishadi va itaradi',12)+T(150,52,'Kogeziya — bir xil modda',11)+T(150,76,'Adgeziya — turli modda',11)+T(150,100,'Ho‘llash, menisk, kapillyarlik',11)+T(150,124,'Sirt tarangligi — tomchi sharsimon',11)+T(150,148,'Elastik va plastik deformatsiya',11))
+};
+const S=[
+['Zarralar o‘zaro ta’sirlashadi','<p>Modda zarralari (molekulalar, atomlar) bir-biri bilan <b>o‘zaro ta’sirlashadi</b>: ular bir-birini tortadi ham, itaradi ham. Moddaning ko‘p xossalari shu ta’sirga bog‘liq.</p>','int'],
+['Tortishish va itarilish kuchlari','<p>Molekulalar orasida bir vaqtda ikki xil kuch bor: <b>tortishish</b> va <b>itarilish</b>. Ular molekulalar orasidagi masofa <b>r</b> ga bog‘liq. Grafikda r₀ nuqtada ikkala kuch muvozanatlashadi.</p>','force'],
+['Masofaga bog‘liqlik','<p>r &lt; r₀ bo‘lsa, <b>itarilish</b> ustun; r = r₀ — <b>muvozanat</b>; r &gt; r₀ — <b>tortishish</b> ustun. Masofa molekula o‘lchamidan bir necha marta katta bo‘lsa, ta’sir deyarli yo‘qoladi (r₀ ≈ 0,3 nm).</p>','dist'],
+['Qattiq jismni cho‘zish qiyin','<p>Sim yoki ipni uzish qiyin, chunki uni cho‘zganda molekulalar orasidagi masofa ortadi va <b>tortishish kuchi</b> qarshilik ko‘rsatadi.</p>','rope'],
+['Qattiq jismni siqish qiyin','<p>Jismni siqganda molekulalar yaqinlashadi va <b>itarilish kuchi</b> ortadi. Shu sabab suyuqlik va qattiq jismlarni siqish juda qiyin.</p>','press'],
+['Kogeziya','<p><b>Kogeziya</b> — bir xil modda molekulalarining o‘zaro tortishishi. Toza kesilgan ikki qo‘rg‘oshin silindrni bosib tutashtirsak, ular yopishib qoladi.</p>','coh'],
+['Adgeziya','<p><b>Adgeziya</b> — turli modda molekulalarining o‘zaro tortishishi. Yelim, bo‘yoq, bo‘r va qalam izi shunga asoslangan.</p>','adh'],
+['Ho‘llash va ho‘llamaslik','<p>Agar suyuqlik–qattiq jism tortishishi (adgeziya) suyuqlikning o‘z ichidagi tortishishidan (kogeziya) kuchli bo‘lsa, suyuqlik sirtni <b>ho‘llaydi</b> (suv–shisha). Aks holda <b>ho‘llamaydi</b> (suv–mum, simob–shisha).</p>','wet'],
+['Menisk','<p>Idish devori yonida suyuqlik sirti egrilanadi — bu <b>menisk</b>. Ho‘llaydigan suyuqlikda menisk <b>botiq</b> (suv), ho‘llamaydiganida <b>qavariq</b> (simob).</p>','men'],
+['Sirt tarangligi','<p>Suyuqlik sirtidagi molekulalar faqat ichkariga tortiladi, shuning uchun sirt elastik parda kabi taranglashadi: <b>F = σ·l</b> (σ — sirt tarangligi koeffitsiyenti). Shu sabab erkin tomchi <b>sharsimon</b> bo‘ladi.</p>','tens'],
+['Kapillyarlik','<p>Ingichka naychalarda (kapillyarlarda) ho‘llaydigan suyuqlik ko‘tariladi, ho‘llamaydigani pasayadi. Naycha qancha ingichka bo‘lsa, suyuqlik shuncha baland ko‘tariladi: <b>h ∼ 1/d</b>.</p>','cap'],
+['Elastik va plastik deformatsiya','<p>Kuch ta’sirida jism shakli o‘zgarishi — <b>deformatsiya</b>. Kuch olingach shakl tiklansa — <b>elastik</b> (prujina), tiklanmasa — <b>plastik</b> (plastilin, loy).</p>','def'],
+['Amaliy misollar','<p>Ta’sirlashuv kuchlari kundalik hayotda: yelimlash va bo‘yash (adgeziya), payvandlash (kogeziya), sochiq va o‘simlik ildizlarida suv ko‘tarilishi (kapillyarlik).</p>','app'],
+['Holatlar va ta’sir kuchi','<p>Qattiq jismda molekulalar orasidagi ta’sir <b>kuchli</b>, suyuqlikda <b>o‘rtacha</b>, gazda <b>juda kuchsiz</b>. Shu sababli ularning shakli va hajmi har xil.</p>','cmp'],
+['Xulosa','<p>Molekulalar o‘zaro tortishadi va itaradi; kogeziya va adgeziya, ho‘llash, sirt tarangligi, kapillyarlik va deformatsiya shu ta’sir natijasidir.</p>','sum']];
+let si=0,tx0=0,seen=new Set();
+S.forEach((_,i)=>{const b=document.createElement('b');b.onclick=()=>go(i);$('#sd').appendChild(b)});
+function go(i){si=Math.max(0,Math.min(S.length-1,i));const [t,h,f]=S[si];$('#sl').innerHTML=`<h2>${si+1}. ${t}</h2><div class="sl"><div>${h}</div>${FIG[f]()}</div>`;
+$('#sn').textContent=(si+1)+' / '+S.length;$('#sp').style.width=(si+1)/S.length*100+'%';$$('#sd b').forEach((b,k)=>b.classList.toggle('on',k==si));
+if(!seen.has(si)){seen.add(si);add(1)}}
+$('#pv').onclick=()=>go(si-1);$('#nx').onclick=()=>go(si+1);
+document.addEventListener('keydown',e=>{if(cur!='slides')return;if(e.key=='ArrowRight')go(si+1);if(e.key=='ArrowLeft')go(si-1)});
+$('#slides').addEventListener('touchstart',e=>tx0=e.touches[0].clientX,{passive:true});
+$('#slides').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx0;if(Math.abs(d)>50)go(si+(d<0?1:-1))},{passive:true});
+
+/* ---------- Simulyatsiyalar ---------- */
+const W=600,H=340,rnd=Math.random,cv=$('#cv'),g=cv.getContext('2d');
+const mk=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+function dot(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,6.283);g.fill()}
+function mv(p,s,lo=0,hi=W){p.x+=Math.cos(p.a)*s;p.y+=Math.sin(p.a)*s;if(p.x<lo+4){p.x=lo+4;p.a=Math.PI-p.a}if(p.x>hi-4){p.x=hi-4;p.a=Math.PI-p.a}if(p.y<4){p.y=4;p.a=-p.a}if(p.y>H-4){p.y=H-4;p.a=-p.a}}
+const tc=()=>getComputedStyle(document.body).color;
+function ca(x1,y1,x2,y2,c){g.strokeStyle=c;g.fillStyle=c;g.lineWidth=3;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const a=Math.atan2(y2-y1,x2-x1);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-11*Math.cos(a-.5),y2-11*Math.sin(a-.5));g.lineTo(x2-11*Math.cos(a+.5),y2-11*Math.sin(a+.5));g.fill();g.lineWidth=1}
+function tx(t,x,y,al){g.fillStyle=tc();g.font='14px system-ui';g.textAlign=al||'center';g.fillText(t,x,y)}
+const LJ=r=>Math.max(-5,Math.min(12,24*(2/Math.pow(r,13)-1/Math.pow(r,7))));
+const SIMS=[
+{n:'Ikki molekula',l:'Masofa',v:40,u:'%',init(){this.t=0},
+ draw(v){const r=.9+v/100*2.1,F=LJ(r),gp=r*70,cx=W/2,cy=75;this.t+=.05;const o=Math.sin(this.t*4)*2;
+ [-1,1].forEach(k=>dot(cx+k*gp/2+o*k,cy,26,B));
+ if(F>.1){const L=Math.min(70,F*5+10);ca(cx-gp/2,cy,cx-gp/2-L,cy,RD);ca(cx+gp/2,cy,cx+gp/2+L,cy,RD)}else if(F<-.1){const L=Math.min(70,-F*14+10);ca(cx-gp/2,cy,cx-gp/2+L,cy,G);ca(cx+gp/2,cy,cx+gp/2-L,cy,G)}
+ g.strokeStyle='#888';g.beginPath();g.moveTo(40,270);g.lineTo(560,270);g.moveTo(40,150);g.lineTo(40,325);g.stroke();
+ g.strokeStyle=B;g.lineWidth=3;g.beginPath();for(let q=.9;q<=3;q+=.02){const x=40+(q-.9)/2.1*520,y=270-LJ(q)*9;q<.91?g.moveTo(x,y):g.lineTo(x,y)}g.stroke();g.lineWidth=1;
+ dot(40+(r-.9)/2.1*520,270-F*9,7,RD);tx('F > 0: itarilish',50,165,'left');tx('F < 0: tortishish',50,318,'left');tx('r →',545,288);tx('r₀',40+.22/2.1*520,288);
+ return`r = ${r.toFixed(2)} (shartli birlik), F = ${F.toFixed(1)} → `+(F>.1?'itarilish ustun':Math.abs(F)<.1?(r>1.5?'ta’sir deyarli yo‘q':'muvozanat (r ≈ r₀)'):'tortishish ustun')}},
+{n:'Kogeziya',l:'Tortishish kuchi',v:50,u:'%',init(){this.P=mk(50,()=>({x:rnd()*W,y:rnd()*H,vx:0,vy:0}))},
+ draw(v){const P=this.P,k=v/100*.06,nb=P.map(()=>0);for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j],dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy;if(d2>6400||d2<1)continue;const d=Math.sqrt(d2),f=d<20?-(20-d)*.08:k,fx=dx/d*f,fy=dy/d*f;a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;if(d<40){nb[i]++;nb[j]++}}
+ P.forEach(p=>{p.vx=(p.vx+(rnd()-.5)*.5)*.95;p.vy=(p.vy+(rnd()-.5)*.5)*.95;p.x+=p.vx;p.y+=p.vy;if(p.x<6||p.x>W-6){p.vx*=-1;p.x=Math.min(W-6,Math.max(6,p.x))}if(p.y<6||p.y>H-6){p.vy*=-1;p.y=Math.min(H-6,Math.max(6,p.y))}});
+ P.forEach((p,i)=>dot(p.x,p.y,6,nb[i]>3?G:B));const av=nb.reduce((a,b)=>a+b,0)/P.length;
+ return`Qo‘shnilar o‘rtacha soni: ${av.toFixed(1)}. `+(av>4?'Zarralar tomchi (suyuqlik) hosil qildi.':'Tortishish kuchsiz — zarralar tarqoq (gaz).')}},
+{n:'Ho‘llash',l:'Adgeziya kuchi',v:70,u:'%',init(){this.th=2.6},
+ draw(v){const t2=(160-v*1.4)*Math.PI/180;this.th+=(t2-this.th)*.08;const th=this.th,R=Math.sqrt(11300/(th-Math.sin(th)*Math.cos(th))),y0=260,cx=W/2,deg=th*180/Math.PI;
+ g.fillStyle='#9aa5b1';g.fillRect(0,y0,W,H-y0);g.save();g.beginPath();g.rect(0,0,W,y0);g.clip();g.fillStyle='rgba(25,181,201,.85)';g.beginPath();g.arc(cx,y0+R*Math.cos(th),R,0,6.283);g.fill();g.restore();
+ tx('Kontakt burchagi θ = '+deg.toFixed(0)+'°',cx,30);tx('qattiq sirt',cx,y0+30);
+ return`θ = ${deg.toFixed(0)}° — `+(deg<90?'suyuqlik sirtni ho‘llaydi (adgeziya kogeziyadan kuchli).':'sirtni ho‘llamaydi (kogeziya kuchli).')}},
+{n:'Kapillyarlik',l:'Naycha diametri',v:40,u:'%',init(){this.l=[0,0,0]},
+ draw(v){const d=2+v*.08,ws=[d*3,d*6,d*10],y0=250;g.fillStyle='rgba(25,181,201,.45)';g.fillRect(20,y0,W-40,H-y0-10);
+ ws.forEach((w,i)=>{const x=120+i*180,tg=Math.min(200,1000/w);this.l[i]+=(tg-this.l[i])*.05;const l=this.l[i];g.strokeStyle='#888';g.lineWidth=2;g.strokeRect(x-w/2,40,w,y0-10);g.fillStyle='rgba(25,181,201,.85)';g.fillRect(x-w/2+1,y0-l,w-2,l+30);g.lineWidth=1;tx(`d = ${(w/3).toFixed(1)} mm`,x,y0+45);tx(`h ≈ ${(l/3).toFixed(0)} mm`,x,y0+68)});
+ return'Naycha ingichka bo‘lsa, suv balandroq ko‘tariladi: h ∼ 1/d.'}}];
+let sc=0,lastSim='';
+function setSim(i){sc=i;const s=SIMS[i];s.init();$('#sll').textContent=s.l;const r=$('#sr');r.min=0;r.max=100;r.value=s.v;$('#sv').textContent=s.v+' '+s.u;
+$('#sb').innerHTML='';SIMS.forEach((x,k)=>{const b=document.createElement('button');b.textContent=x.n;b.className=k==i?'pr':'';b.onclick=()=>setSim(k);$('#sb').appendChild(b)});
+if(s.b){const b=document.createElement('button');b.textContent=s.b[0];b.onclick=()=>s.b[1].call(s);$('#sb').appendChild(b)}
+const r2=document.createElement('button');r2.textContent='↺ Qayta';r2.onclick=()=>setSim(sc);$('#sb').appendChild(r2);add(1)}
+$('#sr').oninput=e=>{SIMS[sc].v=+e.target.value;$('#sv').textContent=e.target.value+' '+SIMS[sc].u};
+
+/* ---------- VR va Video ---------- */
+const vc=$('#vc'),vg=vc.getContext('2d');let vr={yaw:.6,pit:.4,auto:false,t:0,dr:0,lx:0,ly:0};
+$$('.vm').forEach(b=>b.onclick=()=>{$('#vs').value=b.dataset.e;$$('.vm').forEach(x=>x.classList.toggle('pr',x==b));add(1)});
+$('#ar').onclick=()=>{vr.auto=!vr.auto};
+vc.addEventListener('pointerdown',e=>{vr.dr=1;vr.lx=e.clientX;vr.ly=e.clientY;vc.setPointerCapture(e.pointerId)});
+vc.addEventListener('pointermove',e=>{if(!vr.dr)return;vr.yaw+=(e.clientX-vr.lx)*.01;vr.pit=Math.max(-1.5,Math.min(1.5,vr.pit+(e.clientY-vr.ly)*.01));vr.lx=e.clientX;vr.ly=e.clientY});
+vc.addEventListener('pointerup',()=>vr.dr=0);vc.addEventListener('pointercancel',()=>vr.dr=0);
+$('#fs').onclick=()=>{const w=$('#vrw');try{if(document.fullscreenElement)document.exitFullscreen();else if(w.requestFullscreen)w.requestFullscreen();else alert('To‘liq ekran qo‘llanmaydi')}catch(e){}};
+function p3(i,e,t){const ix=i%3,iy=(i/3|0)%3,iz=i/9|0,s=45*(1+e*.4);let x=(ix-1)*s+2*Math.sin(t*6+i),y=(iy-1)*s+2*Math.sin(t*6+i*1.7),z=(iz-1)*s+2*Math.sin(t*6+i*2.3);if(e>.85&&ix==2)x+=35;return[x,y,z]}
+function drawVR(dt){const fsr=document.fullscreenElement,w=$('#vrw').clientWidth,h=fsr?innerHeight:Math.round(w*.62);if(vc.width!=w||vc.height!=h){vc.width=w;vc.height=h}
+const e=+$('#vs').value,z=+$('#vz').value;vr.t+=dt;if(vr.auto&&!vr.dr)vr.yaw+=dt*.4;vg.clearRect(0,0,w,h);
+const sc2=Math.min(w,h)/260*z,cy=Math.cos(vr.yaw),sy=Math.sin(vr.yaw),cp=Math.cos(vr.pit),sp2=Math.sin(vr.pit);
+const P=mk(27,i=>{const[x,y,zz]=p3(i,e,vr.t);const x1=x*cy+zz*sy,z1=-x*sy+zz*cy,y1=y*cp-z1*sp2,z2=y*sp2+z1*cp,f=300/(300+z2*.8);return{x:w/2+x1*sc2*f,y:h/2+y1*sc2*f,z:z2,f}});
+const col=e<-.05?RD:e>.05?B:G,br=e>.85;vg.lineWidth=3;vg.strokeStyle=col;vg.globalAlpha=.8;
+for(let i=0;i<27;i++){const ix=i%3,iy=(i/3|0)%3,iz=i/9|0;[[ix<2,1],[iy<2,3],[iz<2,9]].forEach(([ok,d])=>{if(!ok||(br&&d==1&&ix==1))return;vg.beginPath();vg.moveTo(P[i].x,P[i].y);vg.lineTo(P[i+d].x,P[i+d].y);vg.stroke()})}
+vg.lineWidth=1;P.slice().sort((a,b)=>b.z-a.z).forEach(p=>{vg.globalAlpha=Math.max(.45,Math.min(1,1-p.z/300));vg.fillStyle=col;vg.beginPath();vg.arc(p.x,p.y,8*sc2*p.f,0,6.283);vg.fill()});vg.globalAlpha=1;
+vg.fillStyle=getComputedStyle(document.body).color;vg.font='14px system-ui';vg.fillText(br?'Uzildi! Tortishish kuchlari yetmadi':e<-.05?'Siqish: itarilish kuchlari ustun':e>.05?'Cho‘zish: tortishish kuchlari ustun':'Muvozanat: r = r₀',12,22)}
+const dc=$('#dc'),dg=dc.getContext('2d'),VD=32,vid={t:0,play:false};
+const SUB=[[0,8,'1-qism. Molekulalar bir-biridan uzoq bo‘lsa (bir necha molekula o‘lchamidan ortiq), ular deyarli ta’sirlashmaydi.'],[8,16,'2-qism. Molekulalar yaqinlashganda ular orasida tortishish kuchi paydo bo‘ladi (yashil strelkalar).'],[16,24,'3-qism. Juda yaqinlashsa, itarilish kuchi tortishishdan ustun bo‘ladi (qizil strelkalar).'],[24,32,'4-qism. Muvozanat masofasi r₀ atrofida molekulalar tebranadi: shu sabab qattiq jism shaklini saqlaydi.']];
+const fmt=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
+const gapAt=t=>t<8?320:t<16?320-(t-8)/8*170:t<20?150-(t-16)/4*60:t<24?90+(t-20)/4*40:130+18*Math.sin((t-24)*2);
+function drawVid(){dg.clearRect(0,0,600,340);const s=SUB.find(x=>vid.t>=x[0]&&vid.t<x[1])||SUB[3],gp=gapAt(vid.t),cx=300,cy=150;
+[-1,1].forEach(k=>{dg.fillStyle=B;dg.beginPath();dg.arc(cx+k*gp/2,cy,30,0,6.283);dg.fill()});
+const da=(x1,x2,c)=>{dg.strokeStyle=c;dg.fillStyle=c;dg.lineWidth=4;dg.beginPath();dg.moveTo(x1,cy);dg.lineTo(x2,cy);dg.stroke();const d=Math.sign(x2-x1);dg.beginPath();dg.moveTo(x2,cy);dg.lineTo(x2-d*12,cy-8);dg.lineTo(x2-d*12,cy+8);dg.fill();dg.lineWidth=1};
+if(gp<125){const L=Math.min(80,(130-gp)*1.2+10);da(cx-gp/2,cx-gp/2-L,RD);da(cx+gp/2,cx+gp/2+L,RD)}else if(gp>135&&gp<300){const L=Math.min(60,(gp-130)*.5+8);da(cx-gp/2,cx-gp/2+L,G);da(cx+gp/2,cx+gp/2-L,G)}
+dg.fillStyle=getComputedStyle(document.body).color;dg.font='15px system-ui';dg.textAlign='center';dg.fillText('Masofa: '+(gp/130).toFixed(2)+' r₀ — '+(gp<125?'itarilish ustun':gp>300?'ta’sir yo‘q':gp>135?'tortishish ustun':'muvozanat'),300,260);
+$('#sub').textContent=s[2];$('#vp').style.width=vid.t/VD*100+'%';$('#vt').textContent=fmt(vid.t)+' / '+fmt(VD)}
+$('#pl').onclick=()=>{if(vid.t>=VD)vid.t=0;vid.play=!vid.play;$('#pl').textContent=vid.play?'⏸ Pauza':'▶ Davom'};
+$('#rs').onclick=()=>{vid.t=0;vid.play=true;$('#pl').textContent='⏸ Pauza'};
+
+/* ---------- Umumiy viktorina mexanizmi ---------- */
+function quiz(el,qs,pts){let i=0,s=0;(function sh(){if(i>=qs.length){const p=Math.round(s/qs.length*100);el.innerHTML=`<h3>Natija: ${s} / ${qs.length} to‘g‘ri (${p}%)</h3><p>${p>=80?'A’lo! ⭐':p>=50?'Yaxshi, yana takrorlang.':'Darsni qayta ko‘rib chiqing.'}</p><button class="pr" id="qr">↺ Qaytadan</button>`;add(s*pts);$('#qr').onclick=()=>quiz(el,qs,pts);return}
+const q=qs[i];let lock=0;el.innerHTML=`<p class="muted">Savol ${i+1}/${qs.length} · To‘g‘ri: ${s}</p><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><h3>${q[0]}</h3>`+q[1].map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')+'<div class="fb"></div>';
+el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(lock)return;lock=1;const k=+b.dataset.k,ok=k==q[2];if(ok)s++;b.classList.add(ok?'ok':'no');el.querySelectorAll('.opt')[q[2]].classList.add('ok');
+el.querySelector('.fb').innerHTML=(ok?'✅ To‘g‘ri! ':'❌ Xato. ')+q[3]+'<br><button class="pr" id="qn">'+(i+1<qs.length?'Keyingi →':'Natija')+'</button>';$('#qn').onclick=()=>{i++;sh()}})})()}
+const Q=[
+['Molekulalar orasida qanday kuchlar mavjud?',['Faqat tortishish','Faqat itarilish','Tortishish va itarilish','Hech qanday'],2,'Ikkala kuch bir vaqtda ta’sir qiladi.'],
+['Molekulalar juda yaqinlashganda qaysi kuch ustun?',['Tortishish','Itarilish','Ikkalasi teng','Ta’sir yo‘q'],1,'r < r₀ da itarilish ustun.'],
+['Masofa molekula o‘lchamidan ancha katta bo‘lsa, ta’sir...',['Juda katta','Deyarli yo‘q','Faqat itarilish','Cheksiz'],1,'Ta’sir masofa ortishi bilan tez kamayadi.'],
+['Bir xil modda molekulalarining tortishishi qanday ataladi?',['Adgeziya','Kogeziya','Diffuziya','Konveksiya'],1,'Kogeziya — bir xil modda.'],
+['Yelim bilan ikki jismning yopishishi qaysi hodisaga misol?',['Kogeziya','Adgeziya','Bug‘lanish','Erish'],1,'Adgeziya — turli modda molekulalari tortishishi.'],
+['Suv shishani ho‘llaydi, chunki...',['suv–suv tortishishi kuchli','suv–shisha tortishishi suv–suv dan kuchli','suv hajmi katta','shisha issiq'],1,'Adgeziya kogeziyadan kuchli.'],
+['Ingichka naychada suyuqlik ko‘tarilishi nima deyiladi?',['Diffuziya','Kapillyarlik','Inertsiya','Bosim'],1,'Bu kapillyar hodisa.'],
+['Naycha ingichkalashsa suv ko‘tarilish balandligi...',['Kamayadi','Ortadi','O‘zgarmaydi','Nolga teng'],1,'h ∼ 1/d.'],
+['Suv tomchisi sharsimon bo‘lishiga sabab nima?',['Sirt tarangligi','Magnit kuch','Elektr toki','Ishqalanish'],0,'Sirt tarangligi sirtni qisqartirishga intiladi.'],
+['Kuch olingach shaklini tiklaydigan deformatsiya?',['Plastik','Elastik','Kapillyar','Diffuz'],1,'Masalan, prujina.']];
+const TF=[['Molekulalar orasida faqat tortishish kuchi bor.',['To‘g‘ri','Noto‘g‘ri'],1,'Itarilish kuchi ham bor.'],['Qattiq jismni cho‘zish qiyin, chunki molekulalar tortishadi.',['To‘g‘ri','Noto‘g‘ri'],0,'Tortishish kuchi qarshilik qiladi.'],['Plastilin elastik deformatsiyaga misol.',['To‘g‘ri','Noto‘g‘ri'],1,'Plastilin plastik deformatsiyalanadi.'],['Simob shishani ho‘llamaydi.',['To‘g‘ri','Noto‘g‘ri'],0,'Simobning menisk qavariq.'],['Menisk — suyuqlik sirtining egriligi.',['To‘g‘ri','Noto‘g‘ri'],0,'Idish devori yonida kuzatiladi.'],['Kogeziya — turli modda molekulalarining tortishishi.',['To‘g‘ri','Noto‘g‘ri'],1,'Bu adgeziya.'],['Toza qo‘rg‘oshin silindrlar bosilganda yopishadi.',['To‘g‘ri','Noto‘g‘ri'],0,'Kogeziya tufayli.'],['Ingichka naychada suv pastroq ko‘tariladi.',['To‘g‘ri','Noto‘g‘ri'],1,'Ingichka naychada balandroq.']];
+const FB=[['Bir xil modda molekulalarining tortishishi ___ deyiladi.',['adgeziya','kogeziya','diffuziya'],1,'Kogeziya.'],['Turli modda molekulalari tortishishi ___ deyiladi.',['adgeziya','kogeziya','kapillyarlik'],0,'Adgeziya.'],['Ingichka naychalarda suyuqlik ko‘tarilishi ___.',['bug‘lanish','kapillyarlik','erish'],1,'Kapillyarlik.'],['Molekulalar yaqinlashganda ___ kuchi ustun bo‘ladi.',['tortishish','itarilish','og‘irlik'],1,'Itarilish.'],['Suv sirtidagi yupqa parda ___ tufayli hosil bo‘ladi.',['sirt tarangligi','magnit kuch','inertsiya'],0,'Sirt tarangligi.']];
+const VK=[['Ho‘llamaydigan sirtda suv tomchisi qanday shakl oladi?',['Yassi','Sharsimon','Kvadrat'],1,'Kogeziya ustun, tomchi yumaloq.'],['Qalam izi qog‘ozda qolishiga sabab?',['Adgeziya','Kogeziya','Diffuziya'],0,'Grafit va qog‘oz molekulalari tortishadi.'],['Sochiq suvni shimishi — bu...',['kapillyarlik','kristallanish','sovish'],0,'Ingichka kanallardan suv ko‘tariladi.'],['Qaysi holatda molekulalar ta’siri eng kuchli?',['Gaz','Suyuqlik','Qattiq jism'],2,'Molekulalar eng yaqin.'],['Payvandlash nimaga asoslangan?',['Molekulalar tortishishi','Magnit','Ishqalanish yo‘qligi'],0,'Eritilgan metall zarralari tortishadi.']];
+const sh=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const OG=[
+{n:'Mos keltirish',r(el){const P=[['Kogeziya','Bir xil modda molekulalari tortishishi'],['Adgeziya','Turli modda molekulalari tortishishi'],['Kapillyarlik','Ingichka naychada suyuqlik ko‘tarilishi'],['Sirt tarangligi','Suyuqlik sirtini taranglashtiruvchi kuch'],['Menisk','Suyuqlik sirtining egriligi']];let sel=null,done=0;
+el.innerHTML='<p>Avval chapdan, keyin o‘ngdan mos javobni tanlang.</p><div class="grid2"><div id="ml"></div><div id="mr"></div></div><div class="fb"></div>';
+sh(P.map((p,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=P[i][0];b.onclick=()=>{if(b.disabled)return;$$('#ml .opt').forEach(x=>x.style.outline='');b.style.outline='3px solid #0b78d1';sel=[i,b]};$('#ml').appendChild(b)});
+sh(P.map((p,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=P[i][1];b.onclick=()=>{if(!sel||b.disabled)return;if(sel[0]==i){b.classList.add('ok');sel[1].classList.add('ok');b.disabled=sel[1].disabled=true;sel[1].style.outline='';add(3);if(++done==P.length){el.querySelector('.fb').textContent='🎉 Barchasi to‘g‘ri!';add(5)}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}sel=null};$('#mr').appendChild(b)})}},
+{n:'To‘g‘ri/Noto‘g‘ri',r:el=>quiz(el,TF,2)},
+{n:'Bo‘sh joy',r:el=>quiz(el,FB,3)},
+{n:'Tartiblash',r(el){const O=['r < r₀ (juda yaqin)','r = r₀ (muvozanat)','r > r₀ (biroz uzoq)','r ≫ r₀ (juda uzoq)'];let n=0;
+el.innerHTML='<p>Molekulalar orasidagi masofa <b>kichikdan kattagacha</b> bo‘lishi uchun bosing:</p><div id="so2"></div><div class="fb"></div>';
+sh(O).forEach(t=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(b.disabled)return;if(t==O[n]){n++;b.classList.add('ok');b.disabled=true;b.textContent=n+'. '+t;add(2);if(n==O.length){el.querySelector('.fb').innerHTML='🎉 To‘g‘ri tartib! <button class="pr" id="rr">↺</button>';add(5);$('#rr').onclick=()=>OG[3].r(el)}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}};$('#so2').appendChild(b)})}},
+{n:'Xotira juftlari',r(el){const P=[['Kogeziya','Bir xil modda'],['Adgeziya','Turli modda'],['Menisk','Suyuqlik egriligi'],['Kapillyar','Ingichka naycha'],['Elastik','Shakl tiklanadi'],['Plastik','Shakl qoladi']];const C2=sh(P.flatMap((p,i)=>[[i,p[0]],[i,p[1]]]));let a=null,mv2=0,f=0,lock=0;
+el.innerHTML='<p>Juftlarni toping. Urinishlar: <b id="mm">0</b></p><div class="mem"></div><div class="fb"></div>';
+C2.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent='❓';b.onclick=()=>{if(lock||b.disabled||a&&a[1]==b)return;b.textContent=c[1];if(!a){a=[c,b];return}mv2++;$('#mm').textContent=mv2;
+if(a[0][0]==c[0]){a[1].classList.add('ok');b.classList.add('ok');a[1].disabled=b.disabled=true;a=null;add(3);if(++f==P.length){el.querySelector('.fb').textContent='🎉 Tabriklaymiz! '+mv2+' urinishda.';add(5)}}
+else{lock=1;const x=a[1];a=null;setTimeout(()=>{x.textContent=b.textContent='❓';lock=0},800)}};el.querySelector('.mem').appendChild(b)})}},
+{n:'Viktorina',r:el=>quiz(el,VK,3)}];
+function setGame(i){$('#gb').innerHTML='';OG.forEach((x,k)=>{const b=document.createElement('button');b.textContent=(k+1)+'. '+x.n;b.className=k==i?'pr':'';b.onclick=()=>setGame(k);$('#gb').appendChild(b)});OG[i].r($('#gq'))}
+
+/* ---------- Asosiy sikl ---------- */
+let last=performance.now(),testInit=0,gInit=0,sInit=0;
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+try{if(cur=='sim'){if(!sInit){sInit=1;setSim(0)}g.clearRect(0,0,W,H);$('#so').textContent=SIMS[sc].draw(SIMS[sc].v)}
+else if(cur=='vr')drawVR(dt);
+else if(cur=='video'){if(vid.play){vid.t+=dt;if(vid.t>=VD){vid.t=VD;vid.play=false;$('#pl').textContent='▶ Qayta';add(3)}}drawVid()}
+else if(cur=='test'&&!testInit){testInit=1;quiz($('#tq'),Q,5)}
+else if(cur=='games'&&!gInit){gInit=1;setGame(0)}}catch(e){console.error(e)}
+requestAnimationFrame(loop)}
+ui();go(0);show('slides');requestAnimationFrame(loop);
+</script>
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

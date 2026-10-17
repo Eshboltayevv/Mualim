@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Modda va jism. Moddaning tuzilishi — 7-sinf Fizika</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:linear-gradient(160deg,#e3f3ff 0%,#cfe8fb 50%,#d9f5f8 100%);--card:rgba(255,255,255,.74);--cardb:rgba(255,255,255,.92);--txt:#10283f;--mut:#4d6a85;--pri:#0b78d1;--pri2:#19b5c9;--ok:#1b9e55;--bad:#d93c3c;--warn:#f0a020;--soft:rgba(11,120,209,.10);--line:rgba(11,120,209,.25);--shadow:0 10px 30px rgba(11,80,140,.15);--cv:#f4fbff}
+[data-theme=dark]{--bg:linear-gradient(160deg,#07131f 0%,#0c2236 55%,#0a2a33 100%);--card:rgba(22,42,64,.74);--cardb:rgba(30,56,84,.92);--txt:#e6f1fb;--mut:#9ab4cc;--pri:#3aa0f0;--soft:rgba(58,160,240,.15);--line:rgba(120,190,255,.28);--shadow:0 10px 30px rgba(0,0,0,.4);--cv:#0d1e2f}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg) fixed;color:var(--txt);min-height:100vh;line-height:1.55;font-size:16px}
+.app{max-width:1100px;margin:0 auto;padding:12px 12px 48px}
+.card{background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+h1,h2,h3{margin:0 0 8px;line-height:1.25}
+h1{font-size:clamp(1.2rem,4.4vw,1.9rem)}
+h2{font-size:clamp(1.15rem,3.8vw,1.6rem)}
+h3{font-size:1.1rem}
+h1,h2{background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.top p{margin:0;color:var(--mut);font-size:.9rem}
+.tools{display:flex;gap:8px}
+.btn{font:inherit;min-height:44px;min-width:44px;padding:0 16px;border:0;border-radius:14px;background:linear-gradient(120deg,#0b78d1,#19b5c9);color:#fff;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(11,120,209,.28);transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(1.07)}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.btn.ghost{background:var(--soft);color:var(--txt);box-shadow:none;border:1px solid var(--line)}
+.btn.ok{background:var(--ok)}
+.btn.bad{background:var(--bad)}
+.stats{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:600;min-height:36px}
+.stars{color:#f0a020;letter-spacing:2px}
+.bar{height:10px;background:var(--soft);border-radius:99px;overflow:hidden;flex:1;min-width:80px;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;width:0;background:linear-gradient(120deg,#0b78d1,#19b5c9);border-radius:99px;transition:width .4s}
+.pg{display:flex;align-items:center;gap:8px;flex:1;min-width:150px}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:8px;margin:0 0 12px;position:sticky;top:6px;z-index:30;background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{flex:1 0 auto;min-height:48px;padding:0 16px;border-radius:14px;border:1px solid transparent;background:transparent;color:var(--txt);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+.nav button[aria-selected=true]{background:linear-gradient(120deg,#0b78d1,#19b5c9);color:#fff;box-shadow:0 4px 14px rgba(11,120,209,.3)}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.row .btn{flex:1 1 130px}
+.hint{color:var(--mut);font-size:.92rem;margin:6px 0}
+.slgrid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:820px){.slgrid{grid-template-columns:1.1fr 1fr;align-items:center}}
+.slbody p{margin:0 0 10px}
+.slbody ul{margin:0 0 10px;padding-left:20px}
+.slbody li{margin-bottom:4px}
+.slfig{background:var(--cardb);border:1px solid var(--line);border-radius:16px;padding:8px}
+.fm{display:inline-block;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:2px 10px;font-weight:700;font-family:ui-monospace,Menlo,Consolas,monospace}
+.slhead{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.dots{display:flex;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.dot{width:22px;height:44px;border:0;background:transparent;cursor:pointer;position:relative;padding:0}
+.dot::before{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;background:var(--line);transform:translate(-50%,-50%);transition:.2s}
+.dot.on::before{background:var(--pri);transform:translate(-50%,-50%) scale(1.5)}
+.dot.seen::before{background:var(--pri2)}
+.slarea.anim{animation:fade .35s}
+@keyframes fade{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
+canvas.cv{width:100%;height:clamp(260px,56vw,400px);display:block;border-radius:16px;background:var(--cv);border:1px solid var(--line)}
+.simtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.simtabs button{flex:1 1 140px;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--txt);font:inherit;font-weight:600;cursor:pointer}
+.simtabs button.on{background:linear-gradient(120deg,#0b78d1,#19b5c9);color:#fff;border-color:transparent}
+.ctl{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0}
+.rng{display:block;flex:1 1 220px;font-weight:600}
+.rng input[type=range]{width:100%;height:36px;accent-color:var(--pri);margin:4px 0 0}
+.chk{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-weight:600;cursor:pointer}
+.chk input{width:22px;height:22px;accent-color:var(--pri)}
+.out{display:flex;flex-wrap:wrap;gap:10px}
+.out>div{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:8px 14px}
+.vrstage canvas.cv{height:clamp(300px,64vw,500px);touch-action:none;cursor:grab}
+.vrstage.fs{position:fixed;inset:0;z-index:999;background:var(--bg);padding:8px;border-radius:0;display:flex;flex-direction:column;margin:0;overflow:hidden}
+.vrstage.fs canvas.cv{height:auto;flex:1;min-height:0;border-radius:12px}
+.vrstage.fs .hud{max-height:42vh;overflow:auto;background:var(--card);border-radius:14px;padding:10px;margin-top:8px}
+.vrstage:fullscreen{background:var(--bg)}
+body.nofs{overflow:hidden}
+.sub{background:var(--cardb);border:1px solid var(--line);border-left:5px solid var(--pri);border-radius:12px;padding:12px 14px;margin:10px 0;min-height:70px;font-size:1.02rem}
+.notes{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.notes button{width:100%;text-align:left;min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--txt);font:inherit;cursor:pointer;padding:6px 12px}
+.notes button.on{border-color:var(--pri);background:rgba(11,120,209,.2);font-weight:700}
+.qhead{display:flex;justify-content:space-between;font-weight:700;margin-bottom:8px}
+.qtext{font-size:1.15rem;margin:14px 0 8px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--txt);background:var(--cardb);border:2px solid var(--line);border-radius:14px;min-height:48px;padding:10px 14px;margin:8px 0;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt.sel{border-color:var(--pri);background:rgba(11,120,209,.18)}
+.opt.ok{border-color:var(--ok);background:rgba(27,158,85,.18)}
+.opt.bad{border-color:var(--bad);background:rgba(217,60,60,.16)}
+.opt:disabled{cursor:default;color:var(--txt);opacity:1}
+.fb{border-radius:14px;padding:10px 14px;margin-top:10px;font-weight:600}
+.fb.ok{background:rgba(27,158,85,.15);border:1px solid var(--ok)}
+.fb.bad{background:rgba(217,60,60,.13);border:1px solid var(--bad)}
+.big{font-size:2.4rem;font-weight:800;text-align:center;margin:6px 0}
+.center{text-align:center}
+.gl{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.gcard{text-align:left;font:inherit;color:var(--txt);background:var(--cardb);border:1px solid var(--line);border-radius:18px;padding:16px;cursor:pointer;min-height:110px;box-shadow:var(--shadow)}
+.gcard b{display:block;font-size:1.05rem;margin:4px 0}
+.gcard .ic{font-size:2rem}
+.mt{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mt .col{display:flex;flex-direction:column;gap:8px}
+.mt .opt{margin:0;font-size:.92rem;padding:8px 10px}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:560px){.mem{grid-template-columns:repeat(2,1fr)}}
+.mc{min-height:84px;border-radius:14px;border:2px solid var(--line);background:linear-gradient(120deg,#0b78d1,#19b5c9);color:#fff;font:inherit;font-weight:700;font-size:.88rem;padding:6px;cursor:pointer}
+.mc.open{background:var(--cardb);color:var(--txt);border-color:var(--pri)}
+.mc.done{background:rgba(27,158,85,.2);color:var(--txt);border-color:var(--ok)}
+.fl{margin:10px 0;padding:10px 12px;background:var(--cardb);border:2px solid var(--line);border-radius:14px}
+.fl.ok{border-color:var(--ok)}
+.fl.bad{border-color:var(--bad)}
+select{font:inherit;font-size:16px;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--txt);padding:0 8px;max-width:100%}
+.srt{display:flex;gap:8px;align-items:center;margin:8px 0}
+.srt .opt{margin:0;flex:1}
+.srt .btn{flex:0 0 44px;padding:0}
+.tf{font-size:1.15rem;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;background:var(--cardb);border-radius:16px;border:1px solid var(--line);padding:14px;margin:10px 0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:rgba(16,40,63,.94);color:#fff;border-radius:14px;padding:10px 18px;opacity:0;pointer-events:none;transition:.3s;z-index:2000;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.set label{display:block;font-weight:600;margin:10px 0 4px}
+.set input[type=range]{width:100%;height:36px;accent-color:var(--pri)}
+table.rs{width:100%;border-collapse:collapse;margin-top:10px}
+table.rs td{padding:6px 8px;border-bottom:1px solid var(--line)}
+table.rs td:last-child{text-align:right;font-weight:700}
+table.cmp{width:100%;border-collapse:collapse;font-size:.92rem}
+table.cmp th,table.cmp td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+table.cmp th{background:var(--soft)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="card top">
+    <div>
+      <h1>Modda va jism. Moddaning tuzilishi</h1>
+      <p>Fizika · 7-sinf · interaktiv elektron dars</p>
+    </div>
+    <div class="tools">
+      <button id="themeBtn" class="btn ghost" aria-label="Yorug' / tungi rejim">🌙</button>
+      <button id="setBtn" class="btn ghost" aria-label="Sozlamalar" aria-expanded="false">⚙️</button>
+    </div>
+  </header>
+
+  <div id="setPanel" class="card set" hidden>
+    <h3>Sozlamalar va natijalar</h3>
+    <label for="langSel">Ovozli o'qish tili</label>
+    <select id="langSel">
+      <option value="uz-UZ">O'zbekcha (uz-UZ) — ovoz bo'lmasa turk ovozi</option>
+      <option value="tr-TR">Turk ovozi (tr-TR) — o'zbekcha matn uchun mos</option>
+      <option value="ru-RU">Русский (ru-RU)</option>
+      <option value="en-US">English (en-US)</option>
+    </select>
+    <label for="voiceSel">Ovoz</label>
+    <select id="voiceSel"><option value="">Avto (tilga qarab tanlanadi)</option></select>
+    <label for="rateSel">O'qish tezligi: <b id="rateTxt">0.9</b>×</label>
+    <input id="rateSel" type="range" min="0.5" max="1.5" step="0.1" value="0.9">
+    <div class="row">
+      <button id="speakTest" class="btn ghost">🔊 Sinab ko'rish</button>
+      <button id="resetBtn" class="btn bad">♻ Natijalarni tozalash</button>
+    </div>
+    <p class="hint">Agar o'zbekcha ovoz o'rnatilmagan bo'lsa, dars turk yoki rus ovozida o'qiladi. «Ovoz» ro'yxatidan o'zingizga mos ovozni tanlashingiz mumkin.</p>
+    <table class="rs" id="rsTable"></table>
+  </div>
+
+  <div class="card stats">
+    <span class="chip">⭐ Ball: <b id="scTxt">0</b>/<span id="scMax">0</span></span>
+    <span class="chip stars" id="starTxt" aria-label="Yulduzcha reytingi">☆☆☆☆☆</span>
+    <span class="chip">⏱ <b id="tmTxt">00:00</b></span>
+    <div class="pg"><div class="bar"><i id="pgBar"></i></div><b id="pgTxt">0%</b></div>
+  </div>
+
+  <nav class="nav" id="nav" role="tablist" aria-label="Bo'limlar">
+    <button role="tab" data-sec="slides" aria-selected="true">📚 Slaydlar</button>
+    <button role="tab" data-sec="sim" aria-selected="false">🧪 Simulyatsiya</button>
+    <button role="tab" data-sec="vr" aria-selected="false">🥽 VR-laboratoriya</button>
+    <button role="tab" data-sec="video" aria-selected="false">🎬 Video</button>
+    <button role="tab" data-sec="test" aria-selected="false">📝 Test</button>
+    <button role="tab" data-sec="games" aria-selected="false">🎮 O'yinlar</button>
+  </nav>
+
+  <main>
+    <!-- SLIDES -->
+    <section id="sec-slides" class="card">
+      <div class="slhead"><span id="slNum" class="chip"></span><div class="bar"><i id="slBar"></i></div></div>
+      <div id="slArea" class="slarea">
+        <h2 id="slTitle"></h2>
+        <div class="slgrid"><div id="slBody" class="slbody"></div><div id="slFig" class="slfig"></div></div>
+      </div>
+      <div id="dots" class="dots" role="tablist" aria-label="Slaydlar"></div>
+      <div class="row">
+        <button id="slPrev" class="btn ghost">← Orqaga</button>
+        <button id="slSpeak" class="btn ghost">🔊 O'qish</button>
+        <button id="slNext" class="btn">Oldinga →</button>
+      </div>
+      <p class="hint">Klaviatura: ← → · Telefonda: barmoq bilan chapga/o'ngga suring.</p>
+    </section>
+
+    <!-- SIM -->
+    <section id="sec-sim" class="card" hidden>
+      <h2>Simulyatsiyalar</h2>
+      <div class="simtabs" id="simTabs">
+        <button class="on">1. Agregat holat</button>
+        <button>2. Diffuziya</button>
+        <button>3. Broun harakati</button>
+        <button>4. Moyli parda</button>
+      </div>
+
+      <div class="simbox" data-sim="0">
+        <h3>Agregat holatlar va harorat</h3>
+        <p class="hint">Haroratni o'zgartiring: zarralarning tartibi va harakati qanday o'zgaradi?</p>
+        <canvas class="cv"></canvas>
+        <div class="ctl"><label class="rng">Harorat (shartli): <b data-o="tv">15</b><input type="range" min="0" max="100" value="15" data-k="T"></label></div>
+        <div class="out"><div>Holat: <b data-o="state">—</b></div><div>O'rtacha tezlik: <b data-o="speed">0</b></div></div>
+        <p class="hint" data-o="info"></p>
+      </div>
+
+      <div class="simbox" data-sim="1" hidden>
+        <h3>Diffuziya</h3>
+        <p class="hint">To'siqni olib tashlang va ikki xil modda molekulalari qanday aralashishini kuzating.</p>
+        <canvas class="cv"></canvas>
+        <div class="ctl">
+          <label class="rng">Harorat: <b data-o="tv">5</b><input type="range" min="1" max="10" value="5" data-k="temp"></label>
+        </div>
+        <div class="row">
+          <button class="btn" data-k="wall">To'siqni olib tashlash</button>
+          <button class="btn ghost" data-k="reset">↺ Qayta boshlash</button>
+        </div>
+        <div class="out" style="margin-top:10px"><div>Aralashish: <b data-o="mix">0%</b></div><div>Vaqt: <b data-o="time">0 s</b></div><div>To'siq: <b data-o="ws">bor</b></div></div>
+      </div>
+
+      <div class="simbox" data-sim="2" hidden>
+        <h3>Broun harakati</h3>
+        <p class="hint">Katta zarra ko'rinmas molekulalarning zarbidan tartibsiz harakatlanadi.</p>
+        <canvas class="cv"></canvas>
+        <div class="ctl">
+          <label class="rng">Harorat: <b data-o="tv">5</b><input type="range" min="1" max="10" value="5" data-k="temp"></label>
+          <label class="rng">Molekulalar soni: <b data-o="nv">120</b><input type="range" min="40" max="300" step="10" value="120" data-k="n"></label>
+        </div>
+        <div class="row">
+          <label class="chk"><input type="checkbox" data-k="show" checked> Molekulalarni ko'rsatish</label>
+          <button class="btn ghost" data-k="clr">Izni tozalash</button>
+        </div>
+        <div class="out" style="margin-top:10px"><div>Siljish: <b data-o="disp">0</b></div><div>Bosib o'tilgan yo'l: <b data-o="path">0</b></div></div>
+      </div>
+
+      <div class="simbox" data-sim="3" hidden>
+        <h3>Moyli parda tajribasi: molekula o'lchamini baholash</h3>
+        <p class="hint">Moy tomchisi suv yuzasida bir molekula qalinligidagi pardaga yoyiladi: <span class="fm">d = V / S</span></p>
+        <canvas class="cv"></canvas>
+        <div class="ctl">
+          <label class="rng">Tomchi hajmi V: <b data-o="vv">1.0</b> mm³<input type="range" min="0.5" max="5" step="0.1" value="1" data-k="V"></label>
+          <label class="rng">Parda yuzi S: <b data-o="sv">1.0</b> m²<input type="range" min="0.5" max="5" step="0.1" value="1" data-k="S"></label>
+        </div>
+        <div class="out"><div>d = V / S = <b data-o="d">1.00 nm</b></div></div>
+        <p class="hint" data-o="cmp"></p>
+      </div>
+    </section>
+
+    <!-- VR -->
+    <section id="sec-vr" class="card" hidden>
+      <h2>VR-laboratoriya: molekulalar olami</h2>
+      <p class="hint">Sahnani barmoq/sichqoncha bilan aylantiring, g'ildirak yoki ikki barmoq bilan yaqinlashtiring, molekulaga bosib ma'lumot oling.</p>
+      <div class="vrstage" id="vrStage">
+        <canvas class="cv" id="vrCv"></canvas>
+        <div class="hud">
+          <div class="row" style="margin-top:8px">
+            <button class="btn ghost" data-st="15">🧊 Qattiq</button>
+            <button class="btn ghost" data-st="50">💧 Suyuq</button>
+            <button class="btn ghost" data-st="85">☁ Gaz</button>
+            <button class="btn ghost" id="vrCool">❄ Sovitish</button>
+            <button class="btn ghost" id="vrHeat">🔥 Qizdirish</button>
+          </div>
+          <div class="ctl"><label class="rng">Harorat: <b id="vrTv">15</b><input type="range" id="vrT" min="0" max="100" value="15"></label></div>
+          <div class="row" style="margin-top:0">
+            <label class="chk"><input type="checkbox" id="vrAuto" checked> Avto-aylanish</label>
+            <label class="chk"><input type="checkbox" id="vrAtom"> Atomlar rejimi</label>
+            <label class="chk"><input type="checkbox" id="vrStereo"> VR ko'zoynak (stereo)</label>
+          </div>
+          <div class="row">
+            <button class="btn ghost" id="vrReset">⟲ Ko'rinishni tiklash</button>
+            <button class="btn" id="vrFs">⛶ To'liq ekran</button>
+          </div>
+          <div class="out" style="margin-top:10px"><div>Holat: <b id="vrState">Qattiq jism</b></div></div>
+          <p class="hint" id="vrInfo">Molekulani tanlash uchun unga bosing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO -->
+    <section id="sec-video" class="card" hidden>
+      <h2>Video-dars: moddaning tuzilishi</h2>
+      <canvas class="cv" id="vidCv"></canvas>
+      <div class="ctl" style="margin-bottom:0">
+        <label class="rng" style="flex-basis:100%">Vaqt: <b id="vidTime">0:00 / 0:58</b>
+          <input type="range" id="vidSeek" min="0" max="1000" value="0"></label>
+      </div>
+      <div class="row">
+        <button class="btn" id="vidPlay">▶ Boshlash</button>
+        <button class="btn ghost" id="vidRestart">↺ Qaytadan</button>
+        <select id="vidRate" aria-label="Tezlik"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select>
+        <button class="btn ghost" id="vidSpeak">🔊 Subtitrni o'qish</button>
+      </div>
+      <label class="chk"><input type="checkbox" id="vidAuto"> Sahna almashganda avto-o'qish</label>
+      <div class="sub" id="vidSub" aria-live="polite"></div>
+      <h3>Izohlar (sahnalar)</h3>
+      <ul class="notes" id="vidNotes"></ul>
+    </section>
+
+    <!-- TEST -->
+    <section id="sec-test" class="card" hidden>
+      <h2>Bilimni tekshirish testi</h2>
+      <div id="testBox"></div>
+    </section>
+
+    <!-- GAMES -->
+    <section id="sec-games" class="card" hidden>
+      <h2>Ta'limiy o'yinlar</h2>
+      <div id="gameList" class="gl"></div>
+      <div id="gameBox" hidden></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+'use strict';
+/* ===================== Yordamchilar ===================== */
+const $=(s,r)=>(r||document).querySelector(s);
+const $$=(s,r)=>Array.from((r||document).querySelectorAll(s));
+const cl=(v,a,b)=>Math.max(a==null?0:a,Math.min(b==null?1:b,v));
+const rand=(a,b)=>a+Math.random()*(b-a);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const hash=n=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+const mkr=seed=>{let s=seed%2147483647;if(s<=0)s+=2147483646;return()=>{s=s*16807%2147483647;return(s-1)/2147483646;};};
+const fmtT=s=>{s=Math.floor(s);const m=Math.floor(s/60),r=s%60;return(m<10?'0':'')+m+':'+(r<10?'0':'')+r;};
+
+const KEY='modda_jism_7sinf_v1';
+let st={sc:{},time:0,theme:'light',rate:0.9,lang:'uz-UZ',voice:'',sec:'slides',slide:0};
+try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&typeof j==='object'){st=Object.assign(st,j);}}catch(e){}
+if(!st.sc||typeof st.sc!=='object')st.sc={};
+st.slide=Math.max(0,Math.floor(Number(st.slide)||0));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+
+let toastT=0;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800);}
+
+let COL={};
+function readCol(){const cs=getComputedStyle(document.documentElement);const g=(n,d)=>((cs.getPropertyValue(n)||'')+'').trim()||d;
+  COL={txt:g('--txt','#10283f'),mut:g('--mut','#4d6a85'),pri:g('--pri','#0b78d1'),pri2:g('--pri2','#19b5c9'),ok:g('--ok','#1b9e55'),bad:g('--bad','#d93c3c'),warn:g('--warn','#f0a020'),cv:g('--cv','#f4fbff'),line:g('--line','rgba(11,120,209,.25)')};}
+readCol();
+
+function Cv(cv){
+  const o={cv:cv,ctx:cv.getContext('2d'),W:300,H:200,ok:false,onfit:null};
+  o.fit=function(){
+    const w=cv.clientWidth,h=cv.clientHeight;
+    if(!w||!h)return false;
+    if(o.ok&&Math.abs(w-o.W)<2&&Math.abs(h-o.H)<2)return false;
+    const dpr=Math.min(2,window.devicePixelRatio||1);
+    cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    o.ctx.setTransform(dpr,0,0,dpr,0,0);
+    o.W=w;o.H=h;o.ok=true;
+    if(o.onfit)o.onfit();
+    return true;
+  };
+  return o;
+}
+function dot(ctx,x,y,r,col){ctx.beginPath();ctx.arc(x,y,Math.max(0.1,r),0,6.2832);ctx.fillStyle=col;ctx.fill();}
+function ctext(ctx,s,x,y,size,col,al){ctx.font=Math.round(size)+'px system-ui,sans-serif';ctx.fillStyle=col;ctx.textAlign=al||'left';ctx.textBaseline='middle';ctx.fillText(s,x,y);}
+function waterMol(ctx,x,y,s,rot){
+  const a1=rot+0.91,a2=rot-0.91,d=s*1.35;
+  [[a1],[a2]].forEach(a=>{dot(ctx,x+Math.cos(a[0])*d,y+Math.sin(a[0])*d,s*0.62,'#eef6ff');ctx.strokeStyle='#7fa6c9';ctx.lineWidth=1;ctx.stroke();});
+  dot(ctx,x,y,s,'#d93c3c');
+}
+
+/* ===================== Ovozli o'qish ===================== */
+let voiceWarned=false,VOICES=[],spkId=0;
+function plain(h){const d=document.createElement('div');d.innerHTML=h;return(d.textContent||'').replace(/\s+/g,' ').trim();}
+const SUP={'⁰':0,'¹':1,'²':2,'³':3,'⁴':4,'⁵':5,'⁶':6,'⁷':7,'⁸':8,'⁹':9};
+function spokenText(t){
+  return String(t)
+    .replace(/10⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g,(m,g)=>'10 ning minus '+g.split('').map(c=>SUP[c]).join('')+' darajasi')
+    .replace(/H₂O₂/g,'H ikki O ikki').replace(/H₂O/g,'H ikki O').replace(/₂/g,' ikki')
+    .replace(/mm³/g,'kub millimetr').replace(/m³/g,'kub metr').replace(/m²/g,'kvadrat metr')
+    .replace(/\bnm\b/g,'nanometr').replace(/μm/g,'mikrometr').replace(/\bml\b/g,'millilitr')
+    .replace(/·/g,' karra ').replace(/≈/g,' taxminan ').replace(/[→←▲▼✔✖★☆]/g,' ').replace(/°/g,' daraja').replace(/%/g,' foiz')
+    .replace(/\s+/g,' ').trim();
+}
+function chunkText(t){
+  const parts=t.match(/[^.!?;:]+[.!?;:]?\s*/g)||[t],out=[];let cur='';
+  parts.forEach(p=>{if((cur+p).length>170&&cur){out.push(cur.trim());cur=p;}else cur+=p;});
+  if(cur.trim())out.push(cur.trim());
+  return out.length?out:[t];
+}
+function fillVoiceSel(){
+  const el=$('#voiceSel');if(!el)return;
+  const vs=VOICES.slice().sort((a,b)=>(a.lang||'').localeCompare(b.lang||'')||a.name.localeCompare(b.name));
+  el.innerHTML='<option value="">Avto (tilga qarab tanlanadi)</option>'+vs.map(v=>'<option value="'+esc(v.name)+'">'+esc(v.name)+' ('+esc(v.lang||'?')+')</option>').join('');
+  el.value=st.voice||'';
+  if(el.value!==(st.voice||''))el.value='';
+}
+function loadVoices(){
+  try{VOICES=(window.speechSynthesis.getVoices()||[]).slice();}catch(e){VOICES=[];}
+  fillVoiceSel();
+}
+const VFALL={uz:['tr','ru','kk','az','en'],ru:['uk','en'],tr:['az','en'],en:[]};
+function pickVoice(lang){
+  const l=lang.toLowerCase().replace(/_/g,'-'),pre=l.slice(0,2);
+  const norm=x=>(x.lang||'').toLowerCase().replace(/_/g,'-');
+  if(st.voice){const m=VOICES.find(v=>v.name===st.voice);if(m)return{v:m,exact:true};}
+  let v=VOICES.find(x=>norm(x)===l)||VOICES.find(x=>norm(x).indexOf(pre)===0);
+  if(v)return{v:v,exact:true};
+  const fb=VFALL[pre]||['en'];
+  for(let i=0;i<fb.length;i++){v=VOICES.find(x=>norm(x).indexOf(fb[i])===0);if(v)return{v:v,exact:false};}
+  return{v:VOICES[0]||null,exact:false};
+}
+function speak(txt){
+  const ss=window.speechSynthesis;
+  if(!ss||typeof SpeechSynthesisUtterance==='undefined'){toast("Brauzer ovozli o'qishni qo'llamaydi");return;}
+  if(!VOICES.length)loadVoices();
+  const id=++spkId;
+  try{ss.cancel();}catch(e){}
+  const pv=pickVoice(st.lang);
+  if(pv.v&&!pv.exact&&!voiceWarned){voiceWarned=true;toast('"'+st.lang+'" ovozi topilmadi — "'+pv.v.name+'" ovozida o\'qiladi');}
+  const parts=chunkText(spokenText(txt));let started=false;
+  setTimeout(()=>{
+    if(id!==spkId)return;
+    try{
+      parts.forEach(p=>{
+        const u=new SpeechSynthesisUtterance(p);u.rate=st.rate;u.pitch=1;u.volume=1;
+        if(pv.v){u.voice=pv.v;u.lang=pv.v.lang||st.lang;}else u.lang=st.lang;
+        u.onstart=()=>{started=true;};
+        u.onerror=e=>{if(id===spkId&&e&&e.error&&e.error!=='interrupted'&&e.error!=='canceled')toast('Ovoz xatosi: '+e.error);};
+        ss.speak(u);
+      });
+      if(ss.resume)ss.resume();
+    }catch(e){toast("Ovozli o'qishda xatolik");}
+    setTimeout(()=>{if(id===spkId&&!started&&!ss.speaking)toast("Ovoz chiqmadi: qurilmada matn-nutq (TTS) ovozi yo'q yoki o'chirilgan. Telefon sozlamalaridan «Matn-nutq» ni yoqing va ovoz yuklab oling.");},3000);
+  },80);
+}
+function stopSpeak(){spkId++;try{if('speechSynthesis' in window)window.speechSynthesis.cancel();}catch(e){}}
+
+/* ===================== MA'LUMOTLAR: FIG (SVG chizmalar) ===================== */
+const svg=i=>`<svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" role="img" style="width:100%;height:auto;display:block">${i}</svg>`;
+const tx=(x,y,s,o)=>{o=o||{};return `<text x="${x}" y="${y}" font-size="${o.fs||13}" text-anchor="${o.a||'middle'}" fill="${o.c||'var(--txt)'}"${o.b?' font-weight="700"':''}>${s}</text>`;};
+const rc=(x,y,w,h,f,o)=>{o=o||{};return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.r==null?8:o.r}" fill="${f}" stroke="${o.s||'none'}" stroke-width="${o.sw||2}"/>`;};
+const ci=(x,y,r,f,s)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${f}"${s?` stroke="${s}" stroke-width="1.5"`:''}/>`;
+const ln=(a,b,c,d,col,w,ex)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col||'var(--mut)'}" stroke-width="${w||2}" stroke-linecap="round"${ex||''}/>`;
+const PRI='var(--pri)',P2='var(--pri2)',OKc='var(--ok)',BADc='var(--bad)',WARN='var(--warn)';
+const arrow=(x1,y1,x2,y2,col)=>{const a=Math.atan2(y2-y1,x2-x1),h=9;col=col||PRI;
+  const p=`${x2},${y2} ${(x2-h*Math.cos(a-0.45)).toFixed(1)},${(y2-h*Math.sin(a-0.45)).toFixed(1)} ${(x2-h*Math.cos(a+0.45)).toFixed(1)},${(y2-h*Math.sin(a+0.45)).toFixed(1)}`;
+  return ln(x1,y1,x2,y2,col,2.5)+`<polygon points="${p}" fill="${col}"/>`;};
+const waterSvg=(x,y,s)=>ci(x-s*1.1,y-s*0.9,s*0.55,'#eef6ff','#7fa6c9')+ci(x+s*1.1,y-s*0.9,s*0.55,'#eef6ff','#7fa6c9')+ci(x,y,s,'#d93c3c');
+
+const FIG={
+f1:()=>svg(
+  tx(200,24,`Jism — nima? Modda — nimadan?`,{b:1,fs:15,c:PRI})+
+  `<path d="M45 70 L105 70 L98 175 Q97 182 90 182 L60 182 Q53 182 52 175 Z" fill="rgba(25,181,201,.22)" stroke="${P2}" stroke-width="3"/>`+
+  `<path d="M49 120 L101 120 L98 175 Q97 182 90 182 L60 182 Q53 182 52 175Z" fill="rgba(11,120,209,.35)"/>`+
+  tx(75,206,`Stakan (jism)`,{b:1})+tx(75,224,`modda: shisha`,{c:'var(--mut)',fs:12})+
+  ln(200,86,200,184,'#8d99a6',8)+rc(184,72,32,12,'#6f7b88',{r:3})+
+  tx(200,206,`Mix (jism)`,{b:1})+tx(200,224,`modda: temir`,{c:'var(--mut)',fs:12})+
+  rc(275,110,95,62,'#c28a4b',{r:6})+ln(285,125,360,125,'#a8743a',2)+ln(285,142,360,142,'#a8743a',2)+ln(285,158,360,158,'#a8743a',2)+
+  tx(322,206,`Taxta (jism)`,{b:1})+tx(322,224,`modda: yog'och`,{c:'var(--mut)',fs:12})),
+f2:()=>svg(
+  tx(200,24,`Fizik jismlar — shakli va hajmi bor`,{b:1,fs:15,c:PRI})+
+  ci(60,100,30,'#f6c026','#e09a0a')+ln(60,55,60,45,'#e09a0a',3)+ln(60,145,60,155,'#e09a0a',3)+ln(15,100,25,100,'#e09a0a',3)+ln(105,100,95,100,'#e09a0a',3)+tx(60,185,`Quyosh`,{b:1})+
+  `<g transform="rotate(-35 160 100)">`+rc(125,92,70,16,'#f0a020',{r:3})+`<polygon points="195,92 215,100 195,108" fill="#e8c9a0"/></g>`+tx(165,185,`Qalam`,{b:1})+
+  rc(235,70,55,75,'#0b78d1',{r:4})+ln(245,70,245,145,'#fff',2)+rc(262,85,20,4,'#fff',{r:2})+tx(262,185,`Kitob`,{b:1})+
+  ci(345,100,24,'#19b5c9','#0b78d1')+`<ellipse cx="345" cy="100" rx="40" ry="9" fill="none" stroke="#f0a020" stroke-width="3"/>`+tx(345,185,`Sayyora`,{b:1})+
+  tx(200,222,`Jism: stol, qalam, kitob, Quyosh, sayyora…`,{c:'var(--mut)',fs:12})),
+f3:()=>svg(
+  rc(120,14,160,40,'rgba(11,120,209,.18)',{s:PRI,r:12})+tx(200,40,`TEMIR (modda)`,{b:1,fs:15,c:PRI})+
+  arrow(160,56,70,120,PRI)+arrow(200,56,200,120,PRI)+arrow(240,56,330,120,PRI)+
+  ln(70,130,70,200,'#8d99a6',7)+rc(58,124,24,9,'#6f7b88',{r:3})+tx(70,222,`mix`,{b:1})+
+  ci(190,150,17,'none','#8d99a6')+`<circle cx="190" cy="150" r="17" fill="none" stroke="#8d99a6" stroke-width="6"/>`+rc(205,146,38,9,'#8d99a6',{r:3})+tx(205,222,`kalit`,{b:1})+
+  ln(310,200,350,140,'#8d99a6',5)+ln(350,200,310,140,'#8d99a6',5)+ci(310,208,8,'none','#8d99a6')+ci(350,208,8,'none','#8d99a6')+tx(330,226,`qaychi`,{b:1})),
+f4:()=>svg(
+  rc(150,10,100,34,'rgba(11,120,209,.2)',{s:PRI,r:10})+tx(200,32,`MATERIYA`,{b:1,c:PRI})+
+  ln(180,44,100,80,PRI,2)+ln(220,44,300,80,PRI,2)+
+  rc(50,80,100,34,'rgba(25,181,201,.22)',{s:P2,r:10})+tx(100,102,`Modda`,{b:1})+
+  rc(250,80,100,34,'rgba(240,160,32,.22)',{s:WARN,r:10})+tx(300,102,`Maydon`,{b:1})+
+  ln(100,114,100,140,PRI,2)+ln(300,114,300,140,PRI,2)+
+  rc(15,140,170,64,'var(--cardb)',{s:P2,r:10})+tx(100,162,`qattiq · suyuq · gaz`,{fs:13})+tx(100,182,`temir, suv, havo`,{c:'var(--mut)',fs:12})+tx(100,198,`(molekulalardan tuzilgan)`,{c:'var(--mut)',fs:11})+
+  rc(215,140,170,64,'var(--cardb)',{s:WARN,r:10})+tx(300,162,`gravitatsion, elektromagnit`,{fs:12})+tx(300,182,`magnit, yorug'lik, Yer`,{c:'var(--mut)',fs:12})+tx(300,198,`tortishish maydoni`,{c:'var(--mut)',fs:11})),
+f5:()=>svg(
+  tx(200,22,`Tuzilish haqidagi g'oyalar tarixi`,{b:1,fs:15,c:PRI})+
+  ln(30,120,370,120,PRI,4)+
+  ci(60,120,9,P2)+tx(60,98,`Demokrit`,{b:1,fs:12})+tx(60,84,`m.a. V asr`,{c:'var(--mut)',fs:11})+tx(60,148,`«atom»`,{fs:12})+tx(60,162,`g'oyasi`,{fs:12})+
+  ci(160,120,9,P2)+tx(160,98,`Lomonosov`,{b:1,fs:12})+tx(160,84,`XVIII asr`,{c:'var(--mut)',fs:11})+tx(160,148,`molekulyar`,{fs:12})+tx(160,162,`nazariya`,{fs:12})+
+  ci(262,120,9,P2)+tx(262,98,`R. Broun`,{b:1,fs:12})+tx(262,84,`1827-yil`,{c:'var(--mut)',fs:11})+tx(262,148,`tartibsiz`,{fs:12})+tx(262,162,`harakat`,{fs:12})+
+  ci(345,120,9,P2)+tx(345,98,`J. Perren`,{b:1,fs:12})+tx(345,84,`1908-yil`,{c:'var(--mut)',fs:11})+tx(345,148,`molekulalar`,{fs:12})+tx(345,162,`isboti`,{fs:12})+
+  tx(200,212,`G'oyadan tajribaviy isbotgacha`,{c:'var(--mut)',fs:12})),
+f6:()=>svg(
+  tx(200,26,`Suv molekulasi: H₂O`,{b:1,fs:16,c:PRI})+
+  ln(200,120,138,180,'var(--mut)',3)+ln(200,120,262,180,'var(--mut)',3)+
+  ci(138,180,26,'#eef6ff','#7fa6c9')+ci(262,180,26,'#eef6ff','#7fa6c9')+ci(200,120,40,'#d93c3c')+
+  tx(200,126,`O`,{b:1,fs:20,c:'#fff'})+tx(138,186,`H`,{b:1,fs:16,c:'#456'})+tx(262,186,`H`,{b:1,fs:16,c:'#456'})+
+  `<path d="M178 152 A28 28 0 0 0 222 152" fill="none" stroke="${WARN}" stroke-width="2.5"/>`+tx(200,214,`≈ 104,5°`,{c:WARN,b:1,fs:13})+
+  tx(60,60,`1 ta kislorod`,{fs:12,a:'start'})+tx(60,76,`+ 2 ta vodorod atomi`,{fs:12,a:'start'})),
+f7:()=>svg(
+  tx(200,24,`Atom tuzilishi`,{b:1,fs:16,c:PRI})+
+  `<ellipse cx="200" cy="130" rx="95" ry="38" fill="none" stroke="${P2}" stroke-width="1.8"/>`+
+  `<ellipse cx="200" cy="130" rx="95" ry="38" fill="none" stroke="${P2}" stroke-width="1.8" transform="rotate(60 200 130)"/>`+
+  `<ellipse cx="200" cy="130" rx="95" ry="38" fill="none" stroke="${P2}" stroke-width="1.8" transform="rotate(-60 200 130)"/>`+
+  ci(200,130,14,'#d93c3c')+ci(200,130,6,'#f4a')+
+  ci(295,130,6,PRI)+ci(152,172,6,PRI)+ci(152,88,6,PRI)+
+  tx(200,200,`Yadro (+): proton va neytronlar`,{fs:12})+tx(200,220,`Elektronlar (−) yadro atrofida harakatlanadi`,{fs:12,c:'var(--mut)'})),
+f8:()=>{
+  const X=nm=>40+(Math.log10(nm)+1)*(320/6);
+  const items=[[0.1,`Atom`,0],[0.3,`Suv mol.`,1],[100,`Virus`,0],[2000,`Bakteriya`,1],[70000,`Soch`,0]];
+  let s=tx(200,22,`O'lchamlar shkalasi (logarifmik)`,{b:1,fs:15,c:PRI})+ln(40,120,360,120,'var(--mut)',3);
+  [[0.1,`0,1 nm`],[1,`1 nm`],[10,`10 nm`],[100,`100 nm`],[1000,`1 μm`],[10000,`10 μm`],[100000,`100 μm`]].forEach(t=>{s+=ln(X(t[0]),114,X(t[0]),126,'var(--mut)',2)+tx(X(t[0]),143,t[1],{fs:9.5,c:'var(--mut)'});});
+  items.forEach(it=>{const x=X(it[0]),y=it[2]?190:70;s+=ci(x,120,6,it[2]?WARN:PRI)+ln(x,120,x,y+(it[2]?-14:6),it[2]?WARN:PRI,1.5)+tx(x,y,it[1],{b:1,fs:12});});
+  return svg(s);},
+f9:()=>svg(
+  tx(200,22,`Moyli parda tajribasi`,{b:1,fs:15,c:PRI})+
+  ci(55,95,13,WARN)+tx(55,128,`V (tomchi)`,{fs:12})+arrow(80,95,130,95,PRI)+
+  rc(130,150,250,60,'rgba(25,181,201,.35)',{r:4})+rc(140,142,230,8,WARN,{r:3})+
+  ln(385,142,385,150,BADc,3)+tx(388,134,`d`,{a:'start',b:1,c:BADc,fs:14})+
+  tx(255,175,`suv`,{c:'var(--mut)'})+tx(255,134,`parda: yuzi S`,{c:WARN,b:1,fs:12})+
+  rc(150,40,120,34,'var(--soft)',{s:PRI,r:10})+tx(210,63,`d = V / S`,{b:1,fs:16,c:PRI})),
+f10:()=>svg(
+  tx(200,22,`100 ml + 100 ml < 200 ml`,{b:1,fs:15,c:PRI})+
+  rc(30,90,70,110,'rgba(11,120,209,.3)',{s:PRI,r:6})+tx(65,215,`Suv 100 ml`,{b:1,fs:12})+
+  tx(122,150,`+`,{b:1,fs:26})+
+  rc(145,90,70,110,'rgba(240,160,32,.3)',{s:WARN,r:6})+tx(180,215,`Spirt 100 ml`,{b:1,fs:12})+
+  tx(238,150,`=`,{b:1,fs:26})+
+  rc(262,45,100,155,'rgba(25,181,201,.2)',{s:P2,r:6})+rc(264,70,96,128,'rgba(25,181,201,.5)',{r:3})+
+  ln(262,60,362,60,BADc,2,' stroke-dasharray="5 4"')+tx(312,50,`200 ml (kutilgan)`,{fs:10.5,c:BADc})+tx(312,102,`< 200 ml`,{b:1,fs:14,c:'#fff'})+tx(312,215,`Aralashma`,{b:1,fs:12})),
+f11:()=>{const r=mkr(7);let s=tx(200,22,`Diffuziya: zarralar tarqaladi`,{b:1,fs:15,c:PRI})+rc(30,40,340,150,'var(--cardb)',{s:'var(--line)',r:10});
+  for(let i=0;i<110;i++){const u=r(),x=40+Math.pow(r(),1.7)*320*(0.35+0.65*u),y=50+r()*130;s+=ci(x.toFixed(1),y.toFixed(1),4,i%2?PRI:P2);}
+  s+=arrow(60,208,340,208,WARN)+tx(80,226,`zichligi katta`,{fs:11,c:'var(--mut)',a:'start'})+tx(330,226,`kichik`,{fs:11,c:'var(--mut)',a:'end'});return svg(s);},
+f12:()=>svg(
+  tx(200,22,`Diffuziya tezligi (nisbiy)`,{b:1,fs:15,c:PRI})+
+  ln(60,190,370,190,'var(--mut)',2)+ln(60,40,60,190,'var(--mut)',2)+
+  rc(90,40,60,150,PRI,{r:6})+rc(190,160,60,30,P2,{r:6})+rc(290,184,60,6,WARN,{r:3})+
+  tx(120,208,`Gaz`,{b:1})+tx(220,208,`Suyuqlik`,{b:1})+tx(320,208,`Qattiq`,{b:1})+
+  tx(120,32,`juda tez`,{fs:11,c:'var(--mut)'})+tx(220,152,`sekin`,{fs:11,c:'var(--mut)'})+tx(320,176,`juda sekin`,{fs:11,c:'var(--mut)'})+
+  tx(30,115,`tezlik`,{fs:11,c:'var(--mut)'})),
+f13:()=>{const r=mkr(21);let x=200,y=125,p=`M${x} ${y}`;for(let i=0;i<46;i++){x=cl(x+(r()-0.5)*56,50,350);y=cl(y+(r()-0.5)*50,50,200);p+=` L${x.toFixed(1)} ${y.toFixed(1)}`;}
+  let s=tx(200,22,`Broun harakati: zarra izi`,{b:1,fs:15,c:PRI})+rc(30,36,340,184,'var(--cardb)',{s:'var(--line)',r:10})+`<path d="${p}" fill="none" stroke="${WARN}" stroke-width="2" stroke-linejoin="round"/>`;
+  const r2=mkr(5);for(let i=0;i<30;i++){s+=ci((40+r2()*320).toFixed(1),(46+r2()*165).toFixed(1),2.5,'var(--pri2)');}
+  s+=ci(x,y,11,PRI)+tx(200,238,`Katta zarra molekulalar zarbidan tartibsiz siljiydi`,{fs:11,c:'var(--mut)'});return svg(s);},
+f14:()=>{let p='',first=true;for(let r=0.88;r<=2.4;r+=0.02){let f=Math.pow(1/r,9)-Math.pow(1/r,4);if(f<0)f*=4;const X=70+(r-0.8)*150,Y=cl(120-f*16,24,200);p+=(first?'M':' L')+X.toFixed(1)+' '+Y.toFixed(1);first=false;}
+  return svg(tx(200,18,`Molekulalar orasidagi kuch F va masofa r`,{b:1,fs:14,c:PRI})+
+  ln(60,120,375,120,'var(--mut)',2)+ln(70,30,70,210,'var(--mut)',2)+
+  `<path d="${p}" fill="none" stroke="${PRI}" stroke-width="3"/>`+
+  tx(380,114,`r`,{b:1,a:'end'})+tx(80,40,`F`,{b:1,a:'start'})+
+  tx(120,60,`itarilish (+)`,{c:BADc,fs:12,a:'start'})+tx(260,170,`tortishish (−)`,{c:OKc,fs:12,a:'start'})+
+  ci(70+(1-0.8)*150,120,5,WARN)+tx(100,138,`r₀`,{c:WARN,b:1})+tx(200,232,`r₀ da tortishish va itarilish teng`,{fs:11,c:'var(--mut)'}));},
+f15:()=>{const r=mkr(33);let s=tx(200,20,`Moddaning agregat holatlari`,{b:1,fs:15,c:PRI});
+  [[15,`Qattiq`],[145,`Suyuq`],[275,`Gaz`]].forEach((b,k)=>{s+=rc(b[0],34,110,150,'var(--cardb)',{s:'var(--line)',r:10});
+    if(k===0){for(let i=0;i<4;i++)for(let j=0;j<5;j++)s+=ci(b[0]+22+j*17,56+i*28,6.5,PRI);}
+    else if(k===1){for(let i=0;i<22;i++)s+=ci((b[0]+12+r()*86).toFixed(1),(100+r()*76).toFixed(1),6,P2);}
+    else{for(let i=0;i<8;i++)s+=ci((b[0]+12+r()*86).toFixed(1),(46+r()*128).toFixed(1),5,WARN);}
+    s+=tx(b[0]+55,208,b[1],{b:1});});
+  return svg(s+tx(200,230,`Zarralar orasidagi masofa: kichik → o'rtacha → katta`,{fs:11,c:'var(--mut)'}));},
+f16:()=>{const D=[[`Masofa`,[1,2,6]],[`Tortishish`,[6,3,0.6]],[`Erkinlik`,[1,3,6]]],cs=[PRI,P2,WARN];let s=tx(200,20,`Holatlarni solishtirish (shartli)`,{b:1,fs:15,c:PRI})+ln(30,190,380,190,'var(--mut)',2);
+  [`Qattiq`,`Suyuq`,`Gaz`].forEach((n,k)=>{const gx=50+k*115;s+=tx(gx+36,208,n,{b:1});D.forEach((d,j)=>{const h=d[1][k]*20;s+=rc(gx+j*24,190-h,20,h,cs[j],{r:3});});});
+  D.forEach((d,j)=>{s+=rc(60+j*110,222,10,10,cs[j],{r:2})+tx(74+j*110,231,d[0],{a:'start',fs:11});});return svg(s);},
+f17:()=>svg(
+  tx(200,18,`Agregat holat o'zgarishi`,{b:1,fs:15,c:PRI})+
+  rc(15,95,90,50,'rgba(11,120,209,.2)',{s:PRI,r:12})+tx(60,126,`Qattiq`,{b:1})+
+  rc(155,95,90,50,'rgba(25,181,201,.2)',{s:P2,r:12})+tx(200,126,`Suyuq`,{b:1})+
+  rc(295,95,90,50,'rgba(240,160,32,.2)',{s:WARN,r:12})+tx(340,126,`Gaz`,{b:1})+
+  arrow(105,108,153,108,BADc)+tx(130,92,`erish`,{fs:11,c:BADc})+arrow(153,132,105,132,PRI)+tx(130,155,`qotish`,{fs:11,c:PRI})+
+  arrow(245,108,293,108,BADc)+tx(270,92,`bug'lanish`,{fs:11,c:BADc})+arrow(293,132,245,132,PRI)+tx(270,155,`kondensatsiya`,{fs:10,c:PRI})+
+  `<path d="M60 95 Q200 25 340 95" fill="none" stroke="${OKc}" stroke-width="2.5" stroke-dasharray="6 4"/>`+tx(200,52,`sublimatsiya`,{fs:11,c:OKc})+
+  `<path d="M340 145 Q200 215 60 145" fill="none" stroke="${OKc}" stroke-width="2.5" stroke-dasharray="6 4"/>`+tx(200,206,`desublimatsiya`,{fs:11,c:OKc})+
+  tx(200,232,`Qizdirish → (qizil) · sovitish → (ko'k)`,{fs:11,c:'var(--mut)'})),
+f18:()=>svg(
+  rc(135,95,130,50,'rgba(11,120,209,.22)',{s:PRI,r:14})+tx(200,116,`Moddaning`,{b:1})+tx(200,134,`tuzilishi`,{b:1})+
+  ln(160,95,95,55,PRI,2)+ln(240,95,305,55,PRI,2)+ln(160,145,95,185,PRI,2)+ln(240,145,305,185,PRI,2)+
+  rc(20,30,150,46,'var(--cardb)',{s:P2,r:12})+tx(95,50,`Molekulalar`,{b:1,fs:12})+tx(95,66,`va atomlar`,{fs:11,c:'var(--mut)'})+
+  rc(230,30,150,46,'var(--cardb)',{s:P2,r:12})+tx(305,50,`Oraliqlar`,{b:1,fs:12})+tx(305,66,`(bo'shliqlar bor)`,{fs:11,c:'var(--mut)'})+
+  rc(20,165,150,46,'var(--cardb)',{s:P2,r:12})+tx(95,185,`Uzluksiz`,{b:1,fs:12})+tx(95,201,`tartibsiz harakat`,{fs:11,c:'var(--mut)'})+
+  rc(230,165,150,46,'var(--cardb)',{s:P2,r:12})+tx(305,185,`Tortishish va`,{b:1,fs:12})+tx(305,201,`itarilish kuchlari`,{fs:11,c:'var(--mut)'}))
+};
+
+/* ===================== MA'LUMOTLAR: S (slaydlar) ===================== */
+const S=[
+[`Kirish: atrofimizdagi olam`,`<p>Atrofimizdagi har bir narsa — <b>jism</b>, jism esa biror <b>moddadan</b> tayyorlangan.</p><ul><li>Stakan — jism, shisha — modda</li><li>Mix — jism, temir — modda</li></ul><p>Bugun jism va moddalarning ichki tuzilishini o'rganamiz.</p>`,`f1`],
+[`Fizik jism`,`<p><b>Fizik jism</b> — o'z shakli va hajmiga ega bo'lgan har qanday narsa.</p><ul><li>Qalam, kitob, stol, avtomobil</li><li>Quyosh, Oy, sayyoralar</li></ul><p>Jismlar o'lchami, shakli va massasi bilan farq qiladi.</p>`,`f2`],
+[`Modda`,`<p><b>Modda</b> — jismlar nimadan tuzilgan bo'lsa, o'sha narsa.</p><ul><li>Temir, shisha, suv, havo, yog'och</li><li>Bitta moddadan turli jismlar yasaladi</li></ul><p>Masalan, <b>temirdan</b> mix, kalit, qaychi tayyorlanadi.</p>`,`f3`],
+[`Materiya: modda va maydon`,`<p>Tabiatdagi hamma narsa <b>materiya</b>dir. Materiya ikki ko'rinishda uchraydi:</p><ul><li><b>Modda</b> — qattiq, suyuq, gaz</li><li><b>Maydon</b> — gravitatsion, elektromagnit va boshqalar</li></ul><p>Bu darsda asosan <b>modda</b> tuzilishini o'rganamiz.</p>`,`f4`],
+[`Tuzilish haqidagi g'oyalar`,`<p>Modda uzluksizmi yoki mayda zarralardan iboratmi?</p><ul><li><b>Demokrit</b> (m.a. V asr): «atom» g'oyasi</li><li><b>M. V. Lomonosov</b> (XVIII asr): molekulyar nazariya asoslari</li><li><b>R. Broun</b> (1827): zarralarning tartibsiz harakati</li><li><b>J. Perren</b> (1908): molekulalarning mavjudligini tajribada isbotladi</li></ul>`,`f5`],
+[`Molekula`,`<p><b>Molekula</b> — moddaning o'z kimyoviy xossalarini saqlovchi eng kichik zarrasi.</p><p>Suv molekulasi bitta kislorod va ikkita vodorod atomidan iborat: <span class="fm">H₂O</span></p><p>Bir xil modda molekulalari bir xil, turli modda molekulalari esa turlicha bo'ladi.</p>`,`f6`],
+[`Atom`,`<p><b>Atom</b> — kimyoviy elementning eng kichik zarrasi. Molekulalar atomlardan tuziladi.</p><ul><li>Markazda musbat zaryadli <b>yadro</b></li><li>Atrofida manfiy zaryadli <b>elektronlar</b></li></ul>`,`f7`],
+[`Molekulalarning o'lchami`,`<p>Molekulalar juda kichik. O'lchov birligi — <b>nanometr</b>:</p><p><span class="fm">1 nm = 10⁻⁹ m</span></p><ul><li>Atom ≈ 0,1 nm</li><li>Suv molekulasi ≈ 0,3 nm = 3·10⁻¹⁰ m</li></ul>`,`f8`],
+[`Moyli parda tajribasi`,`<p>Moy tomchisi suv yuzasida bir molekula qalinligidagi pardaga yoyiladi. Qalinlik molekula o'lchamini beradi:</p><p><span class="fm">d = V / S</span></p><p><b>Misol:</b> V = 1 mm³ = 10⁻⁹ m³, S = 1 m² bo'lsa,<br>d = 10⁻⁹ m³ / 1 m² = <b>10⁻⁹ m = 1 nm</b>.</p>`,`f9`],
+[`Molekulalar orasidagi oraliqlar`,`<p>Molekulalar orasida bo'shliqlar bor.</p><p>100 ml suv + 100 ml spirt aralashtirilsa, hajm <b>200 ml dan kam</b> bo'ladi — kichik molekulalar bo'shliqlarga joylashadi.</p><p>Shu sababli gazlarni siqish mumkin.</p>`,`f10`],
+[`Diffuziya`,`<p><b>Diffuziya</b> — bir modda molekulalarining ikkinchi modda molekulalari orasiga o'z-o'zidan kirib borishi.</p><ul><li>Hidning xonaga tarqalishi</li><li>Choyda shakarning erishi</li><li>Suvda siyohning tarqalishi</li></ul>`,`f11`],
+[`Diffuziya tezligi`,`<p>Diffuziya tezligi quyidagilarga bog'liq:</p><ul><li><b>Harorat</b>: harorat ko'tarilsa, diffuziya tezlashadi</li><li><b>Holat</b>: gazda tez, suyuqlikda sekin, qattiq jismda juda sekin</li></ul>`,`f12`],
+[`Broun harakati`,`<p>Ingliz botanigi <b>Robert Broun</b> 1827-yilda suvdagi gulchang zarralarining uzluksiz tartibsiz harakatini kuzatdi.</p><p>Sabab: ko'rinmas molekulalar zarralarga har tomondan turtki beradi.</p><p>Bu molekulalar harakatining <b>bevosita dalili</b>dir.</p>`,`f13`],
+[`Molekulalarning o'zaro ta'siri`,`<p>Molekulalar orasida bir vaqtda <b>tortishish</b> va <b>itarilish</b> kuchlari ta'sir qiladi.</p><ul><li>Yaqin masofada itarilish kuchli</li><li>Uzoqroq masofada tortishish ustun</li><li>Muvozanat masofasi r₀ da ikkala kuch teng</li></ul>`,`f14`],
+[`Moddaning agregat holatlari`,`<p>Modda uch xil <b>agregat holat</b>da bo'ladi:</p><ul><li><b>Qattiq</b> (muz)</li><li><b>Suyuq</b> (suv)</li><li><b>Gaz</b> (bug')</li></ul><p>Molekulalar bir xil, farq ularning joylashuvi va harakatida.</p>`,`f15`],
+[`Qattiq, suyuq va gaz tuzilishi`,`<table class="cmp"><tr><th></th><th>Qattiq</th><th>Suyuq</th><th>Gaz</th></tr><tr><td>Joylashuvi</td><td>Tartibli</td><td>Zich, tartibsiz</td><td>Juda siyrak</td></tr><tr><td>Harakati</td><td>Tebranadi</td><td>Siljiydi</td><td>Erkin uchadi</td></tr><tr><td>Shakl</td><td>Saqlaydi</td><td>Idish shakli</td><td>Idish shakli</td></tr><tr><td>Hajm</td><td>Saqlaydi</td><td>Saqlaydi</td><td>Idishni to'ldiradi</td></tr></table>`,`f16`],
+[`Agregat holatning o'zgarishi`,`<p>Qizdirilganda yoki sovitilganda modda holati o'zgaradi:</p><ul><li>erish (qattiq → suyuq), qotish</li><li>bug'lanish (suyuq → gaz), kondensatsiya</li><li>sublimatsiya (qattiq → gaz)</li></ul><p>Molekulalarning o'zi o'zgarmaydi, faqat joylashuvi va harakati o'zgaradi.</p>`,`f17`],
+[`Xulosa va asosiy formulalar`,`<ul><li>Jism — narsa, modda — jism nimadan tuzilgani.</li><li>Modda molekulalardan, molekula atomlardan iborat.</li><li>Molekulalar orasida oraliq bor, ular uzluksiz va tartibsiz harakatlanadi.</li><li>Molekulalar tortishadi va itarishadi.</li></ul><p><span class="fm">1 nm = 10⁻⁹ m</span> · <span class="fm">d = V / S</span></p>`,`f18`]
+];
+
+/* ===================== MA'LUMOTLAR: Q (test) ===================== */
+const Q=[
+[`Quyidagilardan qaysi biri fizik jism?`,[`Temir`,`Qalam`,`Suv`,`Shisha`],1,`Qalam — shakli va hajmi bor jism. Temir, suv va shisha — moddalar.`],
+[`Qaysi qatorda faqat moddalar keltirilgan?`,[`Stakan, kitob, stol`,`Mix, kalit, qaychi`,`Temir, shisha, suv`,`Quyosh, Oy, Yer`],2,`Temir, shisha va suv — moddalar. Qolganlari jismlar.`],
+[`Moddaning o'z xossalarini saqlovchi eng kichik zarrasi nima?`,[`Atom`,`Molekula`,`Elektron`,`Proton`],1,`Molekula moddaning kimyoviy xossalarini saqlaydi.`],
+[`1 nm necha metrga teng?`,[`10⁻³ m`,`10⁻⁶ m`,`10⁻⁹ m`,`10⁻¹² m`],2,`Nano — milliarddan bir: 1 nm = 10⁻⁹ m.`],
+[`Suv molekulasining tarkibi qaysi?`,[`HO`,`H₂O`,`H₂O₂`,`HO₂`],1,`Suv molekulasi 2 ta vodorod va 1 ta kislorod atomidan iborat.`],
+[`100 ml suv va 100 ml spirt aralashtirilsa, hajm qanday bo'ladi?`,[`200 ml dan ko'p`,`Aynan 200 ml`,`200 ml dan kam`,`Hajm yo'qoladi`],2,`Molekulalar orasida bo'shliqlar bor, shuning uchun hajm 200 ml dan kam.`],
+[`Diffuziya nima?`,[`Moddalarning o'z-o'zidan aralashishi`,`Moddaning erishi`,`Suyuqlikning qaynashi`,`Jismning cho'zilishi`],0,`Diffuziya — bir modda molekulalarining ikkinchisi orasiga o'z-o'zidan kirishi.`],
+[`Diffuziya qaysi holatda eng tez kechadi?`,[`Qattiq jismda`,`Suyuqlikda`,`Gazda`,`Hammasida bir xil`],2,`Gazlarda molekulalar orasidagi masofa katta va ular tez harakatlanadi.`],
+[`Harorat ko'tarilsa, diffuziya qanday o'zgaradi?`,[`Sekinlashadi`,`Tezlashadi`,`O'zgarmaydi`,`To'xtaydi`],1,`Harorat ortsa, molekulalar tezroq harakatlanadi — diffuziya tezlashadi.`],
+[`Broun harakati nima?`,[`Gazning kengayishi`,`Muzning erishi`,`Jismning tebranishi`,`Suyuqlikdagi mayda zarralarning tartibsiz harakati`],3,`1827-yilda R. Broun gulchang zarralarining tartibsiz harakatini kuzatgan.`],
+[`Qaysi holatda molekulalar orasidagi masofa eng katta?`,[`Qattiq`,`Suyuq`,`Gaz`,`Hammasida teng`],2,`Gazlarda molekulalar siyrak joylashgan.`],
+[`Moyli parda tajribasida molekula o'lchami qaysi formula bilan baholanadi?`,[`d = V · S`,`d = V / S`,`d = S / V`,`d = m / V`],1,`Parda qalinligi d tomchi hajmi V ni parda yuzi S ga bo'lishdan topiladi.`]
+];
+
+/* ===================== Ballar ===================== */
+const CAP={};
+for(let i=0;i<S.length;i++)CAP['sl'+i]=3;
+['sim1','sim2','sim3','sim4'].forEach(k=>CAP[k]=10);
+CAP.vr_solid=5;CAP.vr_liquid=5;CAP.vr_gas=5;CAP.vr_pick=5;CAP.vr_fs=5;
+CAP.video=30;CAP.test=Q.length*10;
+for(let i=1;i<=6;i++)CAP['g'+i]=20;
+const MAX=Object.keys(CAP).reduce((a,k)=>a+CAP[k],0);
+const total=()=>Object.keys(CAP).reduce((a,k)=>a+Math.min(CAP[k],Number(st.sc[k])||0),0);
+function award(id,val){
+  const cap=CAP[id];if(cap==null)return;
+  const v=Math.max(0,Math.min(cap,Math.round(val)));
+  const old=Number(st.sc[id])||0;
+  if(v>old){st.sc[id]=v;save();refreshStats();toast('+'+(v-old)+' ball ⭐');}
+}
+const GROUPS=[[`Slaydlar`,`sl`],[`Simulyatsiyalar`,`sim`],[`VR-laboratoriya`,`vr_`],[`Video`,`video`],[`Test`,`test`],[`O'yinlar`,`g`]];
+function renderResults(){
+  const t=$('#rsTable');if(!t)return;
+  t.innerHTML=GROUPS.map(g=>{let a=0,m=0;Object.keys(CAP).forEach(k=>{if(k.indexOf(g[1])===0&&(g[1]!=='g'||/^g\d$/.test(k))){a+=Math.min(CAP[k],Number(st.sc[k])||0);m+=CAP[k];}});return `<tr><td>${g[0]}</td><td>${a} / ${m}</td></tr>`;}).join('');
+}
+function refreshStats(){
+  const tot=total(),pct=Math.round(tot/MAX*100);
+  $('#scTxt').textContent=tot;$('#scMax').textContent=MAX;
+  $('#pgBar').style.width=pct+'%';$('#pgTxt').textContent=pct+'%';
+  const n=Math.min(5,Math.floor(pct/18));
+  $('#starTxt').textContent='★'.repeat(n)+'☆'.repeat(5-n);
+  renderResults();
+}
+function refreshTime(){$('#tmTxt').textContent=fmtT(st.time);}
+
+/* ===================== Slaydlar ===================== */
+let si=Math.min(st.slide,S.length-1);
+const dotsEl=$('#dots');
+S.forEach((s,i)=>{const b=document.createElement('button');b.className='dot';b.setAttribute('aria-label',(i+1)+'-slayd');b.addEventListener('click',()=>goSlide(i));dotsEl.appendChild(b);});
+function renderSlide(anim){
+  const s=S[si];
+  $('#slTitle').textContent=(si+1)+'. '+s[0];
+  $('#slBody').innerHTML=s[1];
+  $('#slFig').innerHTML=FIG[s[2]]();
+  $('#slNum').textContent=(si+1)+' / '+S.length;
+  $('#slBar').style.width=((si+1)/S.length*100)+'%';
+  $('#slPrev').disabled=si===0;$('#slNext').disabled=si===S.length-1;
+  $$('.dot',dotsEl).forEach((d,i)=>{d.classList.toggle('on',i===si);d.classList.toggle('seen',i!==si&&(st.sc['sl'+i]||0)>0);});
+  if(anim){const a=$('#slArea');a.classList.remove('anim');void a.offsetWidth;a.classList.add('anim');}
+  st.slide=si;save();award('sl'+si,3);
+}
+function goSlide(i){if(i<0||i>=S.length)return;si=i;stopSpeak();renderSlide(true);}
+$('#slPrev').addEventListener('click',()=>goSlide(si-1));
+$('#slNext').addEventListener('click',()=>goSlide(si+1));
+$('#slSpeak').addEventListener('click',()=>speak(S[si][0]+'. '+plain(S[si][1])));
+(function(){const a=$('#sec-slides');let sx=0,sy=0,tt=0;
+  a.addEventListener('touchstart',e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY;tt=Date.now();},{passive:true});
+  a.addEventListener('touchend',e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.4&&Date.now()-tt<800){goSlide(si+(dx<0?1:-1));}},{passive:true});})();
+document.addEventListener('keydown',e=>{
+  const tg=(e.target&&e.target.tagName)||'';
+  if(/INPUT|SELECT|TEXTAREA/.test(tg))return;
+  if(st.sec==='slides'){if(e.key==='ArrowRight')goSlide(si+1);else if(e.key==='ArrowLeft')goSlide(si-1);}
+  if(e.key==='Escape'&&VR&&VR.isFs())VR.toggleFs();
+});
+
+/* ===================== SIM ===================== */
+function mkSim1(box){
+  const c=Cv($('canvas',box)),ctx=c.ctx,sl=$('[data-k=T]',box);
+  const oT=$('[data-o=tv]',box),oS=$('[data-o=state]',box),oV=$('[data-o=speed]',box),oI=$('[data-o=info]',box);
+  const cols=8,rows=6;let P=[],sp=30,T=Number(sl.value),mode='',t=0;
+  const INFO={solid:`Qattiq jism: zarralar tartibli joylashgan va muvozanat nuqtasi atrofida tebranadi.`,liquid:`Suyuqlik: zarralar zich, lekin bir-birining yonidan siljib o'tadi; hajm saqlanadi, shakl saqlanmaydi.`,gas:`Gaz: zarralar bir-biridan uzoq va tez uchadi; butun hajmni egallaydi.`};
+  const NAME={solid:`Qattiq jism`,liquid:`Suyuqlik`,gas:`Gaz`};
+  function build(){sp=Math.max(14,Math.min((c.W-60)/cols,(c.H-50)/(rows+0.5)));
+    const x0=(c.W-cols*sp)/2+sp/2,y0=c.H-18-rows*sp+sp/2;P=[];mode='';
+    for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){const hx=x0+i*sp,hy=y0+j*sp;P.push({x:hx,y:hy,hx:hx,hy:hy,vx:0,vy:0,ph:Math.random()*6.28,ph2:Math.random()*6.28});}}
+  c.onfit=build;build();
+  const stateOf=()=>T<34?'solid':T<67?'liquid':'gas';
+  const target=m=>m==='liquid'?50+(T-34)*2.2:140+(T-67)*5;
+  const liqTop=()=>c.H-14-rows*sp*1.25;
+  sl.addEventListener('input',()=>{T=Number(sl.value);oT.textContent=T;award('sim1',10);});
+  function frame(dt){
+    t+=dt;const m=stateOf(),r=sp*0.3;
+    if(m!==mode){if(m!=='solid'){P.forEach(p=>{const a=Math.random()*6.28,s=target(m);p.vx=Math.cos(a)*s;p.vy=Math.sin(a)*s;});}mode=m;}
+    let sum=0;const top=m==='liquid'?liqTop():14;
+    for(const p of P){
+      if(m==='solid'){const amp=sp*(0.03+T/34*0.10),w=6+T*0.25,tx_=p.hx+amp*Math.sin(t*w+p.ph),ty=p.hy+amp*Math.cos(t*w*1.13+p.ph2),k=1-Math.exp(-8*dt);
+        p.x+=(tx_-p.x)*k;p.y+=(ty-p.y)*k;sum+=amp*w;}
+      else{
+        const tg=target(m),s=Math.hypot(p.vx,p.vy)||1,f=1+((tg/s)-1)*Math.min(1,3*dt);p.vx*=f;p.vy*=f;
+        if(Math.random()<dt*3){const a=Math.atan2(p.vy,p.vx)+(Math.random()-0.5)*1.2,s2=Math.hypot(p.vx,p.vy);p.vx=Math.cos(a)*s2;p.vy=Math.sin(a)*s2;}
+        if(m==='liquid'&&p.y<top+r)p.vy+=500*dt;
+        p.x+=p.vx*dt;p.y+=p.vy*dt;
+        if(p.x<14+r){p.x=14+r;p.vx=Math.abs(p.vx);}
+        if(p.x>c.W-14-r){p.x=c.W-14-r;p.vx=-Math.abs(p.vx);}
+        if(m==='gas'&&p.y<top+r){p.y=top+r;p.vy=Math.abs(p.vy);}
+        if(p.y>c.H-14-r){p.y=c.H-14-r;p.vy=-Math.abs(p.vy);}
+        sum+=Math.hypot(p.vx,p.vy);
+      }
+    }
+    oS.textContent=NAME[m];oV.textContent=(sum/P.length/10).toFixed(1);oI.textContent=INFO[m];
+    ctx.clearRect(0,0,c.W,c.H);ctx.fillStyle=COL.cv;ctx.fillRect(0,0,c.W,c.H);
+    ctx.strokeStyle=COL.pri;ctx.lineWidth=2.5;ctx.strokeRect(14,14,c.W-28,c.H-28);
+    if(m==='liquid'){ctx.fillStyle='rgba(25,181,201,.14)';ctx.fillRect(15,top,c.W-30,c.H-14-top-1);}
+    const col=m==='solid'?COL.pri:m==='liquid'?COL.pri2:COL.warn;
+    for(const p of P)dot(ctx,p.x,p.y,r,col);
+    ctext(ctx,NAME[m],24,30,15,COL.txt,'left');
+  }
+  oT.textContent=T;
+  return {frame:frame,fit:()=>c.fit()};
+}
+
+function mkSim2(box){
+  const c=Cv($('canvas',box)),ctx=c.ctx,sl=$('[data-k=temp]',box),bw=$('[data-k=wall]',box),br=$('[data-k=reset]',box);
+  const oT=$('[data-o=tv]',box),oM=$('[data-o=mix]',box),oTm=$('[data-o=time]',box),oW=$('[data-o=ws]',box);
+  const N=120;let P=[],wall=true,el=0,temp=Number(sl.value),hist=[],hAcc=0,mixV=0;
+  function reset(){P=[];el=0;hist=[];wall=true;bw.textContent=`To'siqni olib tashlash`;oW.textContent='bor';
+    for(let i=0;i<N;i++){const red=i<N/2;P.push({red:red,side:red?0:1,x:red?rand(20,c.W/2-12):rand(c.W/2+12,c.W-20),y:rand(20,c.H-20),a:rand(0,6.28)});}}
+  c.onfit=reset;reset();
+  sl.addEventListener('input',()=>{temp=Number(sl.value);oT.textContent=temp;award('sim2',10);});
+  bw.addEventListener('click',()=>{wall=!wall;if(wall){P.forEach(p=>{p.side=p.x<c.W/2?0:1;});}bw.textContent=wall?`To'siqni olib tashlash`:`To'siq qo'yish`;oW.textContent=wall?'bor':"yo'q";award('sim2',10);});
+  br.addEventListener('click',reset);
+  function frame(dt){
+    el+=dt;const sp=25+temp*22,mid=c.W/2;let rl=0;
+    for(const p of P){
+      if(Math.random()<dt*4)p.a+=rand(-1.2,1.2);
+      p.x+=Math.cos(p.a)*sp*dt;p.y+=Math.sin(p.a)*sp*dt;
+      if(p.x<12){p.x=12;p.a=Math.PI-p.a;}
+      if(p.x>c.W-12){p.x=c.W-12;p.a=Math.PI-p.a;}
+      if(p.y<12){p.y=12;p.a=-p.a;}
+      if(p.y>c.H-12){p.y=c.H-12;p.a=-p.a;}
+      if(wall){if(p.side===0){if(p.x>mid-5){p.x=mid-5;p.a=Math.PI-p.a;}}else{if(p.x<mid+5){p.x=mid+5;p.a=Math.PI-p.a;}}}
+      if(p.red&&p.x<mid)rl++;
+    }
+    const half=N/2;mixV=2*Math.min(rl,half-rl)/half*100;
+    hAcc+=dt;if(hAcc>0.2){hAcc=0;hist.push(mixV);if(hist.length>120)hist.shift();}
+    oM.textContent=mixV.toFixed(0)+'%';oTm.textContent=el.toFixed(0)+' s';
+    ctx.clearRect(0,0,c.W,c.H);ctx.fillStyle=COL.cv;ctx.fillRect(0,0,c.W,c.H);
+    ctx.strokeStyle=COL.pri;ctx.lineWidth=2.5;ctx.strokeRect(6,6,c.W-12,c.H-12);
+    if(wall){ctx.fillStyle=COL.mut;ctx.fillRect(mid-3,6,6,c.H-12);}
+    for(const p of P)dot(ctx,p.x,p.y,5,p.red?COL.bad:COL.pri);
+    const gw=Math.min(150,c.W*0.4),gh=44,gx=c.W-gw-14,gy=14;
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillRect(gx,gy,gw,gh);ctx.strokeStyle=COL.line;ctx.lineWidth=1;ctx.strokeRect(gx,gy,gw,gh);
+    ctx.beginPath();hist.forEach((v,i)=>{const x=gx+i/119*gw,y=gy+gh-v/100*gh;if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);});ctx.strokeStyle=COL.ok;ctx.lineWidth=2;ctx.stroke();
+    ctext(ctx,'aralashish %',gx+4,gy+8,10,COL.mut,'left');
+  }
+  oT.textContent=temp;
+  return {frame:frame,fit:()=>c.fit()};
+}
+
+function mkSim3(box){
+  const c=Cv($('canvas',box)),ctx=c.ctx;
+  const sT=$('[data-k=temp]',box),sN=$('[data-k=n]',box),chk=$('[data-k=show]',box),bc=$('[data-k=clr]',box);
+  const oT=$('[data-o=tv]',box),oN=$('[data-o=nv]',box),oD=$('[data-o=disp]',box),oP=$('[data-o=path]',box);
+  let temp=Number(sT.value),n=Number(sN.value),show=true,S_=[],B={x:150,y:100,vx:0,vy:0,r:16,m:40},trail=[],path=0,tAcc=0,x0=0,y0=0;
+  const vT=()=>40+temp*28;
+  function mkSmall(){const a=rand(0,6.28),s=vT();return {x:rand(8,c.W-8),y:rand(8,c.H-8),vx:Math.cos(a)*s,vy:Math.sin(a)*s};}
+  function reset(){B.x=c.W/2;B.y=c.H/2;B.vx=0;B.vy=0;x0=B.x;y0=B.y;trail=[{x:B.x,y:B.y}];path=0;S_=[];for(let i=0;i<n;i++)S_.push(mkSmall());}
+  c.onfit=reset;reset();
+  sT.addEventListener('input',()=>{temp=Number(sT.value);oT.textContent=temp;award('sim3',10);});
+  sN.addEventListener('input',()=>{n=Number(sN.value);oN.textContent=n;while(S_.length<n)S_.push(mkSmall());S_.length=n;award('sim3',10);});
+  chk.addEventListener('change',()=>{show=chk.checked;award('sim3',10);});
+  bc.addEventListener('click',()=>{trail=[{x:B.x,y:B.y}];path=0;x0=B.x;y0=B.y;award('sim3',10);});
+  function frame(dt){
+    const v=vT(),rs=3;
+    for(const s of S_){
+      const sp=Math.hypot(s.vx,s.vy)||1,f=1+((v/sp)-1)*Math.min(1,2*dt);s.vx*=f;s.vy*=f;
+      s.x+=s.vx*dt;s.y+=s.vy*dt;
+      if(s.x<rs){s.x=rs;s.vx=Math.abs(s.vx);}if(s.x>c.W-rs){s.x=c.W-rs;s.vx=-Math.abs(s.vx);}
+      if(s.y<rs){s.y=rs;s.vy=Math.abs(s.vy);}if(s.y>c.H-rs){s.y=c.H-rs;s.vy=-Math.abs(s.vy);}
+      const dx=s.x-B.x,dy=s.y-B.y,d=Math.hypot(dx,dy),R=B.r+rs;
+      if(d<R&&d>0.001){const nx=dx/d,ny=dy/d,rel=(s.vx-B.vx)*nx+(s.vy-B.vy)*ny;
+        if(rel<0){const j=-2*rel/(1+1/B.m);s.vx+=j*nx;s.vy+=j*ny;B.vx-=j*nx/B.m;B.vy-=j*ny/B.m;}
+        s.x=B.x+nx*R;s.y=B.y+ny*R;}
+    }
+    const dr=Math.exp(-0.6*dt);B.vx*=dr;B.vy*=dr;
+    const px=B.x,py=B.y;B.x+=B.vx*dt;B.y+=B.vy*dt;
+    if(B.x<B.r){B.x=B.r;B.vx=Math.abs(B.vx);}if(B.x>c.W-B.r){B.x=c.W-B.r;B.vx=-Math.abs(B.vx);}
+    if(B.y<B.r){B.y=B.r;B.vy=Math.abs(B.vy);}if(B.y>c.H-B.r){B.y=c.H-B.r;B.vy=-Math.abs(B.vy);}
+    path+=Math.hypot(B.x-px,B.y-py);
+    tAcc+=dt;if(tAcc>0.03){tAcc=0;trail.push({x:B.x,y:B.y});if(trail.length>900)trail.shift();}
+    oD.textContent=Math.round(Math.hypot(B.x-x0,B.y-y0))+' px';oP.textContent=Math.round(path)+' px';
+    ctx.clearRect(0,0,c.W,c.H);ctx.fillStyle=COL.cv;ctx.fillRect(0,0,c.W,c.H);
+    if(show)for(const s of S_)dot(ctx,s.x,s.y,rs,COL.pri2);
+    ctx.beginPath();trail.forEach((p,i)=>{if(i)ctx.lineTo(p.x,p.y);else ctx.moveTo(p.x,p.y);});ctx.strokeStyle=COL.warn;ctx.lineWidth=1.8;ctx.stroke();
+    dot(ctx,B.x,B.y,B.r,COL.pri);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  }
+  oT.textContent=temp;oN.textContent=n;
+  return {frame:frame,fit:()=>c.fit()};
+}
+
+function mkSim4(box){
+  const c=Cv($('canvas',box)),ctx=c.ctx,sV=$('[data-k=V]',box),sS=$('[data-k=S]',box);
+  const oV=$('[data-o=vv]',box),oS=$('[data-o=sv]',box),oD=$('[data-o=d]',box),oC=$('[data-o=cmp]',box);
+  let V=Number(sV.value),Sx=Number(sS.value),R=0,t=0;
+  function upd(){const d=V/Sx;oV.textContent=V.toFixed(1);oS.textContent=Sx.toFixed(1);oD.textContent=d.toFixed(2)+' nm';
+    oC.textContent=d<0.2?`Parda molekula o'lchamidan ham yupqa chiqdi — bunday parda uzilib qoladi (V ni oshiring yoki S ni kamaytiring).`:d<=3?`Natija molekula o'lchami (≈ 1–3 nm) tartibida — parda bir molekula qalinligida.`:`Parda bir necha molekula qatlamidan iborat bo'lib qoldi — S ni oshiring.`;}
+  sV.addEventListener('input',()=>{V=Number(sV.value);upd();award('sim4',10);});
+  sS.addEventListener('input',()=>{Sx=Number(sS.value);upd();award('sim4',10);});
+  upd();
+  function frame(dt){
+    t+=dt;const maxR=Math.min(c.W*0.36,c.H*0.28),tr=14+Math.sqrt(Sx/5)*(maxR-14);R+=(tr-R)*Math.min(1,4*dt);
+    const d=V/Sx,cx=c.W*0.56,cy=c.H*0.34;
+    ctx.clearRect(0,0,c.W,c.H);ctx.fillStyle=COL.cv;ctx.fillRect(0,0,c.W,c.H);
+    ctx.fillStyle='rgba(25,181,201,.18)';ctx.fillRect(10,10,c.W-20,c.H*0.6);
+    ctext(ctx,'Yuqoridan ko\'rinish',16,22,12,COL.mut,'left');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,6.2832);ctx.fillStyle='rgba(240,160,32,.35)';ctx.fill();ctx.strokeStyle=COL.warn;ctx.lineWidth=2;ctx.stroke();
+    const step=10;for(let gx=-R;gx<=R;gx+=step)for(let gy=-R;gy<=R;gy+=step){if(gx*gx+gy*gy<(R-3)*(R-3))dot(ctx,cx+gx+Math.sin(t*3+gx*0.7+gy)*1.2,cy+gy+Math.cos(t*3+gy*0.7)*1.2,2.2,COL.warn);}
+    const dr=5+Math.cbrt(V)*7;dot(ctx,c.W*0.1,cy,dr,COL.warn);ctext(ctx,'V',c.W*0.1,cy-dr-10,13,COL.txt,'center');
+    const y0=c.H*0.82,h=cl(d*5+2,3,30);
+    ctx.fillStyle='rgba(25,181,201,.35)';ctx.fillRect(10,y0,c.W-20,c.H-y0-8);
+    ctext(ctx,'Yon tomondan ko\'rinish',16,c.H*0.68,12,COL.mut,'left');
+    for(let x=c.W*0.12;x<c.W*0.8;x+=10){ctx.beginPath();ctx.ellipse(x,y0-h/2,4,Math.max(2,h/2),0,0,6.2832);ctx.fillStyle=COL.warn;ctx.fill();}
+    const bx=c.W*0.84;ctx.strokeStyle=COL.bad;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx,y0-h);ctx.lineTo(bx,y0);ctx.stroke();
+    ctext(ctx,'d = '+d.toFixed(2)+' nm',bx+6,y0-h/2-2,Math.max(11,Math.min(14,c.W/30)),COL.txt,'left');
+    ctext(ctx,'d = V / S',c.W-14,22,15,COL.pri,'right');
+  }
+  return {frame:frame,fit:()=>c.fit()};
+}
+
+const SIMS=[];let simIdx=0;
+(function(){
+  const boxes=$$('.simbox'),fns=[mkSim1,mkSim2,mkSim3,mkSim4];
+  boxes.forEach((b,i)=>SIMS.push(fns[i](b)));
+  const tabs=$$('#simTabs button');
+  tabs.forEach((tb,i)=>tb.addEventListener('click',()=>{simIdx=i;tabs.forEach((x,k)=>x.classList.toggle('on',k===i));boxes.forEach((x,k)=>{x.hidden=k!==i;});SIMS[i].fit();}));
+})();
+
+/* ===================== VR ===================== */
+const VR=(function(){
+  const stage=$('#vrStage'),cvEl=$('#vrCv'),c=Cv(cvEl),ctx=c.ctx;
+  const sT=$('#vrT'),oTv=$('#vrTv'),oSt=$('#vrState'),oInf=$('#vrInfo');
+  let yaw=0.6,pitch=0.3,zoom=1,T=15,auto=true,stereo=false,atoms=false,sel=-1,t=0,mode='',fs=false,interacted=false;
+  const N=27;let M=[];
+  const NAME={solid:`Qattiq jism`,liquid:`Suyuqlik`,gas:`Gaz`};
+  const INFO={solid:`Qattiq jism: molekulalar tartibli joylashgan, o'z o'rni atrofida tebranadi.`,liquid:`Suyuqlik: molekulalar zich, lekin siljib yuradi; pastki qismni egallaydi.`,gas:`Gaz: molekulalar uzoq va tez harakatlanadi, butun hajmni egallaydi.`};
+  function init(){M=[];mode='';for(let x=-1;x<=1;x++)for(let y=-1;y<=1;y++)for(let z=-1;z<=1;z++){
+    M.push({hx:x*0.5,hy:y*0.5-0.45,hz:z*0.5,x:x*0.5,y:y*0.5-0.45,z:z*0.5,vx:0,vy:0,vz:0,ph:Math.random()*6.28,ph2:Math.random()*6.28,ang:Math.random()*6.28,tilt:Math.random()*6.28,spin:rand(-1,1),sx:0,sy:0,sr:0});}}
+  init();
+  const stateOf=()=>T<34?'solid':T<67?'liquid':'gas';
+  const target=m=>m==='liquid'?0.35+(T-34)*0.012:0.9+(T-67)*0.03;
+  function update(dt){
+    const m=stateOf();
+    if(m!==mode){if(m!=='solid'){M.forEach(p=>{const a=rand(0,6.28),b=rand(-1,1),s=target(m),q=Math.sqrt(1-b*b);p.vx=Math.cos(a)*q*s;p.vz=Math.sin(a)*q*s;p.vy=b*s;});}mode=m;oSt.textContent=NAME[m];if(sel<0)oInf.textContent=INFO[m];}
+    const rr=0.12,lim=m==='liquid'?0.72:0.92,top=m==='liquid'?0.05:0.92;
+    for(const p of M){
+      p.ang+=p.spin*dt*(m==='solid'?0.5:(m==='liquid'?2:5));
+      if(m==='solid'){const amp=0.015+T/34*0.04,w=6+T*0.25,k=1-Math.exp(-8*dt);
+        p.x+=(p.hx+amp*Math.sin(t*w+p.ph)-p.x)*k;p.y+=(p.hy+amp*Math.cos(t*w*1.1+p.ph2)-p.y)*k;p.z+=(p.hz+amp*Math.sin(t*w*0.9+p.ph2)-p.z)*k;}
+      else{
+        const tg=target(m),s=Math.hypot(p.vx,p.vy,p.vz)||1,f=1+((tg/s)-1)*Math.min(1,3*dt);p.vx*=f;p.vy*=f;p.vz*=f;
+        if(Math.random()<dt*3){const a=rand(-0.5,0.5);const cs=Math.cos(a),sn=Math.sin(a);const nx=p.vx*cs-p.vz*sn,nz=p.vx*sn+p.vz*cs;p.vx=nx;p.vz=nz;}
+        if(m==='liquid'&&p.y>top-rr)p.vy-=1.6*dt;
+        p.x+=p.vx*dt;p.y+=p.vy*dt;p.z+=p.vz*dt;
+        if(p.x<-lim){p.x=-lim;p.vx=Math.abs(p.vx);}if(p.x>lim){p.x=lim;p.vx=-Math.abs(p.vx);}
+        if(p.z<-lim){p.z=-lim;p.vz=Math.abs(p.vz);}if(p.z>lim){p.z=lim;p.vz=-Math.abs(p.vz);}
+        if(p.y<-0.92){p.y=-0.92;p.vy=Math.abs(p.vy);}
+        if(m==='gas'&&p.y>top){p.y=top;p.vy=-Math.abs(p.vy);}
+      }
+    }
+  }
+  function proj(x,y,z,cy_,cp,sy_,sp_,eye){
+    const a=cy_,b=sy_,x1=x*a+z*b,z1=-x*b+z*a;
+    const y2=y*cp-z1*sp_,z2=y*sp_+z1*cp;
+    return {x:x1,y:y2,z:z2};
+  }
+  function render(x0,w,h,eye){
+    const yw=yaw+eye*0.05,cyw=Math.cos(yw),syw=Math.sin(yw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+    const sc=Math.min(w,h)*0.40*zoom,cx=x0+w/2,cy=h/2,D=4.2;
+    const P=(x,y,z)=>{const q=proj(x,y,z,cyw,cp,syw,sp);const f=D/(D+q.z);return {x:cx+q.x*f*sc,y:cy-q.y*f*sc,f:f,z:q.z};};
+    ctx.save();ctx.beginPath();ctx.rect(x0,0,w,h);ctx.clip();
+    ctx.fillStyle=COL.cv;ctx.fillRect(x0,0,w,h);
+    // pol to'ri
+    ctx.strokeStyle='rgba(25,181,201,.35)';ctx.lineWidth=1;
+    for(let i=-2;i<=2;i++){const a=P(i*0.5,-1,-1),b=P(i*0.5,-1,1),c1=P(-1,-1,i*0.5),d1=P(1,-1,i*0.5);
+      ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.moveTo(c1.x,c1.y);ctx.lineTo(d1.x,d1.y);ctx.stroke();}
+    // kub qirralari
+    const V=[];for(let i=0;i<8;i++)V.push(P(i&1?1:-1,i&2?1:-1,i&4?1:-1));
+    ctx.strokeStyle=COL.pri;ctx.lineWidth=1.6;ctx.beginPath();
+    [[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]].forEach(e=>{ctx.moveTo(V[e[0]].x,V[e[0]].y);ctx.lineTo(V[e[1]].x,V[e[1]].y);});ctx.stroke();
+    // sferalar
+    const list=[];
+    M.forEach((p,i)=>{
+      const q=P(p.x,p.y,p.z);
+      if(eye<=0){p.sx=q.x;p.sy=q.y;p.sr=0.13*q.f*sc;}
+      if(atoms){list.push({x:q.x,y:q.y,z:q.z,r:0.1*q.f*sc,col:i%2?'#19b5c9':'#0b78d1',idx:i});}
+      else{
+        list.push({x:q.x,y:q.y,z:q.z,r:0.12*q.f*sc,col:'#d93c3c',idx:i});
+        for(let k=0;k<2;k++){const a=p.ang+(k?1:-1)*0.91,ox=Math.cos(a)*0.16,oy=Math.sin(a)*0.16*Math.cos(p.tilt),oz=Math.sin(a)*0.16*Math.sin(p.tilt);
+          const h2=P(p.x+ox,p.y+oy,p.z+oz);list.push({x:h2.x,y:h2.y,z:h2.z,r:0.075*h2.f*sc,col:'#eef6ff',idx:-1});}
+      }
+    });
+    list.sort((a,b)=>b.z-a.z);
+    for(const s of list){
+      const g=ctx.createRadialGradient(s.x-s.r*0.35,s.y-s.r*0.35,s.r*0.1,s.x,s.y,s.r);
+      g.addColorStop(0,'#ffffff');g.addColorStop(0.35,s.col);g.addColorStop(1,'rgba(0,0,0,.45)');
+      ctx.beginPath();ctx.arc(s.x,s.y,Math.max(1,s.r),0,6.2832);ctx.fillStyle=s.col;ctx.fill();
+      ctx.beginPath();ctx.arc(s.x,s.y,Math.max(1,s.r),0,6.2832);ctx.fillStyle=g;ctx.globalAlpha=0.75;ctx.fill();ctx.globalAlpha=1;
+      if(s.idx>=0&&s.idx===sel){ctx.beginPath();ctx.arc(s.x,s.y,s.r*1.5,0,6.2832);ctx.strokeStyle=COL.warn;ctx.lineWidth=3;ctx.stroke();}
+    }
+    ctx.restore();
+  }
+  function frame(dt){
+    t+=dt;update(dt);
+    if(auto&&ptrs.size===0)yaw+=dt*0.3;
+    ctx.clearRect(0,0,c.W,c.H);
+    if(stereo){render(0,c.W/2,c.H,-1);render(c.W/2,c.W/2,c.H,1);ctx.strokeStyle=COL.mut;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(c.W/2,0);ctx.lineTo(c.W/2,c.H);ctx.stroke();}
+    else render(0,c.W,c.H,0);
+    ctext(ctx,NAME[stateOf()]+' · '+(atoms?'atomlar':'H₂O molekulalari'),12,18,13,COL.txt,'left');
+  }
+  function setT(v,user){T=cl(Math.round(v),0,100);sT.value=T;oTv.textContent=T;if(user){interacted=true;const m=stateOf();award('vr_'+m,5);}}
+  sT.addEventListener('input',()=>setT(sT.value,true));
+  $$('[data-st]',stage).forEach(b=>b.addEventListener('click',()=>setT(Number(b.dataset.st),true)));
+  $('#vrCool').addEventListener('click',()=>setT(T-12,true));
+  $('#vrHeat').addEventListener('click',()=>setT(T+12,true));
+  $('#vrAuto').addEventListener('change',e=>{auto=e.target.checked;});
+  $('#vrAtom').addEventListener('change',e=>{atoms=e.target.checked;});
+  $('#vrStereo').addEventListener('change',e=>{stereo=e.target.checked;toast(stereo?`Telefonni gorizontal tuting va VR ko'zoynakka joylang`:`Oddiy ko'rinish`);});
+  $('#vrReset').addEventListener('click',()=>{yaw=0.6;pitch=0.3;zoom=1;sel=-1;oInf.textContent=INFO[stateOf()];});
+  // sichqoncha / barmoq
+  const ptrs=new Map();let lastDist=0,moved=0,downT=0;
+  function pick(px,py){
+    const r=cvEl.getBoundingClientRect();let x=px-r.left,y=py-r.top;
+    if(stereo&&x>c.W/2)x-=c.W/2;
+    let best=-1,bd=1e9;
+    M.forEach((p,i)=>{const d=Math.hypot(p.sx-x,p.sy-y);if(d<Math.max(22,p.sr*1.6)&&d<bd){bd=d;best=i;}});
+    sel=best;
+    if(best>=0){const p=M[best],sp=Math.hypot(p.vx,p.vy,p.vz);
+      oInf.textContent=stateOf()==='solid'?`Molekula №${best+1}: panjara tugunida tebranmoqda. Tebranish amplitudasi harorat bilan ortadi.`:`Molekula №${best+1}: tezligi ≈ ${(sp*100).toFixed(0)} shartli birlik. Harorat ko'tarilsa, tezlik ortadi.`;
+      award('vr_pick',5);}
+    else oInf.textContent=INFO[stateOf()];
+  }
+  cvEl.addEventListener('pointerdown',e=>{try{cvEl.setPointerCapture(e.pointerId);}catch(_){}
+    ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=0;downT=performance.now();
+    if(ptrs.size===2){const a=Array.from(ptrs.values());lastDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);}});
+  cvEl.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;
+    const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
+    if(ptrs.size===1){yaw+=dx*0.008;pitch=cl(pitch+dy*0.008,-1.3,1.3);}
+    else if(ptrs.size===2){const a=Array.from(ptrs.values()),d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);if(lastDist>0)zoom=cl(zoom*d/lastDist,0.6,2.5);lastDist=d;}});
+  const up=e=>{if(ptrs.has(e.pointerId)){if(ptrs.size===1&&moved<8&&performance.now()-downT<600)pick(e.clientX,e.clientY);ptrs.delete(e.pointerId);lastDist=0;}};
+  cvEl.addEventListener('pointerup',up);cvEl.addEventListener('pointercancel',up);
+  cvEl.addEventListener('wheel',e=>{e.preventDefault();zoom=cl(zoom*(e.deltaY<0?1.08:0.92),0.6,2.5);},{passive:false});
+  // to'liq ekran
+  function setFs(on){fs=on;stage.classList.toggle('fs',on);document.body.classList.toggle('nofs',on);$('#vrFs').textContent=on?'✕ Chiqish':'⛶ To\'liq ekran';setTimeout(()=>c.fit(),60);setTimeout(()=>c.fit(),350);}
+  function toggleFs(){
+    if(!fs){setFs(true);award('vr_fs',5);
+      try{if(stage.requestFullscreen){const pr=stage.requestFullscreen();if(pr&&pr.catch)pr.catch(()=>{});}else if(stage.webkitRequestFullscreen){stage.webkitRequestFullscreen();}}catch(_){}}
+    else{setFs(false);try{if(document.fullscreenElement&&document.exitFullscreen){const pr=document.exitFullscreen();if(pr&&pr.catch)pr.catch(()=>{});}}catch(_){}}
+  }
+  $('#vrFs').addEventListener('click',toggleFs);
+  document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&fs)setFs(false);});
+  oInf.textContent=INFO.solid;
+  return {frame:frame,fit:()=>c.fit(),toggleFs:toggleFs,isFs:()=>fs};
+})();
+
+/* ===================== VIDEO ===================== */
+const VID=(function(){
+  const c=Cv($('#vidCv')),ctx=c.ctx,DUR=58;
+  const SC=[
+    {t:0,n:`Jism va modda`,s:`Atrofimizdagi narsalar — jismlar. Stakan, mix va taxta — fizik jismlar. Ular shisha, temir va yog'och kabi moddalardan tayyorlangan.`},
+    {t:8,n:`Molekulalar`,s:`Har qanday modda juda mayda zarralar — molekulalardan tuzilgan. Masalan, suv molekulasi bitta kislorod va ikkita vodorod atomidan iborat: H₂O.`},
+    {t:16,n:`Molekula o'lchami`,s:`Molekulalar nihoyatda kichik: suv molekulasi taxminan 0,3 nm, ya'ni 3·10⁻¹⁰ metr. Ularni oddiy mikroskopda ham ko'rib bo'lmaydi.`},
+    {t:24,n:`Bo'shliqlar`,s:`100 ml suv va 100 ml spirt aralashtirilsa, hajm 200 ml dan kam bo'ladi. Chunki molekulalar orasida bo'shliqlar bor.`},
+    {t:32,n:`Diffuziya`,s:`Siyoh tomchisi suvda o'z-o'zidan tarqaladi — bu diffuziya. Issiq suvda molekulalar tezroq harakatlanadi, shuning uchun diffuziya ham tezroq kechadi.`},
+    {t:42,n:`Broun harakati`,s:`Suvdagi mayda zarra molekulalar zarbidan uzluksiz va tartibsiz harakatlanadi. Buni 1827-yilda Robert Broun kuzatgan.`},
+    {t:50,n:`Agregat holatlar`,s:`Qattiq jismda molekulalar tartibli joylashib tebranadi, suyuqlikda siljib yuradi, gazda esa erkin va tez uchib yuradi.`}
+  ];
+  let t=0,playing=false,rate=1,last=-1,fin=false;
+  const btn=$('#vidPlay'),seek=$('#vidSeek'),tl=$('#vidTime'),sub=$('#vidSub'),notes=$('#vidNotes'),auto=$('#vidAuto');
+  SC.forEach((s,i)=>{const li=document.createElement('li'),b=document.createElement('button');b.textContent=(i+1)+'. '+s.n+' ('+fmtT(s.t)+')';b.addEventListener('click',()=>{t=s.t;fin=false;last=-1;});li.appendChild(b);notes.appendChild(li);});
+  const sceneIdx=()=>{for(let i=SC.length-1;i>=0;i--)if(t>=SC[i].t)return i;return 0;};
+  function setPlay(p){playing=p;btn.textContent=p?'⏸ Pauza':(t>=DUR?'▶ Qayta ko\'rish':'▶ Boshlash');}
+  btn.addEventListener('click',()=>{if(!playing&&t>=DUR){t=0;fin=false;last=-1;}setPlay(!playing);});
+  $('#vidRestart').addEventListener('click',()=>{t=0;fin=false;last=-1;setPlay(true);});
+  seek.addEventListener('input',()=>{t=Number(seek.value)/1000*DUR;fin=false;last=-1;if(t>=DUR)t=DUR-0.01;});
+  $('#vidRate').addEventListener('change',e=>{rate=Number(e.target.value)||1;});
+  $('#vidSpeak').addEventListener('click',()=>speak(SC[sceneIdx()].s));
+  const grad=()=>{const g=ctx.createLinearGradient(0,0,0,c.H);g.addColorStop(0,COL.cv);g.addColorStop(1,'rgba(25,181,201,.18)');ctx.fillStyle=g;ctx.fillRect(0,0,c.W,c.H);};
+  function beaker(x,bottom,w,h,level,col){
+    ctx.fillStyle=col;ctx.globalAlpha=0.55;ctx.fillRect(x+2,bottom-h*level,w-4,h*level);ctx.globalAlpha=1;
+    ctx.beginPath();ctx.moveTo(x,bottom-h);ctx.lineTo(x,bottom);ctx.lineTo(x+w,bottom);ctx.lineTo(x+w,bottom-h);ctx.strokeStyle=COL.txt;ctx.lineWidth=3;ctx.stroke();}
+  const D=[
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),y=H*0.52;
+      const A=k=>cl((lt-0.6-k*1.3)/0.8);
+      ctx.save();ctx.globalAlpha=A(0);ctx.translate(W*0.2,y);ctx.scale(u,u);
+      ctx.beginPath();ctx.moveTo(-30,-50);ctx.lineTo(30,-50);ctx.lineTo(24,50);ctx.lineTo(-24,50);ctx.closePath();ctx.fillStyle='rgba(25,181,201,.25)';ctx.fill();ctx.strokeStyle=COL.pri2;ctx.lineWidth=3;ctx.stroke();
+      ctx.fillStyle='rgba(11,120,209,.4)';ctx.fillRect(-26,-5,52,53);ctx.restore();
+      ctx.save();ctx.globalAlpha=A(1);ctx.translate(W*0.5,y);ctx.scale(u,u);ctx.fillStyle='#8d99a6';ctx.fillRect(-4,-45,8,95);ctx.fillRect(-16,-52,32,8);ctx.restore();
+      ctx.save();ctx.globalAlpha=A(2);ctx.translate(W*0.8,y);ctx.scale(u,u);ctx.fillStyle='#c28a4b';ctx.fillRect(-45,-25,90,50);ctx.fillStyle='#a8743a';ctx.fillRect(-45,-10,90,3);ctx.fillRect(-45,6,90,3);ctx.restore();
+      ctx.globalAlpha=A(0);ctext(ctx,'Stakan',W*0.2,y+68*u,14*u+4,COL.txt,'center');
+      ctx.globalAlpha=A(1);ctext(ctx,'Mix',W*0.5,y+68*u,14*u+4,COL.txt,'center');
+      ctx.globalAlpha=A(2);ctext(ctx,'Taxta',W*0.8,y+68*u,14*u+4,COL.txt,'center');
+      ctx.globalAlpha=cl((lt-4.6)/1);ctext(ctx,'Bular — jismlar',W/2,H*0.14,16*u+4,COL.pri,'center');
+      ctext(ctx,'shisha',W*0.2,y+88*u,13*u+3,COL.mut,'center');ctext(ctx,'temir',W*0.5,y+88*u,13*u+3,COL.mut,'center');ctext(ctx,'yog\'och',W*0.8,y+88*u,13*u+3,COL.mut,'center');
+      ctext(ctx,'← moddalar →',W/2,H*0.93,13*u+3,COL.warn,'center');ctx.globalAlpha=1;},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),z=cl(lt/3.5),rad=H*0.16*(1+z*z*7);
+      ctx.globalAlpha=1-cl((lt-2)/1.5);dot(ctx,W/2,H/2,rad,'rgba(11,120,209,.35)');ctx.strokeStyle=COL.pri;ctx.lineWidth=3;ctx.stroke();ctext(ctx,'suv tomchisi',W/2,H*0.88,14*u+3,COL.txt,'center');
+      ctx.globalAlpha=cl((lt-2.2)/1.5);
+      for(let r=0;r<3;r++)for(let k=0;k<5;k++){const x=W*0.14+k*W*0.18+Math.sin(lt*2+r*3+k)*4,y=H*0.25+r*H*0.25+Math.cos(lt*2.3+k*2+r)*4;waterMol(ctx,x,y,9*u+2,lt*0.8+r+k);}
+      ctext(ctx,'Suv molekulalari H₂O',W/2,H*0.92,15*u+3,COL.pri,'center');ctx.globalAlpha=1;},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),x0=W*0.1,x1=W*0.9,y=H*0.5;
+      ctx.strokeStyle=COL.txt;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(x1,y);ctx.stroke();
+      const lab=['1 m','1 mm','1 μm','1 nm'];
+      for(let i=0;i<4;i++){const x=x0+(x1-x0)*i/3;ctx.beginPath();ctx.moveTo(x,y-8);ctx.lineTo(x,y+8);ctx.stroke();ctext(ctx,lab[i],x,y+24,13*u+3,COL.mut,'center');}
+      const p=cl(lt/6),e=p*p*(3-2*p),mx=x0+(x1-x0)*e;
+      dot(ctx,mx,y,9*u+3,COL.warn);ctext(ctx,'10^'+(-9*e).toFixed(1)+' m',mx,y-28,14*u+3,COL.txt,'center');
+      ctx.globalAlpha=cl((lt-5.2)/1.2);waterMol(ctx,x1-W*0.04,y-H*0.28,9*u+2,0.4);ctext(ctx,'Suv molekulasi ≈ 0,3 nm',W/2,H*0.82,16*u+3,COL.pri,'center');ctx.globalAlpha=1;},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),bottom=H*0.74,bh=H*0.36,bh2=bh*1.6,p=cl((lt-1)/3);
+      beaker(W*0.06,bottom,W*0.17,bh,0.7*(1-p),COL.pri);ctext(ctx,'Suv 100 ml',W*0.145,bottom+18*u,12*u+3,COL.txt,'center');
+      beaker(W*0.3,bottom,W*0.17,bh,0.7*(1-p),COL.warn);ctext(ctx,'Spirt 100 ml',W*0.385,bottom+18*u,12*u+3,COL.txt,'center');
+      const lv=0.875*0.95*p;beaker(W*0.62,bottom,W*0.3,bh2,lv,COL.pri2);
+      const yl=bottom-bh2*0.875;ctx.setLineDash([6,4]);ctx.strokeStyle=COL.bad;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(W*0.6,yl);ctx.lineTo(W*0.94,yl);ctx.stroke();ctx.setLineDash([]);
+      ctext(ctx,'200 ml',W*0.94,yl-9,12*u+3,COL.bad,'right');
+      ctx.globalAlpha=cl((lt-4.2)/1);ctext(ctx,'Hajm 200 ml dan kam!',W*0.77,bottom+18*u,14*u+3,COL.txt,'center');
+      ctext(ctx,'Molekulalar orasida bo\'shliqlar bor',W/2,H*0.1,16*u+3,COL.pri,'center');ctx.globalAlpha=1;},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),bottom=H*0.82,gh=H*0.58,gw=W*0.36;
+      [[W*0.07,7,'Sovuq suv — sekin','rgba(11,120,209,.25)'],[W*0.57,20,'Issiq suv — tez','rgba(240,160,32,.25)']].forEach((g,gi)=>{
+        const x=g[0];ctx.fillStyle=g[3];ctx.fillRect(x,bottom-gh*0.85,gw,gh*0.85);
+        ctx.beginPath();ctx.moveTo(x,bottom-gh);ctx.lineTo(x,bottom);ctx.lineTo(x+gw,bottom);ctx.lineTo(x+gw,bottom-gh);ctx.strokeStyle=COL.txt;ctx.lineWidth=3;ctx.stroke();
+        const sx=x+gw/2,sy=bottom-gh*0.7;
+        for(let k=0;k<36;k++){const a=hash(k+gi*40)*6.283,rr=g[1]*u*Math.sqrt(lt+0.1)*(0.4+hash(k+50)*0.9);
+          const px=cl(sx+Math.cos(a)*rr,x+6,x+gw-6),py=cl(sy+Math.sin(a)*rr*0.8,bottom-gh*0.85+6,bottom-6);dot(ctx,px,py,3*u+1,'rgba(40,40,150,.6)');}
+        ctext(ctx,g[2],x+gw/2,bottom+16*u,13*u+3,COL.txt,'center');});},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225);
+      for(let i=0;i<40;i++)dot(ctx,hash(i)*W+Math.sin(lt*3+i)*5,hash(i+90)*H+Math.cos(lt*3.3+i)*5,3,'rgba(25,181,201,.55)');
+      const bx=k=>W/2+W*0.26*(Math.sin(1.7*k)+0.5*Math.sin(3.9*k+1)+0.3*Math.sin(7.3*k)),by=k=>H/2+H*0.22*(Math.cos(1.3*k)+0.5*Math.sin(4.1*k+2)+0.3*Math.cos(6.9*k));
+      ctx.beginPath();for(let s=60;s>=0;s--){const k=lt*1.2-s*0.04;if(s===60)ctx.moveTo(bx(k),by(k));else ctx.lineTo(bx(k),by(k));}ctx.strokeStyle=COL.warn;ctx.lineWidth=2;ctx.stroke();
+      const k0=lt*1.2;dot(ctx,bx(k0),by(k0),12*u+3,COL.pri);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctext(ctx,'Katta zarra — tartibsiz harakat',W/2,H*0.92,15*u+3,COL.pri,'center');},
+    function(lt){const W=c.W,H=c.H,u=Math.min(W/400,H/225),bw=W*0.27,bh=H*0.55,by=H*0.18,t0=lt;
+      const xs=[W*0.04,W*0.365,W*0.69],names=['Qattiq','Suyuq','Gaz'];
+      xs.forEach((x,k)=>{ctx.strokeStyle=COL.line;ctx.lineWidth=2;ctx.strokeRect(x,by,bw,bh);ctext(ctx,names[k],x+bw/2,by+bh+22*u,16*u+3,COL.txt,'center');});
+      for(let i=0;i<4;i++)for(let j=0;j<4;j++)dot(ctx,xs[0]+bw*0.2+j*bw*0.2+Math.sin(t0*8+i*3+j)*2.5,by+bh*0.15+i*bh*0.22+Math.cos(t0*9+i+j*2)*2.5,6*u+1,COL.pri);
+      for(let k=0;k<14;k++){const x=xs[1]+bw*(0.1+0.8*(0.5+0.5*Math.sin(t0*0.9+k*1.7))),y=by+bh*(0.4+0.55*(0.5+0.5*Math.cos(t0*1.1+k*2.3)));dot(ctx,x,y,6*u+1,COL.pri2);}
+      for(let k=0;k<8;k++){const x=xs[2]+bw*(0.08+0.84*(0.5+0.5*Math.sin(t0*2.2+k*2.1))),y=by+bh*(0.08+0.84*(0.5+0.5*Math.cos(t0*2.7+k*1.3)));dot(ctx,x,y,5*u+1,COL.warn);}}
+  ];
+  function draw(){
+    ctx.clearRect(0,0,c.W,c.H);grad();const i=sceneIdx();D[i](t-SC[i].t);ctx.globalAlpha=1;
+    ctext(ctx,(i+1)+'/'+SC.length+' · '+SC[i].n,12,16,Math.max(12,c.W/36),COL.mut,'left');
+  }
+  function frame(dt){
+    if(playing){t+=dt*rate;if(t>=DUR){t=DUR;setPlay(false);if(!fin){fin=true;award('video',30);}}}
+    draw();
+    const i=sceneIdx();
+    if(i!==last){last=i;sub.textContent=SC[i].s;$$('button',notes).forEach((b,k)=>b.classList.toggle('on',k===i));if(auto.checked&&playing)speak(SC[i].s);}
+    seek.value=Math.round(t/DUR*1000);tl.textContent=fmtT(t).replace(/^0/,'')+' / '+fmtT(DUR).replace(/^0/,'');
+  }
+  sub.textContent=SC[0].s;
+  return {frame:frame,fit:()=>{c.fit();},stop:()=>{if(playing)setPlay(false);}};
+})();
+
+/* ===================== TEST ===================== */
+(function(){
+  const box=$('#testBox');let qi=0,correct=0,answered=false;
+  function start(){qi=0;correct=0;answered=false;renderQ();}
+  function renderQ(){
+    const q=Q[qi];answered=false;
+    box.innerHTML=`<div class="qhead"><span>Savol ${qi+1} / ${Q.length}</span><span>✔ ${correct}</span></div>
+    <div class="bar"><i style="width:${qi/Q.length*100}%"></i></div>
+    <h3 class="qtext">${esc(q[0])}</h3>
+    <div id="opts">${q[1].map((o,i)=>`<button class="opt" data-i="${i}">${String.fromCharCode(65+i)}) ${esc(o)}</button>`).join('')}</div>
+    <div id="fb" class="fb" hidden></div>
+    <div class="row"><button id="tSp" class="btn ghost">🔊 Savolni o'qish</button><button id="tNx" class="btn" hidden>${qi===Q.length-1?'Natijani ko\'rish':'Keyingi savol →'}</button></div>`;
+    $$('.opt',box).forEach(b=>b.addEventListener('click',()=>pick(Number(b.dataset.i))));
+    $('#tSp',box).addEventListener('click',()=>speak(q[0]+'. '+q[1].map((o,i)=>String.fromCharCode(65+i)+', '+o).join('. ')));
+    $('#tNx',box).addEventListener('click',()=>{stopSpeak();qi++;if(qi>=Q.length)finish();else renderQ();});
+  }
+  function pick(i){
+    if(answered)return;answered=true;const q=Q[qi],ok=i===q[2];if(ok)correct++;
+    $$('.opt',box).forEach((b,k)=>{b.disabled=true;if(k===q[2])b.classList.add('ok');else if(k===i)b.classList.add('bad');});
+    const fb=$('#fb',box);fb.hidden=false;fb.className='fb '+(ok?'ok':'bad');fb.textContent=(ok?'✔ To\'g\'ri! ':'✖ Xato. ')+q[3];
+    $('#tNx',box).hidden=false;
+  }
+  function finish(){
+    const pct=Math.round(correct/Q.length*100),stars=pct>=90?5:pct>=75?4:pct>=60?3:pct>=40?2:pct>0?1:0;
+    award('test',correct*10);
+    const msg=pct>=90?`A'lo! Mavzuni mukammal o'zlashtirdingiz.`:pct>=70?`Yaxshi natija! Biroz takrorlasangiz, a'lo bo'ladi.`:pct>=50?`Qoniqarli. Slaydlar va simulyatsiyalarni qayta ko'rib chiqing.`:`Mavzuni qayta o'rganib, yana urinib ko'ring.`;
+    box.innerHTML=`<div class="center"><div class="big">${correct} / ${Q.length}</div><div class="big" style="color:var(--pri)">${pct}%</div>
+    <div class="stars" style="font-size:2rem">${'★'.repeat(stars)}${'☆'.repeat(5-stars)}</div><p>Ball: <b>${correct*10}</b> / ${Q.length*10}</p><p>${msg}</p></div>
+    <div class="row"><button id="tAgain" class="btn">↺ Qayta topshirish</button></div>`;
+    $('#tAgain',box).addEventListener('click',start);
+  }
+  start();
+  window.__testReset=start;
+})();
+
+/* ===================== O'YINLAR ===================== */
+let gTimers=[];
+function clearG(){gTimers.forEach(clearInterval);gTimers=[];}
+const OG=[
+{id:'g1',n:`Mos keltirish`,ic:'🔗',d:`Atamalarni ta'riflar bilan juftlang.`,run:function(b,done){
+  const P=[[`Atom`,`Kimyoviy elementning eng kichik zarrasi`],[`Molekula`,`Modda xossalarini saqlovchi eng kichik zarra`],[`Diffuziya`,`Moddalarning o'z-o'zidan aralashishi`],[`Broun harakati`,`Suyuqlikdagi mayda zarralarning tartibsiz harakati`],[`Agregat holat`,`Moddaning qattiq, suyuq yoki gaz ko'rinishi`]];
+  let sel=-1,mis=0,ok=0;
+  b.innerHTML=`<p class="hint">Chapdagi atamani tanlang, so'ng uning ta'rifini bosing.</p><div class="mt"><div class="col" id="mL"></div><div class="col" id="mR"></div></div><p class="hint" id="mS">Xatolar: 0</p>`;
+  const L=$('#mL',b),R=$('#mR',b);
+  shuffle(P.map((_,i)=>i)).forEach(i=>{const x=document.createElement('button');x.className='opt';x.textContent=P[i][0];x.dataset.i=i;x.addEventListener('click',()=>{if(x.disabled)return;$$('.opt',L).forEach(y=>y.classList.remove('sel'));x.classList.add('sel');sel=i;});L.appendChild(x);});
+  shuffle(P.map((_,i)=>i)).forEach(i=>{const x=document.createElement('button');x.className='opt';x.textContent=P[i][1];x.dataset.i=i;x.addEventListener('click',()=>{
+    if(x.disabled)return;if(sel<0){toast('Avval atamani tanlang');return;}
+    if(sel===i){const l=$('.opt[data-i="'+i+'"]',L);l.classList.remove('sel');l.classList.add('ok');l.disabled=true;x.classList.add('ok');x.disabled=true;sel=-1;ok++;if(ok===P.length)setTimeout(()=>done(Math.max(0,P.length-mis),P.length),500);}
+    else{mis++;$('#mS',b).textContent='Xatolar: '+mis;x.classList.add('bad');setTimeout(()=>x.classList.remove('bad'),500);}
+  });R.appendChild(x);});
+}},
+{id:'g2',n:`Tezkor: to'g'ri / noto'g'ri`,ic:'⚡',d:`45 soniyada iloji boricha ko'p javob bering.`,run:function(b,done){
+  const A=[[`Molekulalar orasida bo'shliqlar mavjud.`,1],[`Diffuziya faqat suyuqliklarda bo'ladi.`,0],[`Harorat ko'tarilsa, diffuziya tezlashadi.`,1],[`Atom — moddaning xossalarini saqlovchi eng kichik zarrasi.`,0],[`Gazlarda molekulalar orasidagi masofa katta.`,1],[`Qattiq jismlarda molekulalar butunlay to'xtab turadi.`,0],[`1 nm = 10⁻⁹ m.`,1],[`Broun harakatini 1827-yilda R. Broun kuzatgan.`,1],[`Suyuqlik o'z shaklini saqlaydi.`,0],[`Molekulalar uzluksiz va tartibsiz harakatlanadi.`,1]];
+  const items=shuffle(A);let i=0,sc=0,tm=45,over=false;
+  b.innerHTML=`<div class="qhead"><span>⏱ <b id="tfT">45</b> s</span><span>✔ <b id="tfS">0</b></span></div><div class="tf" id="tfQ"></div><div class="row"><button class="btn ok" id="tfY">To'g'ri ✔</button><button class="btn bad" id="tfN">Noto'g'ri ✖</button></div>`;
+  const q=$('#tfQ',b);function show(){q.textContent=items[i][0];}show();
+  function end(){if(over)return;over=true;clearG();done(sc,A.length);}
+  function ans(v){if(over)return;if(items[i][1]===v){sc++;$('#tfS',b).textContent=sc;q.style.outline='3px solid var(--ok)';}else q.style.outline='3px solid var(--bad)';
+    i++;if(i>=items.length){end();return;}setTimeout(()=>{q.style.outline='';},250);show();}
+  $('#tfY',b).addEventListener('click',()=>ans(1));$('#tfN',b).addEventListener('click',()=>ans(0));
+  gTimers.push(setInterval(()=>{tm--;const e=$('#tfT',b);if(e)e.textContent=tm;if(tm<=0)end();},1000));
+}},
+{id:'g3',n:`Bo'sh joyni to'ldiring`,ic:'✏️',d:`Gaplardagi bo'sh joyga mos so'zni tanlang.`,run:function(b,done){
+  const F=[[`Moddaning o'z xossalarini saqlovchi eng kichik zarrasi ___ deyiladi.`,[`atom`,`molekula`,`proton`],1],[`Turli moddalar molekulalarining o'z-o'zidan aralashishi ___ deyiladi.`,[`diffuziya`,`bug'lanish`,`erish`],0],[`Harorat oshsa, diffuziya ___.`,[`sekinlashadi`,`tezlashadi`,`to'xtaydi`],1],[`Suyuqlikdagi mayda zarralarning tartibsiz harakati ___ harakati deyiladi.`,[`Broun`,`Nyuton`,`Arximed`],0],[`Gazlarda molekulalar orasidagi masofa molekula o'lchamidan ___.`,[`ancha katta`,`ancha kichik`,`nolga teng`],0],[`Qattiq jismning hajmi ham, shakli ham ___.`,[`saqlanadi`,`o'zgaradi`,`yo'qoladi`],0]];
+  b.innerHTML=`<div id="fl"></div><div class="row"><button class="btn" id="flC">Tekshirish</button></div>`;
+  const wrap=$('#fl',b);
+  F.forEach((f,i)=>{const parts=f[0].split('___'),d=document.createElement('div');d.className='fl';d.innerHTML=esc(parts[0])+`<select data-i="${i}"><option value="-1">— tanlang —</option>${f[1].map((o,k)=>`<option value="${k}">${esc(o)}</option>`).join('')}</select>`+esc(parts[1]||'');wrap.appendChild(d);});
+  let used=false;
+  $('#flC',b).addEventListener('click',()=>{if(used)return;used=true;let sc=0;
+    $$('select',wrap).forEach(s=>{const i=Number(s.dataset.i),ok=Number(s.value)===F[i][2];if(ok)sc++;s.parentNode.classList.add(ok?'ok':'bad');s.disabled=true;});
+    $('#flC',b).disabled=true;setTimeout(()=>done(sc,F.length),1500);});
+}},
+{id:'g4',n:`Tartiblash: o'lcham`,ic:'📏',d:`Zarralarni kichikdan kattaga qarab joylashtiring.`,run:function(b,done){
+  const C=[[`Atom`,`≈ 0,1 nm`],[`Suv molekulasi`,`≈ 0,3 nm`],[`Virus`,`≈ 100 nm`],[`Bakteriya`,`≈ 2000 nm`],[`Soch tolasining qalinligi`,`≈ 70 000 nm`]];
+  let ord=shuffle(C.map((_,i)=>i));while(ord.every((v,i)=>v===i))ord=shuffle(ord);
+  let checked=false;
+  b.innerHTML=`<p class="hint">Eng kichigi tepada bo'lsin. ▲▼ tugmalaridan foydalaning.</p><div id="sl"></div><div class="row"><button class="btn" id="stC">Tekshirish</button></div>`;
+  const wrap=$('#sl',b);
+  function draw(){wrap.innerHTML='';ord.forEach((v,p)=>{const r=document.createElement('div');r.className='srt';
+    const t=document.createElement('div');t.className='opt'+(checked?(v===p?' ok':' bad'):'');t.textContent=(p+1)+'. '+C[v][0]+(checked?' — '+C[v][1]:'');
+    const u=document.createElement('button'),d=document.createElement('button');u.className=d.className='btn ghost';u.textContent='▲';d.textContent='▼';u.disabled=checked||p===0;d.disabled=checked||p===ord.length-1;
+    u.setAttribute('aria-label','Yuqoriga');d.setAttribute('aria-label','Pastga');
+    u.addEventListener('click',()=>{const x=ord[p];ord[p]=ord[p-1];ord[p-1]=x;draw();});
+    d.addEventListener('click',()=>{const x=ord[p];ord[p]=ord[p+1];ord[p+1]=x;draw();});
+    r.appendChild(t);r.appendChild(u);r.appendChild(d);wrap.appendChild(r);});}
+  draw();
+  $('#stC',b).addEventListener('click',()=>{if(checked)return;checked=true;let sc=0;ord.forEach((v,p)=>{if(v===p)sc++;});draw();$('#stC',b).disabled=true;setTimeout(()=>done(sc,C.length),1800);});
+}},
+{id:'g5',n:`Xotira: juftlarni toping`,ic:'🧠',d:`Atamalar va ta'riflarni juftlab toping.`,run:function(b,done){
+  const P=[[`Qattiq`,`Shakli va hajmini saqlaydi`],[`Suyuq`,`Hajmini saqlaydi, shaklini yo'q`],[`Gaz`,`Butun idishni to'ldiradi`],[`Diffuziya`,`Moddalarning o'z-o'zidan aralashishi`]];
+  const cards=[];P.forEach((p,i)=>{cards.push({p:i,t:p[0]});cards.push({p:i,t:p[1]});});
+  const D=shuffle(cards);let open=[],lock=false,moves=0,found=0;
+  b.innerHTML=`<p class="hint">Yurishlar: <b id="mvC">0</b></p><div class="mem" id="mem"></div>`;
+  const g=$('#mem',b);
+  D.forEach((cd,i)=>{const x=document.createElement('button');x.className='mc';x.textContent='?';x.addEventListener('click',()=>{
+    if(lock||x.classList.contains('open')||x.classList.contains('done'))return;
+    x.classList.add('open');x.textContent=cd.t;open.push({x:x,cd:cd});
+    if(open.length===2){moves++;$('#mvC',b).textContent=moves;lock=true;const a=open[0],c2=open[1];
+      if(a.cd.p===c2.cd.p){setTimeout(()=>{a.x.classList.remove('open');c2.x.classList.remove('open');a.x.classList.add('done');c2.x.classList.add('done');open=[];lock=false;found++;
+        if(found===P.length)setTimeout(()=>done(cl(P.length-Math.floor((moves-P.length)/2),1,P.length),P.length),400);},450);}
+      else{setTimeout(()=>{a.x.classList.remove('open');c2.x.classList.remove('open');a.x.textContent='?';c2.x.textContent='?';open=[];lock=false;},800);}}
+  });g.appendChild(x);});
+}},
+{id:'g6',n:`Viktorina`,ic:'🏆',d:`5 ta savolga javob bering.`,run:function(b,done){
+  const V=[[`Suv molekulasi nechta atomdan iborat?`,[`2`,`3`,`4`],1],[`Qaysi holatda diffuziya eng sekin kechadi?`,[`Gazda`,`Suyuqlikda`,`Qattiq jismda`],2],[`Molekula o'lchami qaysi birlikda qulay o'lchanadi?`,[`nanometr (nm)`,`kilometr (km)`,`santimetr (sm)`],0],[`Moyli parda qalinligi qaysi formula bilan topiladi?`,[`d = V / S`,`d = V · S`,`d = S / V`],0],[`Isitilganda molekulalarning harakati qanday o'zgaradi?`,[`sekinlashadi`,`jadallashadi`,`to'xtaydi`],1]];
+  let i=0,sc=0;
+  function show(){const q=V[i];b.innerHTML=`<div class="qhead"><span>Savol ${i+1} / ${V.length}</span><span>✔ ${sc}</span></div><h3 class="qtext">${esc(q[0])}</h3>${q[1].map((o,k)=>`<button class="opt" data-k="${k}">${esc(o)}</button>`).join('')}`;
+    $$('.opt',b).forEach(x=>x.addEventListener('click',()=>{const k=Number(x.dataset.k);$$('.opt',b).forEach((y,j)=>{y.disabled=true;if(j===q[2])y.classList.add('ok');else if(j===k)y.classList.add('bad');});if(k===q[2])sc++;
+      setTimeout(()=>{i++;if(i>=V.length)done(sc,V.length);else show();},900);}));}
+  show();
+}}
+];
+const gList=$('#gameList'),gBox=$('#gameBox');
+function renderGameList(){
+  gBox.hidden=true;gList.hidden=false;gBox.innerHTML='';clearG();
+  gList.innerHTML=OG.map((g,i)=>`<button class="gcard" data-i="${i}"><span class="ic">${g.ic}</span><b>${i+1}. ${esc(g.n)}</b><span class="hint">${esc(g.d)}</span><br><span class="stars">Eng yaxshi: ${st.sc[g.id]||0} / 20</span></button>`).join('');
+  $$('.gcard',gList).forEach(b=>b.addEventListener('click',()=>openGame(Number(b.dataset.i))));
+}
+function openGame(i){
+  clearG();const g=OG[i];gList.hidden=true;gBox.hidden=false;
+  gBox.innerHTML=`<div class="row" style="margin:0 0 10px"><button class="btn ghost" id="gBack" style="flex:0 0 auto">← Ro'yxat</button><h3 style="margin:0;flex:1">${g.ic} ${esc(g.n)}</h3></div><div id="gBody"></div>`;
+  $('#gBack',gBox).addEventListener('click',renderGameList);
+  const body=$('#gBody',gBox);
+  g.run(body,function(score,max){
+    clearG();const pts=Math.round(20*score/max);award(g.id,pts);
+    body.innerHTML=`<div class="center"><div class="big">${score} / ${max}</div><p>Ball: <b>+${pts}</b> / 20</p><p>${score===max?`Ajoyib! Mukammal natija! 🎉`:score>=max*0.6?`Yaxshi natija!`:`Yana urinib ko'ring.`}</p></div><div class="row"><button class="btn" id="gAg">↺ Qayta o'ynash</button><button class="btn ghost" id="gLs">Ro'yxatga qaytish</button></div>`;
+    $('#gAg',body).addEventListener('click',()=>openGame(i));$('#gLs',body).addEventListener('click',renderGameList);
+  });
+}
+
+/* ===================== Bo'limlar, mavzu, sozlamalar ===================== */
+const SECS=['slides','sim','vr','video','test','games'];
+function showSec(name){
+  if(SECS.indexOf(name)<0)name='slides';
+  if(st.sec==='video'&&name!=='video')VID.stop();
+  if(st.sec==='games'&&name!=='games')clearG();
+  stopSpeak();st.sec=name;save();
+  SECS.forEach(s=>{$('#sec-'+s).hidden=s!==name;});
+  $$('#nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.sec===name?'true':'false'));
+  if(name==='sim')SIMS[simIdx].fit();else if(name==='vr')VR.fit();else if(name==='video')VID.fit();else if(name==='games'&&gBox.hidden)renderGameList();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$$('#nav button').forEach(b=>b.addEventListener('click',()=>showSec(b.dataset.sec)));
+
+function applyTheme(){document.documentElement.setAttribute('data-theme',st.theme);$('#themeBtn').textContent=st.theme==='dark'?'☀️':'🌙';readCol();}
+$('#themeBtn').addEventListener('click',()=>{st.theme=st.theme==='dark'?'light':'dark';save();applyTheme();});
+$('#setBtn').addEventListener('click',()=>{const p=$('#setPanel');p.hidden=!p.hidden;$('#setBtn').setAttribute('aria-expanded',String(!p.hidden));});
+$('#langSel').addEventListener('change',e=>{st.lang=e.target.value;voiceWarned=false;save();});
+$('#rateSel').addEventListener('input',e=>{st.rate=Number(e.target.value)||0.9;$('#rateTxt').textContent=st.rate.toFixed(1);save();});
+$('#speakTest').addEventListener('click',()=>speak(`Modda va jism. Moddaning tuzilishi. Fizika, yettinchi sinf.`));
+$('#resetBtn').addEventListener('click',()=>{
+  let ok=true;try{ok=window.confirm('Barcha ball va vaqt tozalansinmi?');}catch(e){}
+  if(!ok)return;st.sc={};st.time=0;save();refreshStats();refreshTime();renderSlide(false);window.__testReset();if(!gBox.hidden)renderGameList();toast('Natijalar tozalandi');
+});
+if(!('speechSynthesis' in window)){$('#speakTest').disabled=true;$('#voiceSel').disabled=true;}
+else{loadVoices();try{window.speechSynthesis.onvoiceschanged=loadVoices;}catch(e){}setTimeout(loadVoices,500);setTimeout(loadVoices,1500);}
+$('#voiceSel').addEventListener('change',e=>{st.voice=e.target.value;voiceWarned=false;save();});
+
+window.addEventListener('resize',()=>{clearTimeout(window.__rz);window.__rz=setTimeout(()=>{if(st.sec==='sim')SIMS[simIdx].fit();else if(st.sec==='vr')VR.fit();else if(st.sec==='video')VID.fit();},120);});
+
+/* Umumiy animatsiya sikli */
+let lastT=performance.now();
+function loop(now){
+  const dt=Math.min(0.05,Math.max(0,(now-lastT)/1000));lastT=now;
+  try{
+    if(st.sec==='sim')SIMS[simIdx].frame(dt);
+    else if(st.sec==='vr')VR.frame(dt);
+    else if(st.sec==='video')VID.frame(dt);
+  }catch(e){console.error(e);}
+  requestAnimationFrame(loop);
+}
+
+/* Umumiy taymer */
+setInterval(()=>{if(!document.hidden){st.time++;refreshTime();if(st.time%10===0)save();}},1000);
+
+/* Ishga tushirish */
+$('#langSel').value=st.lang;$('#rateSel').value=st.rate;$('#rateTxt').textContent=Number(st.rate).toFixed(1);
+applyTheme();refreshStats();refreshTime();renderSlide(false);
+showSec(SECS.indexOf(st.sec)>=0?st.sec:'slides');
+window.scrollTo(0,0);
+requestAnimationFrame(loop);
+})();
+</script>
+
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>

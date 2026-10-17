@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Quvvat va uning birliklari</title>
+<style>
+:root{--bg:#e6f3ff;--c:#0b2a45;--cd:rgba(255,255,255,.72);--p:#0b78d1;--ok:#1b9e55;--er:#d93c3c;--bd:rgba(11,120,209,.22)}
+body.dark{--bg:#0a1b2c;--c:#e8f4ff;--cd:rgba(20,45,70,.72);--bd:rgba(120,190,255,.25)}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--c);padding:10px;min-height:100vh;line-height:1.5}
+.w{max-width:1000px;margin:auto}
+.card{background:var(--cd);backdrop-filter:blur(10px);border:1px solid var(--bd);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 6px 20px rgba(11,120,209,.15)}
+h1,h2{background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent;margin:.2em 0}
+h1{font-size:1.3rem}
+button,select{min-height:44px;border-radius:12px;border:1px solid var(--bd);background:var(--cd);color:var(--c);padding:0 14px;font:inherit;cursor:pointer}
+button.on,button.pr{background:var(--p);color:#fff;border-color:var(--p)}
+button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+button.er{background:var(--er);color:#fff;border-color:var(--er)}
+button:disabled{opacity:1;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.sec{display:none}.sec.on{display:block}
+svg{width:100%;max-height:260px;color:var(--c)}
+canvas{width:100%;height:auto;border-radius:14px;background:rgba(255,255,255,.55);touch-action:none;display:block}
+body.dark canvas{background:rgba(0,0,0,.3)}
+.pb{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:6px}
+.pb i{display:block;height:100%;width:0;background:linear-gradient(120deg,#0b78d1,#19b5c9);transition:width .3s}
+.dot{min-height:0;width:14px;height:14px;padding:0;border-radius:50%}
+label{display:block;flex:1 1 200px}
+input[type=range]{width:100%;height:32px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.g2 button{width:100%;margin-bottom:8px;padding:8px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.g4 button{height:64px;padding:2px;font-size:.8rem}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:8px 14px}
+#vrw:fullscreen{background:var(--bg);overflow:auto;padding:10px}
+#vrw:fullscreen canvas{max-height:60vh;object-fit:contain}
+.fig{margin-top:8px}
+</style></head><body><div class="w">
+<div class="card"><div class="row" style="justify-content:space-between"><h1>⚡ Quvvat va uning birliklari · 7-sinf</h1><button id="th">🌓 Mavzu</button></div>
+<div class="row"><b id="sc"></b><span id="stars" style="color:#f5a623;font-size:1.2rem"></span><span id="tm">⏱ 0:00</span></div><div class="pb"><i id="pb"></i></div>
+<div class="row" style="margin-top:8px"><button id="spk">🔊 O'qish</button><select id="rt"><option value=".7">Sekin</option><option value="1" selected>Normal</option><option value="1.4">Tez</option></select><select id="lg"><option value="uz-UZ">O'zbek</option><option value="ru-RU">Русский</option><option value="en-US">English</option></select></div></div>
+<div class="card row" id="nav"></div>
+
+<div id="s0" class="sec card on"><div id="sl"></div><div class="row"><button id="pv">‹ Orqaga</button><button id="nx" class="pr">Oldinga ›</button><b id="spg"></b></div><div id="dots" class="row" style="margin-top:10px"></div></div>
+
+<div id="s1" class="sec card"><div class="row" id="st"></div><canvas id="cv" width="600" height="320"></canvas><p><b id="inf"></b></p><div id="cs" class="row"></div></div>
+
+<div id="s2" class="sec"><div id="vrw" class="card"><canvas id="vr" width="640" height="360"></canvas><p style="margin:6px 0">Sichqoncha yoki barmoq bilan sahnani aylantiring.</p>
+<div class="row"><label>Yuk massasi: <b id="vmo">50</b> kg<input type="range" id="vm" min="20" max="100" step="10" value="50"></label><select id="vo"><option value="0">Motor 100 W</option><option value="1">Motor 200 W</option><option value="2" selected>Motor 400 W</option><option value="3">Motor 800 W</option></select></div>
+<div class="row" style="margin-top:8px"><button id="vd" class="pr">⬆ Ko'tarish</button><button id="vz">⟲ Pastga</button><button id="vs">👓 Stereo</button><button id="vf">⛶ To'liq ekran</button><button id="v0">↺ Ko'rinish</button></div></div></div>
+
+<div id="s3" class="sec card"><canvas id="vc" width="600" height="320"></canvas><p id="sub" style="min-height:3em;font-weight:600"></p><input type="range" id="vk" min="0" max="40" step=".1" value="0"><div class="row"><button id="vpl" class="pr">▶ Play</button><button id="vpa">⏸ Pauza</button><button id="vre">↺ Qaytadan</button><b id="vtm"></b></div></div>
+
+<div id="s4" class="sec card"><div id="tq"></div></div>
+<div id="s5" class="sec card"><div class="row" id="gt"></div><div id="gm" style="margin-top:12px"></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+let st;try{st=JSON.parse(localStorage.getItem('qvt7'))||{}}catch(e){st={}}
+st.p=st.p||{};st.t=st.t||0;
+const sv=()=>{try{localStorage.setItem('qvt7',JSON.stringify(st))}catch(e){}},MAX=110;
+const col=()=>document.body.classList.contains('dark')?'#e8f4ff':'#0b2a45';
+function upd(){const s=Object.values(st.p).reduce((a,b)=>a+b,0),k=Math.round(s/MAX*5);$('#sc').textContent='Ball: '+s+'/'+MAX;$('#stars').textContent='★'.repeat(k)+'☆'.repeat(5-k);$('#pb').style.width=Math.min(100,s/MAX*100)+'%'}
+function add(k,v){if((st.p[k]||0)<v){st.p[k]=v;sv();upd()}}
+setInterval(()=>{st.t++;$('#tm').textContent='⏱ '+Math.floor(st.t/60)+':'+String(st.t%60).padStart(2,'0');if(st.t%5==0)sv()},1000);
+document.body.classList.toggle('dark',!!st.d);
+$('#th').onclick=()=>{st.d=!st.d;document.body.classList.toggle('dark',st.d);sv()};
+let cur=0;
+`📖 Slaydlar,🧪 Simulyatsiya,🥽 VR,🎬 Video,📝 Test,🎮 O'yinlar`.split(',').forEach((n,i)=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>show(i);$('#nav').append(b)});
+function show(i){cur=i;for(let j=0;j<6;j++)$('#s'+j).classList.toggle('on',j==i);[...$('#nav').children].forEach((b,j)=>b.classList.toggle('on',j==i));if(i!=3)vp=false;try{speechSynthesis.cancel()}catch(e){}}
+/* SVG */
+const f=b=>`<svg viewBox="0 0 300 160"><defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0L8,4L0,8z" fill="#d93c3c"/></marker><marker id="ab" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0L8,4L0,8z" fill="#0b78d1"/></marker></defs>${b}</svg>`;
+const T=(x,y,s,z=12,c='currentColor')=>`<text x="${x}" y="${y}" font-size="${z}" text-anchor="middle" fill="${c}">${s}</text>`;
+const A=(a,b,c,d,k=0)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${k?'#0b78d1':'#d93c3c'}" stroke-width="3" marker-end="url(#${k?'ab':'ar'})"/>`;
+const C=(x,y,r,l)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${l}"/>`;
+const R=(x,y,w,h,l)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${l}"/>`;
+const BX='rgba(11,120,209,.22)',YL='#ffd54a';
+const FIG={
+a:()=>f(R(60,105,30,25,'#0b78d1')+R(210,105,30,25,'#0b78d1')+A(75,100,75,50,1)+A(225,100,225,50,1)+T(75,148,'t = 10 s',12)+T(225,148,'t = 5 s',12)+T(150,22,`Ish bir xil, vaqt har xil`,12)+T(150,75,`⇒ quvvat har xil`,13)),
+b:()=>f(R(30,20,240,50,'#0b78d1')+T(150,52,'Quvvat = ish / vaqt',20,'#fff')+T(150,100,`Quvvat — ish bajarilish tezligini`,12)+T(150,118,`ko'rsatuvchi fizik kattalik`,12)+T(150,145,`Ish qancha tez bajarilsa, quvvat shuncha katta`,10)),
+c:()=>f(R(50,15,200,55,'#0b78d1')+T(150,53,'N = A / t',26,'#fff')+T(150,92,'N — quvvat (W)',12)+T(150,112,'A — bajarilgan ish (J)',12)+T(150,132,'t — vaqt (s)',12)),
+d:()=>f(R(20,8,260,30,BX)+T(150,28,'1 W = 1 J / 1 s',14)+R(20,44,260,30,BX)+T(150,64,'1 kW = 1000 W',14)+R(20,80,260,30,BX)+T(150,100,'1 MW = 1 000 000 W',14)+R(20,116,260,30,BX)+T(150,136,`1 o.k. ≈ 735,5 W`,14)),
+e:()=>f(C(90,70,40,'rgba(255,213,74,.3)')+C(90,70,22,YL)+C(210,70,55,'rgba(255,213,74,.4)')+C(210,70,26,'#ffcc00')+T(90,135,'60 W: 60 J/s',12)+T(210,135,'100 W: 100 J/s',12)+T(150,14,`1 W — har sekundda 1 J ish`,12)),
+f:()=>f(R(20,15,260,32,'#0b78d1')+T(150,37,'N = A / t',16,'#fff')+R(20,57,125,32,BX)+T(82,78,'A = N · t',15)+R(155,57,125,32,BX)+T(217,78,'t = A / N',15)+T(150,118,`Uch kattalikdan ikkitasi ma'lum bo'lsa,`,11)+T(150,136,`uchinchisini topish mumkin`,11)),
+g:()=>f(R(20,8,260,145,BX)+T(150,32,'N = 200 W, A = 1000 J',13)+T(150,62,'t = A / N',15)+T(150,92,'t = 1000 / 200',14)+T(150,125,'t = 5 s',18)),
+h:()=>f(R(80,85,100,32,'#0b78d1')+R(100,65,55,22,'#0b78d1')+C(105,120,12,'#333')+C(155,120,12,'#333')+A(185,100,260,100)+T(232,92,'F',13)+A(185,60,260,60,1)+T(232,52,'v',13)+T(150,148,'N = F · v',16)+R(20,128,50,6,'#667')),
+i:()=>f(R(15,5,270,125,BX)+['Inson: 70–100 W','Lampochka: 60 W','Choynak: 2 kW'].map((s,i)=>T(85,40+i*38,s,11)).join('')+['Avtomobil: 70 kW','Elektrovoz: 5 MW','GES: 100 MW'].map((s,i)=>T(215,40+i*38,s,11)).join('')+T(150,150,'Turli qurilmalar quvvati',11)),
+j:()=>f(R(20,8,260,145,BX)+T(150,35,'Ot kuchi (o.k.)',14)+T(150,65,'1 o.k. ≈ 735,5 W',14)+T(150,95,'1 kW ≈ 1,36 o.k.',14)+T(150,128,`Dvigatel quvvati ba'zan o.k. da beriladi`,10)),
+k:()=>f(R(20,8,260,145,BX)+T(150,32,'Energiya sarfi: E = N · t',13)+T(150,62,'1 kW·soat = 1000 W · 3600 s',12)+T(150,92,'= 3 600 000 J = 3,6 MJ',14)+T(150,128,`Elektr hisoblagichlar kW·soat da hisoblaydi`,10)),
+l:()=>f(R(30,125,70,10,'#555')+R(60,20,8,105,'#d9a21c')+R(60,20,150,8,'#d9a21c')+`<line x1="200" y1="28" x2="200" y2="70" stroke="currentColor" stroke-width="2"/>`+R(185,70,30,25,'#0b78d1')+A(240,95,240,45,1)+T(262,70,'h',13)+T(150,150,`Kran yukni ko'taradi: N = A / t`,11)),
+m:()=>f(R(20,8,260,145,BX)+T(150,28,'m = 50 kg, h = 4 m, t = 10 s',12)+T(150,58,'A = m·g·h = 50·9,8·4 = 1960 J',12)+T(150,92,'N = A / t = 1960 / 10',13)+T(150,125,'N = 196 W',18)),
+n:()=>f(R(20,8,260,145,BX)+T(150,28,'F = 2000 N, s = 12 m, t = 20 s',12)+T(150,58,'A = F·s = 2000·12 = 24 000 J',12)+T(150,92,'N = 24 000 / 20 = 1200 W',13)+T(150,125,'N = 1,2 kW',18)),
+o:()=>f(R(20,10,260,32,'#0b78d1')+T(150,32,'N = A / t',18,'#fff')+R(15,52,125,32,BX)+T(77,73,'A = N·t',15)+R(160,52,125,32,BX)+T(222,73,'N = F·v',15)+T(150,112,'1 W = 1 J/s;  1 kW = 1000 W',13)+T(150,138,'1 kW·soat = 3,6 MJ',13))};
+const S=[
+[`Ish bir xil, vaqt har xil`,`<p>Ikki kishi bir xil yukni bir xil balandlikka ko'tarsa, ikkalasi ham bir xil ish bajaradi. Lekin biri buni 10 s da, ikkinchisi 5 s da bajarishi mumkin. Ularning ish bajarish <b>tezligi</b> har xil.</p>`,'a'],
+[`Quvvat nima?`,`<p><b>Quvvat</b> — ishning bajarilish tezligini ko'rsatuvchi fizik kattalik. U bajarilgan ishning shu ish bajarilgan vaqtga nisbatiga teng. Belgisi: N (yoki P).</p>`,'b'],
+[`Quvvat formulasi`,`<p><b>N = A / t</b>, bu yerda A — bajarilgan ish (J), t — vaqt (s), N — quvvat (W).</p>`,'c'],
+[`Quvvat birligi`,`<p>Quvvat birligi — <b>vatt (W)</b>: 1 W = 1 J / 1 s. Katta birliklar: 1 kW = 1000 W, 1 MW = 1 000 000 W. Quvvat birligi ingliz olimi Jeyms Vatt nomi bilan atalgan.</p>`,'d'],
+[`Vattning ma'nosi`,`<p>1 W — 1 sekundda 1 J ish bajaradigan qurilma quvvati. 60 W lampochka har sekundda 60 J elektr energiyasini yorug'lik va issiqlikka aylantiradi.</p>`,'e'],
+[`Ish va vaqtni topish`,`<p>Formuladan: <b>A = N · t</b> (ishni topish) va <b>t = A / N</b> (vaqtni topish). Birliklar: N — vatt, t — sekund, A — joul.</p>`,'f'],
+[`Vaqtni hisoblash misoli`,`<p>Quvvati 200 W bo'lgan mashina 1000 J ish bajarishi uchun t = A/N = 1000/200 = <b>5 s</b> vaqt kerak.</p>`,'g'],
+[`Quvvat va tezlik`,`<p>Jism F kuch ta'sirida v tezlik bilan tekis harakatlansa, quvvat <b>N = F · v</b>. Bu A = F·s va v = s/t dan kelib chiqadi. Avtomobil bir xil quvvatda tezlikni oshirsa, tortish kuchi kamayadi.</p>`,'h'],
+[`Turli qurilmalar quvvati`,`<p>Odam uzoq vaqt davomida o'rtacha 70–100 W quvvat sarflaydi. Lampochka — 60 W, choynak — 2 kW, avtomobil dvigateli — taxminan 70 kW, elektrovoz — bir necha MW.</p>`,'i'],
+[`Ot kuchi`,`<p>Texnikada <b>ot kuchi (o.k.)</b> birligi ham ishlatiladi: 1 o.k. ≈ 735,5 W. Demak, 1 kW ≈ 1,36 o.k.</p>`,'j'],
+[`Energiya sarfi`,`<p>Sarflangan energiya E = N · t. Kundalik hayotda <b>kilovatt-soat</b> ishlatiladi: 1 kW·soat = 1000 W · 3600 s = 3 600 000 J = 3,6 MJ.</p>`,'k'],
+[`Mashinalar quvvati`,`<p>Kran, motor, nasos kabi mexanizmlarning quvvati ularning qanchalik tez ish bajarishini ko'rsatadi. Quvvati katta mexanizm bir xil ishni kam vaqtda bajaradi.</p>`,'l'],
+[`Masala 1`,`<p>Massasi 50 kg yuk 4 m balandlikka 10 s da ko'tarildi. Ish A = m·g·h = 50·9,8·4 = 1960 J. Quvvat N = A/t = 1960/10 = <b>196 W</b>.</p>`,'m'],
+[`Masala 2`,`<p>Kran 2000 N og'irlikdagi yukni 12 m balandlikka 20 s da ko'tardi. A = F·s = 24 000 J; N = A/t = 24 000/20 = <b>1200 W = 1,2 kW</b>.</p>`,'n'],
+[`Xulosa`,`<p>N = A/t; A = N·t; N = F·v. Birlik — vatt: 1 W = 1 J/s, 1 kW = 1000 W. Quvvat katta bo'lsa, ish tezroq bajariladi. Energiya sarfi kW·soat da hisoblanadi.</p>`,'o']];
+let si=0;
+function rs(){const s=S[si];$('#sl').innerHTML=`<h2>${si+1}. ${s[0]}</h2><div>${s[1]}</div><div class="fig">${FIG[s[2]]()}</div>`;$('#spg').textContent=(si+1)+' / '+S.length;[...$('#dots').children].forEach((d,i)=>d.classList.toggle('pr',i==si));if(si==S.length-1)add('sl',10)}
+function go(d){si=Math.max(0,Math.min(S.length-1,si+d));rs()}
+S.forEach((s,i)=>{const b=document.createElement('button');b.className='dot';b.onclick=()=>{si=i;rs()};$('#dots').append(b)});
+$('#pv').onclick=()=>go(-1);$('#nx').onclick=()=>go(1);
+document.addEventListener('keydown',e=>{if(cur==0){if(e.key=='ArrowRight')go(1);if(e.key=='ArrowLeft')go(-1)}});
+let tx=0;$('#s0').addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+$('#s0').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(d<0?1:-1)});
+/* Canvas */
+function ar(x,a,b,c,d,k){x.strokeStyle=x.fillStyle=k;x.lineWidth=5;x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke();const g=Math.atan2(d-b,c-a);x.beginPath();x.moveTo(c,d);x.lineTo(c-14*Math.cos(g-.4),d-14*Math.sin(g-.4));x.lineTo(c-14*Math.cos(g+.4),d-14*Math.sin(g+.4));x.fill()}
+/* SIM */
+const S3={x:0,w:0},S4={e:0};
+const SM=[
+{n:`N = A/t`,c:[[`Ish A (J)`,100,2000,800,50],[`Vaqt t (s)`,1,20,4,1]],d(x,t,[A,tt],c){const N=A/tt,u=Math.min(1,(t%(tt+1.2))/tt),ly=250-u*170;x.fillStyle='#555';x.fillRect(60,280,120,14);x.fillStyle='#d9a21c';x.fillRect(100,60,12,220);x.fillRect(100,60,200,12);x.strokeStyle=c;x.lineWidth=2;x.beginPath();x.moveTo(290,72);x.lineTo(290,ly);x.stroke();x.fillStyle='#0b78d1';x.fillRect(270,ly,40,30);x.fillStyle='#889';x.fillRect(250,293,100,6);x.strokeStyle=c;x.strokeRect(480,40,40,220);x.fillStyle='#1b9e55';const h=N/2000*220;x.fillRect(480,260-h,40,h);x.fillStyle=c;x.fillText(`N = ${N.toFixed(0)} W`,450,285);x.fillText('Quvvat',470,30);x.fillText(`t: ${(u*tt).toFixed(1)} s`,20,30);return `N = A/t = ${A} / ${tt} = ${N.toFixed(1)} W: ${A} J ish ${tt} s da bajariladi`}},
+{n:`Ikki ishchi`,c:[[`2-ishchi quvvati (W)`,50,400,200,10]],d(x,t,[N2],c){const A=600,t1=6,t2=A/N2,per=Math.max(t1,t2)+1.5,tm=t%per,us=[Math.min(1,tm/t1),Math.min(1,tm/t2)];[[150,100,t1],[400,N2,t2]].forEach((p,i)=>{x.strokeStyle=c;x.lineWidth=3;x.beginPath();x.moveTo(p[0],60);x.lineTo(p[0],290);x.stroke();x.fillStyle='#0b78d1';x.fillRect(p[0]-20,260-us[i]*190,40,30);x.fillStyle=c;x.fillText(`${i+1}-ishchi: N = ${p[1]} W`,p[0]-70,30);x.fillText(`t = ${p[2].toFixed(1)} s`,p[0]-30,50);if(us[i]>=1)x.fillText('✔ tayyor',p[0]+30,150)});return `Ikkalasi ham A = 600 J ish bajaradi: 1-ishchi ${t1} s, 2-ishchi ${t2.toFixed(1)} s. Quvvat katta bo'lsa, ish tezroq bajariladi`}},
+{n:`N = F·v`,c:[[`Tortish kuchi F (N)`,500,5000,2000,100],[`Tezlik v (m/s)`,1,30,10,1]],d(x,t,[F,v],c){const N=F*v;S3.x=(S3.x+v*.6)%80;S3.w+=v*.05;x.fillStyle='#667';x.fillRect(0,240,600,50);x.fillStyle='#fff';for(let i=-1;i<9;i++)x.fillRect(i*80-S3.x,262,40,5);x.fillStyle='#0b78d1';x.fillRect(220,185,140,45);x.fillRect(250,160,70,28);[250,335].forEach(wx=>{x.fillStyle='#222';x.beginPath();x.arc(wx,235,16,0,7);x.fill();x.strokeStyle='#fff';x.lineWidth=2;x.beginPath();x.moveTo(wx+14*Math.cos(S3.w),235+14*Math.sin(S3.w));x.lineTo(wx-14*Math.cos(S3.w),235-14*Math.sin(S3.w));x.stroke()});ar(x,365,205,365+F*.03,205,'#d93c3c');x.strokeStyle=c;x.lineWidth=2;x.strokeRect(40,40,520,22);x.fillStyle='#1b9e55';x.fillRect(40,40,Math.min(520,N/150000*520),22);x.fillStyle=c;x.fillText(`N = ${(N/1000).toFixed(1)} kW`,40,32);x.fillText(`F = ${F} N`,380,150);x.fillText(`v = ${v} m/s`,40,100);return `N = F·v = ${F} × ${v} = ${N} W = ${(N/1000).toFixed(1)} kW`}},
+{n:`Energiya sarfi`,c:[[`Quvvat N (W)`,10,200,60,10],[`Vaqt (soat)`,1,24,5,1]],d(x,t,[N,h],c){const E=N*h/1000;S4.e+=(E-S4.e)*.05;const g=N/200;x.fillStyle=`rgba(255,213,74,${.15+g*.35})`;x.beginPath();x.arc(150,130,40+g*70,0,7);x.fill();x.fillStyle=YL;x.beginPath();x.arc(150,130,32,0,7);x.fill();x.fillStyle='#889';x.fillRect(138,160,24,30);x.fillStyle=c;x.fillText(`${N} W`,132,215);x.strokeStyle=c;x.lineWidth=2;x.strokeRect(330,60,230,60);x.font='28px system-ui';x.fillText(`${S4.e.toFixed(2)} kWh`,350,102);x.font='15px system-ui';x.fillText('Hisoblagich',380,50);x.fillText(`Misol: 1 kWh = 1000 so'm deb olsak:`,330,160);x.fillText(`${(S4.e*1000).toFixed(0)} so'm`,330,185);return `E = N·t = ${N} W × ${h} soat = ${N*h} W·soat = ${E.toFixed(2)} kW·soat`}}];
+let sm=0,t0=performance.now();
+function bs(i){sm=i;t0=performance.now();[...$('#st').children].forEach((b,j)=>b.classList.toggle('on',j==i));$('#cs').innerHTML=SM[i].c.map((c,j)=>`<label>${c[0]}: <b id="o${j}">${c[3]}</b><input type="range" min="${c[1]}" max="${c[2]}" step="${c[4]}" value="${c[3]}"></label>`).join('');$('#cs').querySelectorAll('input').forEach((r,j)=>r.oninput=()=>{$('#o'+j).textContent=r.value;add('s'+i,5)})}
+SM.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n;b.onclick=()=>bs(i);$('#st').append(b)});
+/* VR */
+const vx=$('#vr').getContext('2d'),MT=[100,200,400,800],FC=[[0,1,2,3],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[4,5,6,7]];
+let yaw=.6,pit=.4,ly=0,run=false,tt=0,ster=false,dr=null;
+function scn(x,ox,w,ye){const m=+$('#vm').value,s=.3+m*.004;
+const pj=(a,b,c)=>{b-=1.5;const y=yaw+ye,c1=Math.cos(y),s1=Math.sin(y),x1=a*c1+c*s1,z1=-a*s1+c*c1,c2=Math.cos(pit),s2=Math.sin(pit),y2=b*c2-z1*s2,z2=b*s2+z1*c2,k=w*.9/(14+z2);return[ox+w/2+x1*k,200-y2*k,z2]};
+const L=(a,b,c,d,e,g,k,lw)=>{const p=pj(a,b,c),q=pj(d,e,g);x.strokeStyle=k;x.lineWidth=lw;x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(q[0],q[1]);x.stroke()};
+for(let i=-4;i<=4;i++){L(i,0,-4,i,0,4,'rgba(25,181,201,.5)',1);L(-4,0,i,4,0,i,'rgba(25,181,201,.5)',1)}
+L(-1.6,0,0,-1.6,3.4,0,'#d9a21c',6);L(-1.6,3.4,0,0,3.4,0,'#d9a21c',6);
+L(1.6,0,0,1.6,2,0,'#fff',2);for(let i=0;i<=4;i++)L(1.6,i*.5,0,1.9,i*.5,0,'#fff',2);L(.6,2,0,1.6,2,0,'#1b9e55',2);
+L(0,3.4,0,0,ly+s,0,'#ddd',2);
+const bx=(a,b,c,d,e,g)=>[[a,c,e],[b,c,e],[b,c,g],[a,c,g],[a,d,e],[b,d,e],[b,d,g],[a,d,g]],V=bx(-s/2,s/2,ly,ly+s,-s/2,s/2).map(p=>pj(p[0],p[1],p[2]));
+FC.slice(1).map((q,i)=>[q,i,q.reduce((a,j)=>a+V[j][2],0)]).sort((a,b)=>b[2]-a[2]).forEach(q=>{x.fillStyle='#0b78d1';x.beginPath();q[0].forEach((j,i)=>i?x.lineTo(V[j][0],V[j][1]):x.moveTo(V[j][0],V[j][1]));x.closePath();x.fill();x.fillStyle=`rgba(0,0,0,${[.1,.25,.1,.2,0][q[1]]})`;x.fill();x.strokeStyle='rgba(255,255,255,.5)';x.lineWidth=1;x.stroke()});
+const mp=pj(-1.6,.2,0);x.fillStyle=run?'#1b9e55':'#d93c3c';x.beginPath();x.arc(mp[0],mp[1],7,0,7);x.fill()}
+function vrf(dt){const m=+$('#vm').value,N=MT[+$('#vo').value],v=N/(m*9.8);
+if(run){ly+=v*dt;tt+=dt;if(ly>=2){ly=2;run=false;add('vr',10)}}
+const x=vx;x.fillStyle='#0b2a45';x.fillRect(0,0,640,360);
+if(ster){for(const e of[-1,1]){x.save();x.beginPath();x.rect(e<0?0:320,0,320,360);x.clip();scn(x,e<0?0:320,320,e*.03);x.restore()}}else scn(x,0,640,0);
+x.fillStyle='#fff';x.font='14px system-ui';x.fillText(`m = ${m} kg   N = ${N} W   v = N/(mg) = ${v.toFixed(2)} m/s`,10,22);x.fillText(`h = ${ly.toFixed(2)} m   t = ${tt.toFixed(1)} s   A = mgh = ${(m*9.8*ly).toFixed(0)} J`,10,44)}
+$('#vm').oninput=()=>$('#vmo').textContent=$('#vm').value;
+$('#vd').onclick=()=>{if(ly>=2){ly=0;tt=0}run=true};
+$('#vz').onclick=()=>{ly=0;tt=0;run=false};
+$('#vs').onclick=()=>{ster=!ster;$('#vs').classList.toggle('on',ster)};
+$('#v0').onclick=()=>{yaw=.6;pit=.4};
+$('#vf').onclick=()=>{const w=$('#vrw');if(document.fullscreenElement)document.exitFullscreen();else if(w.requestFullscreen)w.requestFullscreen();else alert(`Brauzer to'liq ekranni qo'llamaydi`)};
+const vc0=$('#vr');vc0.onpointerdown=e=>{dr=[e.clientX,e.clientY];vc0.setPointerCapture(e.pointerId)};
+vc0.onpointermove=e=>{if(!dr)return;yaw+=(e.clientX-dr[0])*.01;pit=Math.max(.05,Math.min(1.4,pit+(e.clientY-dr[1])*.01));dr=[e.clientX,e.clientY]};
+vc0.onpointerup=vc0.onpointercancel=()=>dr=null;
+/* VIDEO */
+const vc=$('#vc').getContext('2d'),VS=[[0,`Bir xil yukni bir xil balandlikka ko'tarish: biri 10 s, ikkinchisi 5 s sarflaydi. Ish bir xil, lekin quvvat har xil.`],[10,`Quvvat N = A / t. Masalan, 600 J ish 20 s da bajarilsa, N = 30 W. 1 W = 1 J/s.`],[20,`Lampochka quvvati qancha katta bo'lsa, u har sekundda shuncha ko'p energiya sarflaydi va yorqinroq yonadi.`],[30,`Masala: m = 50 kg, h = 4 m, t = 10 s. A = 1960 J, N = 196 W.`]];
+let vt=0,vp=false;
+function vdraw(x,t){const sc=Math.min(3,t/10|0),s=t-sc*10,k='#0b2a45',g=x.createLinearGradient(0,0,0,320);g.addColorStop(0,'#bfe3ff');g.addColorStop(1,'#eaf6ff');x.fillStyle=g;x.fillRect(0,0,600,320);x.font='16px system-ui';x.lineWidth=3;x.strokeStyle=k;
+if(sc==0){[[150,10],[430,5]].forEach((p,i)=>{const u=Math.min(1,s/p[1]);x.beginPath();x.moveTo(p[0],70);x.lineTo(p[0],290);x.stroke();x.fillStyle='#0b78d1';x.fillRect(p[0]-22,262-u*190,44,30);x.fillStyle=k;x.fillText(`${i+1}-ishchi: t = ${p[1]} s`,p[0]-70,40);if(u>=1)x.fillText('✔',p[0]+40,150)});x.fillText('Ish bir xil, quvvat har xil',200,310)}
+else if(sc==1){x.fillStyle='rgba(11,120,209,.2)';x.fillRect(40,20,520,280);x.fillStyle=k;x.font='22px system-ui';['N = A / t','A = 600 J, t = 20 s','N = 600 / 20 = 30 W','1 W = 1 J / 1 s'].forEach((l,i)=>{if(s>i*2)x.fillText(l,90,80+i*55)})}
+else if(sc==2){[[170,40],[430,100]].forEach(p=>{const r=30+p[1]*.4+Math.sin(s*4)*3;x.fillStyle='rgba(255,213,74,.3)';x.beginPath();x.arc(p[0],140,r+25,0,7);x.fill();x.fillStyle=YL;x.beginPath();x.arc(p[0],140,r*.6,0,7);x.fill();x.fillStyle=k;x.fillText(`${p[1]} W: ${p[1]} J/s`,p[0]-55,280)})}
+else{x.fillStyle='rgba(11,120,209,.2)';x.fillRect(40,20,520,280);x.fillStyle=k;x.font='20px system-ui';['m = 50 kg, h = 4 m, t = 10 s','A = m·g·h = 50·9,8·4 = 1960 J','N = A / t = 1960 / 10','N = 196 W'].forEach((l,i)=>{if(s>i*2)x.fillText(l,80,80+i*55)})}}
+function vdf(dt){if(vp){vt+=dt;if(vt>=40){vt=40;vp=false;add('vd',10)}}vdraw(vc,vt);if(document.activeElement!=$('#vk'))$('#vk').value=vt;$('#sub').textContent=[...VS].reverse().find(a=>a[0]<=vt)[1];$('#vtm').textContent=vt.toFixed(0)+' / 40 s'}
+$('#vpl').onclick=()=>{if(vt>=40)vt=0;vp=true};$('#vpa').onclick=()=>vp=false;$('#vre').onclick=()=>{vt=0;vp=true};$('#vk').oninput=()=>vt=+$('#vk').value;
+/* LOOP */
+let last=0;function loop(now){requestAnimationFrame(loop);const dt=Math.min(.05,(now-last)/1000||0);last=now;
+if(cur==1){const x=$('#cv').getContext('2d'),c=col();x.clearRect(0,0,600,320);x.font='15px system-ui';x.fillStyle=c;$('#inf').textContent=SM[sm].d(x,(now-t0)/1000,[...$('#cs').querySelectorAll('input')].map(i=>+i.value),c)}
+if(cur==2)vrf(dt);if(cur==3)vdf(dt)}
+/* TEST */
+const Q=[
+[`Quvvat nimani ko'rsatadi?`,[`Jism massasini`,`Ish bajarilish tezligini`,`Jism hajmini`,`Kuch yo'nalishini`],1,`Quvvat ishning bajarilish tezligidir.`],
+[`Quvvat formulasi qaysi?`,[`N = A·t`,`N = t/A`,`N = A / t`,`N = A + t`],2,`N = A / t.`],
+[`Quvvat birligi nima?`,[`joul`,`vatt`,`nyuton`,`paskal`],1,`Quvvat birligi — vatt (W).`],
+[`1 kW necha vatt?`,[`10 W`,`100 W`,`1000 W`,`1 000 000 W`],2,`Kilo — 1000 marta.`],
+[`A = 600 J, t = 20 s bo'lsa, N = ?`,[`30 W`,`12 000 W`,`620 W`,`3 W`],0,`N = 600/20 = 30 W.`],
+[`N = 100 W qurilma 60 s da qancha ish bajaradi?`,[`1,6 J`,`160 J`,`6000 J`,`600 J`],2,`A = N·t = 100·60 = 6000 J.`],
+[`1 W nimaga teng?`,[`1 J/s`,`1 N/m`,`1 J·s`,`1 N·s`],0,`1 W = 1 J / 1 s.`],
+[`F = 200 N, v = 5 m/s bo'lsa, N = F·v = ?`,[`40 W`,`205 W`,`1000 W`,`0,025 W`],2,`N = 200·5 = 1000 W.`],
+[`Bir xil ishni 5 s va 10 s da bajargan kimning quvvati katta?`,[`5 s da bajargan odamniki`,`10 s da bajargan odamniki`,`Teng`,`Aytib bo'lmaydi`],0,`Ish tezroq bajarilsa, quvvat katta.`],
+[`1 kW·soat necha joul?`,[`3600 J`,`1000 J`,`3,6 MJ`,`36 J`],2,`1000 W · 3600 s = 3 600 000 J.`]];
+let qi=0,qs=0,qa=false;
+function rq(){const e=$('#tq');if(qi>=Q.length){const p=Math.round(qs/Q.length*100);e.innerHTML=`<h2>Natija</h2><p>To'g'ri javoblar: <b>${qs} / ${Q.length}</b> — <b>${p}%</b> ${'★'.repeat(Math.round(p/20))}</p><button class="pr" id="qr">↺ Qayta urinish</button>`;add('q',qs*3);$('#qr').onclick=()=>{qi=qs=0;rq()};return}
+const q=Q[qi];qa=false;e.innerHTML=`<div>Savol ${qi+1} / ${Q.length}</div><h3>${q[0]}</h3>`+q[1].map((o,i)=>`<button class="opt" data-i="${i}">${o}</button>`).join('')+`<p id="ex"></p>`;
+e.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(qa)return;qa=true;const i=+b.dataset.i;if(i==q[2]){qs++;b.classList.add('ok')}else{b.classList.add('er');e.querySelectorAll('.opt')[q[2]].classList.add('ok')}$('#ex').innerHTML=(i==q[2]?'✔ To\'g\'ri! ':'✘ Xato. ')+q[3]+`<br><button class="pr" id="qn">Keyingisi ›</button>`;$('#qn').onclick=()=>{qi++;rq()}})}
+/* GAMES */
+let gi=0;
+function qz(el,items,key){let i=0,s=0;const r=()=>{if(i>=items.length){el.innerHTML=`<h3>Natija: ${s} / ${items.length}</h3><button class="pr" onclick="og(gi)">↺ Qaytadan</button>`;add(key,Math.round(s/items.length*5));return}const q=items[i];el.innerHTML=`<p>${i+1}/${items.length}. ${q[0]}</p>`+q[1].map((o,j)=>`<button data-j="${j}">${o}</button> `).join('');el.querySelectorAll('button').forEach(b=>b.onclick=()=>{const j=+b.dataset.j;if(j==q[2])s++;b.className=j==q[2]?'ok':'er';el.querySelectorAll('button').forEach(c=>c.disabled=true);setTimeout(()=>{i++;r()},700)})};r()}
+const OG=[
+{n:`Moslashtirish`,f:e=>{const L=[[`Quvvat`,`Ish bajarilish tezligi`],[`Vatt`,`1 J/s`],[`Kilovatt`,`1000 W`],[`Ot kuchi`,`≈ 735,5 W`],[`kW·soat`,`Energiya birligi (3,6 MJ)`]],o=[2,4,0,3,1];let sel=-1,d=0;e.innerHTML=`<p>Chapdan tushunchani, so'ng o'ngdan mosini tanlang.</p><div class="g2"><div id="l"></div><div id="r"></div></div><b id="gr"></b>`;
+L.forEach((p,i)=>{const b=document.createElement('button');b.textContent=p[0];b.onclick=()=>{if(b.disabled)return;sel=i;[...$('#l').children].forEach(c=>c.classList.remove('pr'));b.classList.add('pr')};$('#l').append(b)});
+o.forEach(i=>{const b=document.createElement('button');b.textContent=L[i][1];b.onclick=()=>{if(sel<0||b.disabled)return;if(sel==i){const lb=$('#l').children[i];b.disabled=lb.disabled=true;lb.className=b.className='ok';sel=-1;if(++d==5){$('#gr').textContent='✔ Barakalla!';add('g0',5)}}else{b.classList.add('er');setTimeout(()=>b.classList.remove('er'),500)}};$('#r').append(b)})}},
+{n:`To'g'ri / noto'g'ri`,f:e=>qz(e,[[`Quvvat birligi vatt (W).`,0],[`1 W = 1 J·s.`,1],[`Ish tezroq bajarilsa, quvvat katta bo'ladi.`,0],[`1 kW = 100 W.`,1],[`N = A / t formulasi quvvatni beradi.`,0],[`Quvvat ishning o'zi bilan bir xil kattalik.`,1]].map(a=>[a[0],[`To'g'ri`,`Noto'g'ri`],a[1]]),'g1')},
+{n:`Bo'sh joy`,f:e=>qz(e,[[`N = A / ____`,[`t`,`m`,`v`],0],[`Quvvat birligi — ____.`,[`joul`,`nyuton`,`vatt`],2],[`A = N · ____`,[`F`,`t`,`h`],1],[`1 kW = ____ W.`,[`100`,`1000`,`10`],1],[`Avtomobil quvvati N = F · ____.`,[`v`,`t`,`m`],0]],'g2')},
+{n:`Tartiblash`,f:e=>{const L=[[`Telefon zaryadlagich`,`5 W`],[`Lampochka`,`60 W`],[`Choynak`,`2000 W`],[`Avtomobil dvigateli`,`70 000 W`],[`Elektrovoz`,`5 000 000 W`]],o=[3,0,4,2,1];let k=0;e.innerHTML=`<p>Quvvat bo'yicha kichikdan kattaga qarab bosing:</p><div class="row" id="so"></div><p id="sr"></p>`;o.forEach(i=>{const b=document.createElement('button');b.textContent=L[i][0];b.onclick=()=>{if(b.disabled)return;if(i==k){b.disabled=true;b.className='ok';k++;$('#sr').textContent+=`${L[i][0]} (${L[i][1]}) → `;if(k==5){$('#sr').textContent+='✔';add('g3',5)}}else{b.className='er';setTimeout(()=>b.className='',500)}};$('#so').append(b)})}},
+{n:`Xotira`,f:e=>{const P=[[`N`,`Quvvat`],[`A`,`Ish`],[`t`,`Vaqt`],[`W`,`Vatt`],[`kW`,`1000 W`],[`1 W`,`1 J/s`]];let c=[];P.forEach((p,i)=>{c.push([p[0],i]);c.push([p[1],i])});c.sort(()=>Math.random()-.5);let a=[],m=0,d=0,lk=0;e.innerHTML=`<p>Juftlarni toping. Urinishlar: <b id="mv">0</b></p><div class="g4" id="mb"></div>`;
+c.forEach(q=>{const b=document.createElement('button');b.textContent='?';b.onclick=()=>{if(lk||b.disabled||a.includes(b))return;b.textContent=q[0];b.className='pr';b.q=q;a.push(b);if(a.length==2){lk=1;$('#mv').textContent=++m;const[x,y]=a;if(x.q[1]==y.q[1]){x.disabled=y.disabled=true;x.className=y.className='ok';a=[];lk=0;if(++d==6)add('g4',5)}else setTimeout(()=>{x.textContent=y.textContent='?';x.className=y.className='';a=[];lk=0},800)}};$('#mb').append(b)})}},
+{n:`Viktorina`,f:e=>qz(e,[[`A = 300 J, t = 10 s bo'lsa, N = ?`,[`3000 W`,`30 W`,`310 W`],1],[`N = 50 W qurilma 20 s da qancha ish bajaradi?`,[`2,5 J`,`70 J`,`1000 J`],2],[`2 kW necha vatt?`,[`2000 W`,`20 W`,`200 W`],0],[`F = 100 N, v = 10 m/s bo'lsa, N = ?`,[`10 W`,`1000 W`,`110 W`],1],[`1 kW·soat necha MJ?`,[`1 MJ`,`36 MJ`,`3,6 MJ`],2]],'g5')}];
+function og(i){gi=i;[...$('#gt').children].forEach((b,j)=>b.classList.toggle('on',j==i));OG[i].f($('#gm'))}
+OG.forEach((g,i)=>{const b=document.createElement('button');b.textContent=g.n;b.onclick=()=>og(i);$('#gt').append(b)});
+/* OVOZ */
+$('#spk').onclick=()=>{if(!('speechSynthesis' in window)){alert(`Brauzeringiz ovozli o'qishni qo'llamaydi`);return}const ss=speechSynthesis;if(ss.speaking){ss.cancel();return}const t=cur==0?$('#sl').innerText:$('.sec.on').innerText,u=new SpeechSynthesisUtterance(t.slice(0,1500));u.rate=+$('#rt').value;u.lang=$('#lg').value;ss.speak(u)};
+/* BOSHLASH */
+show(0);rs();bs(0);rq();og(0);upd();requestAnimationFrame(loop);
+</script>
+</body>
+<script id="EMAKTAB_SUPABASE_INJECTION" type="text/javascript">
+
+<script>
+(function() {
+  if (window.__EMAKTAB_LESSON_INJECTED__) return;
+  window.__EMAKTAB_LESSON_INJECTED__ = true;
+
+  function getStudent() {
+    try {
+      const raw = localStorage.getItem('emaktab_student');
+      return raw ? JSON.parse(raw) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function findLessonTitle() {
+    const direct = document.querySelector('h1, h2, .lesson-title, .topic-title');
+    return (direct && direct.textContent && direct.textContent.trim()) || document.title || 'Fizika darsi';
+  }
+
+  window.__EMAKTAB_SUBMIT_TEST_RESULT__ = async function(payload) {
+    const student = getStudent();
+    if (!student) {
+      const evt = new CustomEvent('emaktab:student-required');
+      window.dispatchEvent(evt);
+      return { ok: false, reason: 'no_student' };
+    }
+    const record = {
+      student_id: student.id || null,
+      student_name: [student.first_name, student.last_name].filter(Boolean).join(' '),
+      phone: student.phone || '',
+      grade: student.grade || '7-sinf',
+      subject: 'Fizika',
+      lesson_title: payload.lesson_title || findLessonTitle(),
+      score: Number(payload.score || 0),
+      total_questions: Number(payload.total_questions || 0),
+      created_at: new Date().toISOString()
+    };
+
+    if (!window.supabase) return { ok: true, queued: true, data: record };
+
+    try {
+      const { data, error } = await window.supabase.from('test_results').insert([record]).select();
+      if (error) throw error;
+      return { ok: true, data: data || record };
+    } catch (error) {
+      console.error('Supabase lesson result send failed:', error);
+      return { ok: false, error: String(error) };
+    }
+  };
+})();
+<\/script>
+
+</script>
+</html>

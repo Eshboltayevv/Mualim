@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modda zarrachalari va ularning harakati — 7-sinf fizika</title>
+<style>
+:root{--p:#0b78d1;--ok:#1b9e55;--no:#d93c3c;--bg:#e3f2fd;--bg2:#cdeafc;--card:rgba(255,255,255,.72);--tx:#12324a;--mu:#587186;--sh:0 8px 28px rgba(11,120,209,.16)}
+body.dark{--bg:#0c1a2a;--bg2:#10263c;--card:rgba(24,44,66,.72);--tx:#e6f1fb;--mu:#9db6cc;--sh:0 8px 28px rgba(0,0,0,.4)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;color:var(--tx);background:linear-gradient(160deg,var(--bg),var(--bg2));min-height:100vh}
+.wrap{max-width:1000px;margin:auto;padding:12px}
+.card{background:var(--card);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.5);border-radius:20px;box-shadow:var(--sh);padding:16px;margin-bottom:12px}
+h1,h2,h3{margin:.2em 0;background:linear-gradient(120deg,#0b78d1,#19b5c9);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:1.35rem}
+button,select{min-height:44px;border-radius:14px;border:1px solid rgba(11,120,209,.3);background:var(--card);color:var(--tx);font:inherit;padding:0 14px;cursor:pointer}
+button.pr,nav button.on{background:var(--p);color:#fff;border-color:var(--p)}
+.top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.top>div{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+nav{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}nav button{padding:0 4px;font-size:.85rem}
+.sec{display:none}.sec.on{display:block}
+.bar{height:10px;border-radius:9px;background:rgba(11,120,209,.18);overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0b78d1,#19b5c9);transition:width .3s}
+svg,canvas{width:100%;height:auto;display:block;border-radius:14px;background:rgba(255,255,255,.45)}
+body.dark svg,body.dark canvas{background:rgba(255,255,255,.07)}
+.muted{color:var(--mu)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.dots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0}.dots b{width:14px;height:14px;border-radius:50%;background:rgba(11,120,209,.25);cursor:pointer;border:0}.dots b.on{background:var(--p)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0}.opt.ok,.g.ok{background:var(--ok)!important;color:#fff!important}.opt.no,.g.no{background:var(--no)!important;color:#fff!important}
+.g{margin:4px;min-width:44px}.fb{min-height:24px;margin:6px 0}
+input[type=range]{width:180px;min-height:44px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.mem{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.mem button{min-height:64px}
+#vrw{position:relative}#vrw canvas{touch-action:none;cursor:grab}
+@media(min-width:760px){.sl{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}.mem{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:520px){nav button{font-size:.7rem}h1{font-size:1.1rem}}
+</style></head><body>
+<div class="wrap">
+<div class="card"><div class="top"><h1>Modda zarrachalari va ularning harakati</h1>
+<div><span id="stars" title="Reyting">☆☆☆☆☆</span><b>Ball: <span id="sc">0</span></b><span>⏱ <span id="tm">0:00</span></span><button id="th">🌓</button></div></div>
+<div class="bar" style="margin-top:8px"><i id="pg"></i></div>
+<div class="row"><button id="rd" class="pr">🔊 O‘qish</button><button id="st">⏹</button><label>Tezlik <input type="range" id="rt" min=".6" max="1.6" step=".1" value="1"></label>
+<select id="lg"><option value="tr-TR">Türkçe</option><option value="uz-UZ">O‘zbek</option><option value="ru-RU">Русский</option><option value="en-US">English</option></select></div></div>
+<nav id="nav"></nav>
+
+<section class="sec card" id="slides"><div id="sl"></div><div class="dots" id="sd"></div><div class="bar"><i id="sp"></i></div>
+<div class="row" style="justify-content:space-between"><button id="pv">← Orqaga</button><b id="sn"></b><button id="nx" class="pr">Oldinga →</button></div></section>
+
+<section class="sec card" id="sim"><h2>Simulyatsiyalar</h2><div class="row" id="sb"></div><canvas id="cv" width="600" height="340"></canvas>
+<div class="row"><label id="sll"></label><input type="range" id="sr"><b id="sv"></b><span id="sx"></span></div><p class="muted" id="so"></p></section>
+
+<section class="sec card" id="vr"><h2>VR laboratoriya</h2><div id="vrw"><canvas id="vc" width="600" height="380"></canvas></div>
+<div class="row"><button class="vm pr" data-m="0">Qattiq</button><button class="vm" data-m="1">Suyuq</button><button class="vm" data-m="2">Gaz</button>
+<button id="ar">🔄 Avto-aylanish</button><button id="fs">⛶ To‘liq ekran</button></div>
+<div class="row"><label>Tezlik/harorat <input type="range" id="vs" min="0.2" max="3" step=".1" value="1"></label><label>Masshtab <input type="range" id="vz" min=".6" max="2" step=".1" value="1.2"></label></div>
+<p class="muted">Sichqoncha yoki barmoq bilan sahnani aylantiring. Holatni tanlang va tezlikni o‘zgartiring: zarralar harakati qanday o‘zgarishini kuzating.</p></section>
+
+<section class="sec card" id="video"><h2>Video-dars</h2><canvas id="dc" width="600" height="340"></canvas>
+<div class="bar" style="margin:8px 0"><i id="vp"></i></div><p id="sub" style="font-weight:600;min-height:3em"></p>
+<div class="row"><button id="pl" class="pr">▶ Boshlash</button><button id="rs">↺ Qaytadan</button><span id="vt" class="muted">0:00 / 0:32</span></div></section>
+
+<section class="sec card" id="test"><h2>Test</h2><div id="tq"></div></section>
+<section class="sec card" id="games"><h2>O‘yinlar</h2><div class="row" id="gb"></div><div id="gq"></div></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let ST=Object.assign({score:0,time:0,dark:0,done:0},JSON.parse(localStorage.getItem('fz7')||'{}'));
+function save(){try{localStorage.setItem('fz7',JSON.stringify(ST))}catch(e){}}
+function ui(){$('#sc').textContent=ST.score;const n=Math.min(5,Math.floor(ST.score/25));$('#stars').textContent='★'.repeat(n)+'☆'.repeat(5-n);$('#pg').style.width=Math.min(100,ST.score/2)+'%';document.body.classList.toggle('dark',!!ST.dark)}
+function add(n){ST.score+=n;save();ui()}
+setInterval(()=>{ST.time++;const t=ST.time;$('#tm').textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');if(t%10==0)save()},1000);
+$('#th').onclick=()=>{ST.dark=ST.dark?0:1;save();ui()};
+let VO=[];const SS='speechSynthesis' in window;
+function loadV(){try{VO=speechSynthesis.getVoices()||[]}catch(e){}}
+if(SS){loadV();speechSynthesis.onvoiceschanged=loadV}
+function pickV(l){const b=l.slice(0,2).toLowerCase();return VO.find(v=>v.lang.replace('_','-')==l)||VO.find(v=>v.lang.toLowerCase().replace('_','-').startsWith(b))||null}
+function note(m){const b=$('#rd'),o='🔊 O‘qish';b.textContent=m;setTimeout(()=>b.textContent=o,3500)}
+$('#rd').onclick=()=>{if(!SS){alert('Bu brauzer ovozli o‘qishni qo‘llamaydi. Chrome yoki Safari ishlating.');return}
+loadV();speechSynthesis.cancel();speechSynthesis.resume();
+const el=$('.sec.on'),raw=(el.id=='slides'?$('#sl'):el).innerText.replace(/[‘’ʻ]/g,"'").replace(/\s+/g,' ').slice(0,3000);
+let lang=$('#lg').value,v=pickV(lang);
+if(!v&&VO.length){const alt=pickV('tr-TR')||pickV('ru-RU')||pickV('en-US');if(alt){v=alt;note('🔊 O‘zbek ovozi yo‘q: '+alt.lang)}}
+const parts=[];(raw.match(/[^.!?]+[.!?]?/g)||[raw]).forEach(x=>{const l=parts.length-1;if(l>=0&&parts[l].length+x.length<180)parts[l]+=x;else parts.push(x)});
+parts.forEach(p=>{const u=new SpeechSynthesisUtterance(p.trim());u.lang=v?v.lang:lang;if(v)u.voice=v;u.rate=+$('#rt').value;u.onerror=e=>{if(e.error&&e.error!='canceled'&&e.error!='interrupted')note('🔊 Ovoz xatosi')};speechSynthesis.speak(u)})};
+$('#st').onclick=()=>{if('speechSynthesis' in window)speechSynthesis.cancel()};
+const SEC=[['slides','📘 Slayd'],['sim','🧪 Sim'],['vr','🥽 VR'],['video','🎬 Video'],['test','📝 Test'],['games','🎮 O‘yin']];
+SEC.forEach(([id,l])=>{const b=document.createElement('button');b.textContent=l;b.dataset.s=id;b.onclick=()=>show(id);$('#nav').appendChild(b)});
+let cur='slides';function show(id){cur=id;$$('.sec').forEach(s=>s.classList.toggle('on',s.id==id));$$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s==id));if('speechSynthesis' in window)speechSynthesis.cancel();if(id!='video')vid.play=false,$('#pl').textContent='▶ Davom'}
+
+/* ---------- SVG helpers ---------- */
+const R=s=>()=>(s=s*16807%2147483647)/2147483647;
+const dots=(n,x,y,w,h,s,c,r=4)=>{const q=R(s);let o='';for(let i=0;i<n;i++)o+=`<circle cx="${x+q()*w|0}" cy="${y+q()*h|0}" r="${r}" fill="${c}"/>`;return o};
+const lat=(cs,rs,x,y,d,c,r=5)=>{let o='';for(let i=0;i<cs;i++)for(let j=0;j<rs;j++)o+=`<circle cx="${x+i*d}" cy="${y+j*d}" r="${r}" fill="${c}"/>`;return o};
+const sv=i=>`<svg viewBox="0 0 300 160">${i}</svg>`;
+const T=(x,y,t,s=11)=>`<text x="${x}" y="${y}" font-size="${s}" fill="currentColor" text-anchor="middle">${t}</text>`;
+const box=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="none" stroke="#0b78d1" stroke-width="2"/>`;
+const B='#0b78d1',RD='#d93c3c',G='#1b9e55',C='#19b5c9';
+const arr=(x,L,s)=>{const q=R(s);let o='';for(let i=0;i<8;i++){const a=q()*6.28,px=x+10+q()*80,py=40+q()*70;o+=`<circle cx="${px|0}" cy="${py|0}" r="4" fill="${B}"/><line x1="${px|0}" y1="${py|0}" x2="${px+Math.cos(a)*L|0}" y2="${py+Math.sin(a)*L|0}" stroke="${RD}" stroke-width="2"/>`}return o};
+const FIG={
+intro:()=>sv(dots(45,10,8,280,120,3,B,5)+T(150,152,'Modda = juda ko‘p mayda zarrachalar')),
+mol:()=>sv(`<line x1="150" y1="70" x2="108" y2="105" stroke="#888" stroke-width="3"/><line x1="150" y1="70" x2="192" y2="105" stroke="#888" stroke-width="3"/><circle cx="150" cy="70" r="26" fill="${RD}"/><circle cx="108" cy="105" r="15" fill="${B}"/><circle cx="192" cy="105" r="15" fill="${B}"/>`+T(150,75,'O','14" fill="#fff')+T(150,148,'Suv molekulasi H₂O')),
+size:()=>sv(`<rect x="20" y="100" width="8" height="8" fill="${B}"/><rect x="60" y="85" width="25" height="25" fill="${C}"/><rect x="120" y="55" width="55" height="55" fill="${G}"/><rect x="210" y="30" width="80" height="80" fill="${RD}"/>`+T(24,125,'molekula',9)+T(72,125,'virus',9)+T(147,125,'bakteriya',9)+T(250,125,'hujayra',9)+T(150,152,'1 nm = 10⁻⁹ m',12)),
+brown:()=>{const q=R(5);let x=150,y=80,p='';for(let i=0;i<26;i++){p+=x+','+y+' ';x=Math.min(280,Math.max(20,x+(q()-.5)*60));y=Math.min(120,Math.max(20,y+(q()-.5)*50))}return sv(`<polyline points="${p}" fill="none" stroke="${C}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="9" fill="${RD}"/>`+T(150,150,'Broun harakati: zig-zag izi'))},
+diff:()=>sv(box(8,20,130,100)+box(162,20,130,100)+dots(10,14,30,50,80,1,RD)+dots(10,80,30,50,80,2,B)+dots(10,168,30,115,80,3,RD)+dots(10,168,30,115,80,4,B)+T(73,140,'oldin')+T(227,140,'keyin')+T(150,75,'→',22)),
+gap:()=>sv(`<rect x="30" y="60" width="40" height="60" fill="${B}" opacity=".6"/><rect x="100" y="60" width="40" height="60" fill="${C}" opacity=".6"/><rect x="210" y="75" width="40" height="45" fill="${G}" opacity=".7"/>`+T(85,50,'+',22)+T(175,95,'=',22)+T(50,138,'50 ml',10)+T(120,138,'50 ml',10)+T(230,138,'< 100 ml',10)+T(150,20,'Zarralar orasida bo‘shliq bor',11)),
+force:()=>sv(`<line x1="20" y1="80" x2="285" y2="80" stroke="#888"/><line x1="30" y1="10" x2="30" y2="150" stroke="#888"/><path d="M40 10 C48 100 60 135 100 120 S200 88 285 84" fill="none" stroke="${B}" stroke-width="3"/>`+T(75,30,'itarilish',10)+T(200,110,'tortishish',10)+T(270,96,'r',10)),
+solid:()=>sv(lat(9,5,40,25,28,B,7)+T(150,155,'Qattiq jism: zarralar tartibli, joyida tebranadi')),
+liquid:()=>sv(box(20,10,260,125)+dots(40,26,70,248,60,9,C,7)+T(150,155,'Suyuqlik: zarralar yaqin, lekin siljiydi')),
+gas:()=>sv(box(20,10,260,125)+dots(16,26,20,248,105,4,RD,6)+T(150,155,'Gaz: zarralar uzoq, erkin uchadi')),
+cmp:()=>sv(box(5,15,90,100)+box(105,15,90,100)+box(205,15,90,100)+lat(4,4,20,30,20,B,5)+dots(18,112,60,76,50,2,C,5)+dots(6,212,25,76,85,5,RD,5)+T(50,135,'Qattiq',10)+T(150,135,'Suyuq',10)+T(250,135,'Gaz',10)),
+temp:()=>sv(box(5,25,140,100)+box(155,25,140,100)+arr(5,8,1)+arr(155,24,2)+T(75,142,'Sovuq: sekin')+T(225,142,'Issiq: tez')),
+exp:()=>sv(lat(4,4,25,35,16,B,5)+lat(4,4,175,20,30,RD,5)+T(60,125,'20 °C',11)+T(220,150,'100 °C',11)+T(150,70,'→',22)),
+evap:()=>sv(box(20,70,260,70)+dots(30,26,85,248,48,6,C,5)+dots(4,60,20,180,40,8,RD,5)+`<line x1="150" y1="68" x2="150" y2="22" stroke="${G}" stroke-width="3"/>`+T(200,35,'bug‘ga aylanadi',10)),
+sum:()=>sv(T(150,30,'Qattiq → Suyuq → Gaz',14)+T(150,60,'zarralar orasidagi masofa ortadi',11)+T(150,85,'harakat tezligi ortadi',11)+T(150,110,'o‘zaro ta’sir kuchi kamayadi',11)+T(150,140,'↑ harorat = ↑ zarralar tezligi',12))
+};
+const S=[
+['Modda nima?','<p>Atrofimizdagi barcha jismlar <b>moddadan</b> iborat. Modda juda mayda <b>zarrachalardan</b> tuziladi: atomlar va molekulalar.</p>','intro'],
+['Atom va molekula','<p><b>Molekula</b> — moddaning xossalarini saqlovchi eng kichik zarra. Molekulalar <b>atomlardan</b> tuzilgan. Masalan, suv molekulasi 2 ta vodorod va 1 ta kislorod atomidan iborat (H₂O).</p>','mol'],
+['Zarralarning o‘lchami','<p>Molekulalar juda kichik: ularning o‘lchami taxminan <b>0,3–1 nm</b> (1 nm = 10⁻⁹ m). Ularni oddiy mikroskopda ko‘rib bo‘lmaydi.</p>','size'],
+['Zarralar to‘xtovsiz harakatda','<p>1827-yilda <b>R. Broun</b> suvdagi gul changi zarralarining tartibsiz harakatini kuzatdi. Bu <b>Broun harakati</b> bo‘lib, uni suv molekulalarining zarbalari keltirib chiqaradi.</p>','brown'],
+['Diffuziya','<p><b>Diffuziya</b> — turli moddalar zarralarining o‘z-o‘zidan aralashib ketishi. Atir hidining xonaga tarqalishi, choyga shakarning erishi — diffuziya misollari.</p>','diff'],
+['Zarralar orasida bo‘shliq bor','<p>50 ml suv va 50 ml spirtni aralashtirsak, hajm 100 ml dan <b>kam</b> bo‘ladi: zarralar bir-biri orasidagi bo‘shliqlarga joylashadi.</p>','gap'],
+['O‘zaro tortishish va itarilish','<p>Zarralar orasida bir vaqtda <b>tortishish</b> va <b>itarilish</b> kuchlari ta’sir qiladi. Juda yaqinda itarilish, uzoqroqda tortishish ustun bo‘ladi.</p>','force'],
+['Qattiq jismlar','<p>Zarralar <b>tartibli</b> joylashgan, bir-biriga juda yaqin va o‘z o‘rni atrofida tebranadi. Shuning uchun qattiq jism <b>shakli va hajmini</b> saqlaydi.</p>','solid'],
+['Suyuqliklar','<p>Zarralar yaqin, lekin tartibsiz joylashgan va bir-birining ustidan sirpanib o‘tadi. Suyuqlik <b>hajmini saqlaydi</b>, shaklini idishga moslaydi (oquvchanlik).</p>','liquid'],
+['Gazlar','<p>Zarralar bir-biridan uzoq, juda tez va erkin harakatlanadi, devorlarga urilib <b>bosim</b> hosil qiladi. Gaz na shaklini, na hajmini saqlaydi.</p>','gas'],
+['Uch holatni taqqoslash','<p>Qattiq jism → suyuqlik → gaz yo‘nalishida zarralar orasidagi masofa va harakat tezligi ortadi, o‘zaro tortishish kuchi kamayadi.</p>','cmp'],
+['Harorat va zarralar tezligi','<p><b>Harorat</b> zarralar harakatining o‘rtacha tezligini bildiradi: <b>harorat qancha yuqori bo‘lsa, zarralar shuncha tez harakatlanadi</b>. Shu sabab issiq suvda diffuziya tezroq kechadi.</p>','temp'],
+['Issiqlikdan kengayish','<p>Qizdirilganda zarralar kuchliroq tebranadi va orasidagi masofa ortadi — jism <b>kengayadi</b>. Zarralarning o‘zi kattalashmaydi! Formula: <b>Δl = α·l₀·Δt</b>.</p>','exp'],
+['Bug‘lanish','<p>Suyuqlik sirtidagi eng tez zarralar tortishish kuchini yengib, suyuqlikdan chiqib ketadi. Bu <b>bug‘lanish</b>. Harorat ortsa, u tezlashadi.</p>','evap'],
+['Xulosa','<p>Modda zarralardan tuzilgan; zarralar to‘xtovsiz va tartibsiz harakatlanadi; ular orasida bo‘shliq va o‘zaro ta’sir bor; harorat ortsa, harakat tezlashadi.</p>','sum']];
+let si=0,tx0=0,seen=new Set();
+S.forEach((_,i)=>{const b=document.createElement('b');b.onclick=()=>go(i);$('#sd').appendChild(b)});
+function go(i){si=Math.max(0,Math.min(S.length-1,i));const [t,h,f]=S[si];$('#sl').innerHTML=`<h2>${si+1}. ${t}</h2><div class="sl"><div>${h}</div>${FIG[f]()}</div>`;
+$('#sn').textContent=(si+1)+' / '+S.length;$('#sp').style.width=(si+1)/S.length*100+'%';$$('#sd b').forEach((b,k)=>b.classList.toggle('on',k==si));
+if(!seen.has(si)){seen.add(si);add(1)}}
+$('#pv').onclick=()=>go(si-1);$('#nx').onclick=()=>go(si+1);
+document.addEventListener('keydown',e=>{if(cur!='slides')return;if(e.key=='ArrowRight')go(si+1);if(e.key=='ArrowLeft')go(si-1)});
+$('#slides').addEventListener('touchstart',e=>tx0=e.touches[0].clientX,{passive:true});
+$('#slides').addEventListener('touchend',e=>{const d=e.changedTouches[0].clientX-tx0;if(Math.abs(d)>50)go(si+(d<0?1:-1))},{passive:true});
+
+/* ---------- Simulyatsiyalar ---------- */
+const W=600,H=340,rnd=Math.random,cv=$('#cv'),g=cv.getContext('2d');
+const mk=(n,f)=>Array.from({length:n},(_,i)=>f(i));
+function dot(x,y,r,c){g.fillStyle=c;g.beginPath();g.arc(x,y,r,0,6.283);g.fill()}
+function mv(p,s,lo=0,hi=W){p.x+=Math.cos(p.a)*s;p.y+=Math.sin(p.a)*s;if(p.x<lo+4){p.x=lo+4;p.a=Math.PI-p.a}if(p.x>hi-4){p.x=hi-4;p.a=Math.PI-p.a}if(p.y<4){p.y=4;p.a=-p.a}if(p.y>H-4){p.y=H-4;p.a=-p.a}}
+const SIMS=[
+{n:'Gaz',l:'Harorat',v:50,u:'°C',init(){this.P=mk(80,()=>({x:rnd()*W,y:rnd()*H,a:rnd()*6.28}))},
+ draw(v){const s=.5+v/12;this.P.forEach(p=>{mv(p,s);dot(p.x,p.y,5,B)});return`O‘rtacha tezlik ≈ ${(s*50).toFixed(0)} m/s (shartli). Harorat ↑ — tezlik ↑.`}},
+{n:'Broun',l:'Harorat',v:50,u:'°C',init(){this.P=mk(140,()=>({x:rnd()*W,y:rnd()*H,a:rnd()*6.28}));this.b={x:W/2,y:H/2,vx:0,vy:0};this.tr=[]},
+ draw(v){const s=.8+v/15,b=this.b;this.P.forEach(p=>{mv(p,s);dot(p.x,p.y,3,C);const dx=b.x-p.x,dy=b.y-p.y;if(dx*dx+dy*dy<22*22){b.vx+=Math.cos(p.a)*s*.18;b.vy+=Math.sin(p.a)*s*.18;p.a+=Math.PI}});
+ b.vx*=.96;b.vy*=.96;b.x+=b.vx;b.y+=b.vy;if(b.x<16||b.x>W-16)b.vx*=-1;if(b.y<16||b.y>H-16)b.vy*=-1;b.x=Math.min(W-16,Math.max(16,b.x));b.y=Math.min(H-16,Math.max(16,b.y));
+ this.tr.push([b.x,b.y]);if(this.tr.length>250)this.tr.shift();g.strokeStyle=RD;g.beginPath();this.tr.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.stroke();dot(b.x,b.y,14,RD);return'Katta zarra molekulalar zarbasidan zig-zag chizadi (Broun harakati).'}},
+{n:'Diffuziya',l:'Harorat',v:50,u:'°C',b:['To‘siqni olib tashla',function(){this.wall=false}],init(){this.wall=true;this.P=mk(120,i=>({x:i<60?rnd()*W/2:W/2+rnd()*W/2,y:rnd()*H,a:rnd()*6.28,r:i<60}))},
+ draw(v){const s=.5+v/14;let m=0;this.P.forEach(p=>{this.wall?mv(p,s,p.r?0:W/2,p.r?W/2:W):mv(p,s);if(p.r&&p.x>W/2)m++;dot(p.x,p.y,5,p.r?RD:B)});if(this.wall){g.fillStyle='#888';g.fillRect(W/2-2,0,4,H)}
+ return`Qizil zarralarning o‘ng yarmidagi ulushi: ${(m/60*100).toFixed(0)}% ${this.wall?'(to‘siq bor)':'(aralashish tugagach ≈50%)'}`}},
+{n:'Holatlar',l:'Harorat',v:15,u:'°C',init(){this.P=mk(60,i=>({hx:60+i%10*52,hy:50+(i/10|0)*45,x:60+i%10*52,y:50+(i/10|0)*45,vx:0,vy:0}))},
+ draw(v){const md=v<35?0:v<70?1:2;this.P.forEach(p=>{if(md==0){p.x+=(p.hx-p.x)*.25+(rnd()-.5)*(1+v/6);p.y+=(p.hy-p.y)*.25+(rnd()-.5)*(1+v/6)}
+ else if(md==1){p.vx+=(rnd()-.5)*.9;p.vy+=.25+(rnd()-.5)*.9;p.vx*=.93;p.vy*=.93;p.x+=p.vx;p.y+=p.vy}
+ else{p.vx+=(rnd()-.5)*.3;p.vy+=(rnd()-.5)*.3;const sp=Math.hypot(p.vx,p.vy)||1,k=(2+(v-70)/8)/sp;p.vx*=k;p.vy*=k;p.x+=p.vx;p.y+=p.vy}
+ if(p.x<5){p.x=5;p.vx=Math.abs(p.vx)}if(p.x>W-5){p.x=W-5;p.vx=-Math.abs(p.vx)}if(p.y<5){p.y=5;p.vy=Math.abs(p.vy)}if(p.y>H-5){p.y=H-5;p.vy=-Math.abs(p.vy)*.3}dot(p.x,p.y,6,['#0b78d1','#19b5c9','#d93c3c'][md])});
+ return['Qattiq jism: zarralar joyida tebranadi.','Suyuqlik: zarralar siljiydi, hajm saqlanadi.','Gaz: zarralar erkin uchadi.'][md]}}];
+let sc=0,lastSim='';
+function setSim(i){sc=i;const s=SIMS[i];s.init();$('#sll').textContent=s.l;const r=$('#sr');r.min=0;r.max=100;r.value=s.v;$('#sv').textContent=s.v+' '+s.u;
+$('#sb').innerHTML='';SIMS.forEach((x,k)=>{const b=document.createElement('button');b.textContent=x.n;b.className=k==i?'pr':'';b.onclick=()=>setSim(k);$('#sb').appendChild(b)});
+if(s.b){const b=document.createElement('button');b.textContent=s.b[0];b.onclick=()=>s.b[1].call(s);$('#sb').appendChild(b)}
+const r2=document.createElement('button');r2.textContent='↺ Qayta';r2.onclick=()=>setSim(sc);$('#sb').appendChild(r2);add(1)}
+$('#sr').oninput=e=>{SIMS[sc].v=+e.target.value;$('#sv').textContent=e.target.value+' '+SIMS[sc].u};
+
+/* ---------- VR va Video uchun umumiy 3D pozitsiya ---------- */
+const KK=[1,1.7,2.3];
+function pos(i,t,m){const h=[(i%4)-1.5,((i>>2)%4)-1.5,(i>>4)-1.5].map(v=>v*45);return h.map((v,a)=>m==0?v+4*Math.sin(t*9+i*KK[a]):m==1?v*1.1+22*Math.sin(t*1.6+i*KK[a]):95*Math.sin(t*(.6+(i%5)*.25)+i*KK[a]*1.3))}
+const vc=$('#vc'),vg=vc.getContext('2d');let vr={m:0,yaw:.6,pit:.4,auto:true,t:0,dr:0,lx:0,ly:0};
+$$('.vm').forEach(b=>b.onclick=()=>{vr.m=+b.dataset.m;$$('.vm').forEach(x=>x.classList.toggle('pr',x==b));add(1)});
+$('#ar').onclick=()=>{vr.auto=!vr.auto};
+vc.addEventListener('pointerdown',e=>{vr.dr=1;vr.lx=e.clientX;vr.ly=e.clientY;vc.setPointerCapture(e.pointerId)});
+vc.addEventListener('pointermove',e=>{if(!vr.dr)return;vr.yaw+=(e.clientX-vr.lx)*.01;vr.pit=Math.max(-1.5,Math.min(1.5,vr.pit+(e.clientY-vr.ly)*.01));vr.lx=e.clientX;vr.ly=e.clientY});
+vc.addEventListener('pointerup',()=>vr.dr=0);vc.addEventListener('pointercancel',()=>vr.dr=0);
+$('#fs').onclick=()=>{const w=$('#vrw');try{if(document.fullscreenElement)document.exitFullscreen();else if(w.requestFullscreen)w.requestFullscreen();else alert('To‘liq ekran qo‘llanmaydi')}catch(e){}};
+function drawVR(dt){const fsr=document.fullscreenElement,w=$('#vrw').clientWidth,h=fsr?innerHeight:Math.round(w*.62);if(vc.width!=w||vc.height!=h){vc.width=w;vc.height=h}
+const sp=+$('#vs').value,z=+$('#vz').value;vr.t+=dt*sp;if(vr.auto&&!vr.dr)vr.yaw+=dt*.4;
+vg.clearRect(0,0,w,h);const sc2=Math.min(w,h)/260*z,cy=Math.cos(vr.yaw),sy=Math.sin(vr.yaw),cp=Math.cos(vr.pit),sp2=Math.sin(vr.pit);
+const pts=mk(64,i=>{let[x,y,zz]=pos(i,vr.t,vr.m);let x1=x*cy+zz*sy,z1=-x*sy+zz*cy,y1=y*cp-z1*sp2,z2=y*sp2+z1*cp;const f=300/(300+z2*.8);return{x:w/2+x1*sc2*f,y:h/2+y1*sc2*f,z:z2,f}}).sort((a,b)=>b.z-a.z);
+pts.forEach(p=>{const d=(p.z+150)/300;vg.fillStyle=['#0b78d1','#19b5c9','#d93c3c'][vr.m];vg.globalAlpha=.45+.55*(1-Math.min(1,Math.max(0,d)));vg.beginPath();vg.arc(p.x,p.y,7*sc2*p.f,0,6.283);vg.fill()});vg.globalAlpha=1;
+vg.fillStyle=getComputedStyle(document.body).color;vg.font='14px system-ui';vg.fillText(['Qattiq jism','Suyuqlik','Gaz'][vr.m]+' · tezlik ×'+sp.toFixed(1),12,22)}
+
+/* ---------- Video ---------- */
+const dc=$('#dc'),dg=dc.getContext('2d'),VD=32,vid={t:0,play:false};
+const SUB=[[0,8,0,'1-qism. Qattiq jismda zarralar tartibli joylashgan va joyida tebranadi.',1],[8,16,1,'2-qism. Suyuqlikda zarralar yaqin, lekin bir-biridan sirpanib o‘tadi.',1],[16,24,2,'3-qism. Gazda zarralar uzoq masofada, erkin va tez harakatlanadi.',1],[24,32,2,'4-qism. Harorat oshsa, zarralar tezligi ham oshadi. Diffuziya tezlashadi!',2.2]];
+const fmt=t=>Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0');
+function drawVid(){dg.clearRect(0,0,600,340);const s=SUB.find(x=>vid.t>=x[0]&&vid.t<x[1])||SUB[3];
+for(let i=0;i<64;i++){const p=pos(i,vid.t*s[4],s[2]);dg.fillStyle=['#0b78d1','#19b5c9','#d93c3c'][s[2]];dg.beginPath();dg.arc(300+p[0]*2.8*.6+p[2]*.2,170+p[1]*1.6,6,0,6.283);dg.fill()}
+$('#sub').textContent=s[3];$('#vp').style.width=vid.t/VD*100+'%';$('#vt').textContent=fmt(vid.t)+' / '+fmt(VD)}
+$('#pl').onclick=()=>{if(vid.t>=VD)vid.t=0;vid.play=!vid.play;$('#pl').textContent=vid.play?'⏸ Pauza':'▶ Davom'};
+$('#rs').onclick=()=>{vid.t=0;vid.play=true;$('#pl').textContent='⏸ Pauza'};
+
+/* ---------- Umumiy viktorina mexanizmi ---------- */
+function quiz(el,qs,pts){let i=0,s=0;(function sh(){if(i>=qs.length){const p=Math.round(s/qs.length*100);el.innerHTML=`<h3>Natija: ${s} / ${qs.length} to‘g‘ri (${p}%)</h3><p>${p>=80?'A’lo! ⭐':p>=50?'Yaxshi, yana takrorlang.':'Darsni qayta ko‘rib chiqing.'}</p><button class="pr" id="qr">↺ Qaytadan</button>`;add(s*pts);$('#qr').onclick=()=>quiz(el,qs,pts);return}
+const q=qs[i];let lock=0;el.innerHTML=`<p class="muted">Savol ${i+1}/${qs.length} · To‘g‘ri: ${s}</p><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><h3>${q[0]}</h3>`+q[1].map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')+'<div class="fb"></div>';
+el.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(lock)return;lock=1;const k=+b.dataset.k,ok=k==q[2];if(ok)s++;b.classList.add(ok?'ok':'no');el.querySelectorAll('.opt')[q[2]].classList.add('ok');
+el.querySelector('.fb').innerHTML=(ok?'✅ To‘g‘ri! ':'❌ Xato. ')+q[3]+'<br><button class="pr" id="qn">'+(i+1<qs.length?'Keyingi →':'Natija')+'</button>';$('#qn').onclick=()=>{i++;sh()}})})()}
+const Q=[
+['Modda qanday zarrachalardan tuzilgan?',['Faqat atomlardan','Molekula va atomlardan','Faqat ionlardan','Uzluksiz massadan'],1,'Modda atom va molekulalardan iborat.'],
+['Suv molekulasi formulasi qaysi?',['CO₂','H₂O','O₂','NaCl'],1,'Suv molekulasi 2 vodorod va 1 kislorod atomidan iborat.'],
+['1 nanometr necha metr?',['10⁻³ m','10⁻⁶ m','10⁻⁹ m','10⁻¹² m'],2,'1 nm = 10⁻⁹ m.'],
+['Broun harakati nima?',['Suvning qaynashi','Suvdagi mayda zarralarning tartibsiz harakati','Jismning erishi','Gazning siqilishi'],1,'Uni suv molekulalarining zarbalari keltirib chiqaradi.'],
+['Diffuziya qaysi holatda eng tez kechadi?',['Qattiq jismda','Suyuqlikda','Gazda','Hammasida bir xil'],2,'Gazda zarralar uzoq va tez harakatlanadi.'],
+['Harorat oshsa zarralar tezligi...',['Kamayadi','Oshadi','O‘zgarmaydi','Nolga teng bo‘ladi'],1,'Harorat o‘rtacha tezlikni bildiradi.'],
+['Qaysi holatda zarralar tartibli joylashgan?',['Gaz','Suyuqlik','Qattiq jism','Hammasida'],2,'Qattiq jismda kristall panjara mavjud.'],
+['Isitilganda jism kengayishining sababi?',['Zarralar kattalashadi','Zarralar orasidagi masofa ortadi','Zarralar soni ortadi','Zarralar og‘irlashadi'],1,'Zarralar kuchliroq tebranib, orasi ochiladi.'],
+['Qaysi modda hajmini ham, shaklini ham saqlamaydi?',['Temir','Suv','Havo','Muz'],2,'Gaz butun idishni egallaydi.'],
+['50 ml suv + 50 ml spirt = ?',['Aynan 100 ml','100 ml dan ko‘p','100 ml dan kam','0 ml'],2,'Zarralar orasidagi bo‘shliqlarga joylashadi.']];
+const TF=[['Gaz zarralari bir-biriga juda yaqin joylashgan.',['To‘g‘ri','Noto‘g‘ri'],1,'Gazda zarralar uzoq.'],['Diffuziya o‘z-o‘zidan sodir bo‘ladi.',['To‘g‘ri','Noto‘g‘ri'],0,'Tashqi kuchsiz ham aralashadi.'],['Qizdirilganda zarralarning o‘zi kattalashadi.',['To‘g‘ri','Noto‘g‘ri'],1,'Faqat orasidagi masofa ortadi.'],['Suyuqlik hajmini saqlaydi.',['To‘g‘ri','Noto‘g‘ri'],0,'Shaklini saqlamaydi, hajmini saqlaydi.'],['Sovuq suvda diffuziya tezroq bo‘ladi.',['To‘g‘ri','Noto‘g‘ri'],1,'Issiq suvda tezroq.'],['Zarralar orasida bo‘shliq mavjud.',['To‘g‘ri','Noto‘g‘ri'],0,'Shu sabab hajm aralashmada kamayadi.'],['Qattiq jism zarralari butunlay qimirlamaydi.',['To‘g‘ri','Noto‘g‘ri'],1,'Ular joyida tebranadi.'],['Broun harakati tartibsiz.',['To‘g‘ri','Noto‘g‘ri'],0,'Zig-zag shaklda.']];
+const FB=[['Gazlarda zarralar orasidagi masofa ___.',['kichik','katta','nolga teng'],1,'Gazda masofa eng katta.'],['Harorat oshsa zarralar tezligi ___.',['kamayadi','oshadi','o‘zgarmaydi'],1,'Tezlik ortadi.'],['Aralashib ketish hodisasi ___ deyiladi.',['bug‘lanish','diffuziya','erish'],1,'Diffuziya.'],['Moddaning xossalarini saqlovchi eng kichik zarra — ___.',['atom','molekula','proton'],1,'Molekula.'],['Qattiq jism zarralari o‘z o‘rni atrofida ___.',['tebranadi','uchib yuradi','to‘xtaydi'],0,'Tebranadi.']];
+const VK=[['Suvdagi chang zarralari harakatini kim kuzatgan?',['Nyuton','Broun','Galiley'],1,'R. Broun, 1827-yil.'],['Suyuqlik idish shaklini oladi, chunki zarralari...',['qattiq bog‘langan','siljiy oladi','uchib yuradi'],1,'Oquvchanlik.'],['Eng sekin zarralar qaysi muhitda?',['Muzda','Qaynoq suvda','Bug‘da'],0,'Past harorat — sekin zarra.'],['Atir hidi xonaga tarqalishi — bu...',['erish','diffuziya','kondensatsiya'],1,'Gazda diffuziya.'],['Bug‘lanishda suyuqlikdan qaysi zarralar chiqadi?',['Eng sekinlari','Eng tezlari','Barchasi birdan'],1,'Tortishishni yengadigan tezlari.']];
+const sh=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const OG=[
+{n:'Mos keltirish',r(el){const P=[['Diffuziya','Moddalarning o‘z-o‘zidan aralashishi'],['Broun harakati','Suvdagi zarralarning tartibsiz harakati'],['Molekula','Moddaning xossasini saqlovchi eng kichik zarra'],['Gaz','Zarralari uzoq va erkin harakatlanadi'],['Qattiq jism','Zarralari tartibli, joyida tebranadi']];let sel=null,done=0;
+el.innerHTML='<p>Avval chapdan, keyin o‘ngdan mos javobni tanlang.</p><div class="grid2"><div id="ml"></div><div id="mr"></div></div><div class="fb"></div>';
+sh(P.map((p,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=P[i][0];b.onclick=()=>{if(b.disabled)return;$$('#ml .opt').forEach(x=>x.style.outline='');b.style.outline='3px solid #0b78d1';sel=[i,b]};$('#ml').appendChild(b)});
+sh(P.map((p,i)=>i)).forEach(i=>{const b=document.createElement('button');b.className='opt';b.textContent=P[i][1];b.onclick=()=>{if(!sel||b.disabled)return;if(sel[0]==i){b.classList.add('ok');sel[1].classList.add('ok');b.disabled=sel[1].disabled=true;sel[1].style.outline='';add(3);if(++done==P.length){el.querySelector('.fb').textContent='🎉 Barchasi to‘g‘ri!';add(5)}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}sel=null};$('#mr').appendChild(b)})}},
+{n:'To‘g‘ri/Noto‘g‘ri',r:el=>quiz(el,TF,2)},
+{n:'Bo‘sh joy',r:el=>quiz(el,FB,3)},
+{n:'Tartiblash',r(el){const O=['Muz (−10 °C)','Sovuq suv (5 °C)','Iliq suv (40 °C)','Qaynoq suv (95 °C)','Bug‘ (120 °C)'];let n=0;
+el.innerHTML='<p>Zarralar tezligi <b>eng sekindan eng tezgacha</b> bo‘lishi uchun bosing:</p><div id="so2"></div><div class="fb"></div>';
+sh(O).forEach(t=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{if(b.disabled)return;if(t==O[n]){n++;b.classList.add('ok');b.disabled=true;b.textContent=n+'. '+t;add(2);if(n==O.length){el.querySelector('.fb').innerHTML='🎉 To‘g‘ri tartib! <button class="pr" id="rr">↺</button>';add(5);$('#rr').onclick=()=>OG[3].r(el)}}else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),500)}};$('#so2').appendChild(b)})}},
+{n:'Xotira juftlari',r(el){const P=[['Qattiq','Tartibli'],['Suyuq','Oquvchan'],['Gaz','Erkin uchadi'],['Diffuziya','Aralashish'],['Molekula','Eng kichik zarra'],['Broun','Zig-zag']];const C2=sh(P.flatMap((p,i)=>[[i,p[0]],[i,p[1]]]));let a=null,mv2=0,f=0,lock=0;
+el.innerHTML='<p>Juftlarni toping. Urinishlar: <b id="mm">0</b></p><div class="mem"></div><div class="fb"></div>';
+C2.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent='❓';b.onclick=()=>{if(lock||b.disabled||a&&a[1]==b)return;b.textContent=c[1];if(!a){a=[c,b];return}mv2++;$('#mm').textContent=mv2;
+if(a[0][0]==c[0]){a[1].classList.add('ok');b.classList.add('ok');a[1].disabled=b.disabled=true;a=null;add(3);if(++f==P.length){el.querySelector('.fb').textContent='🎉 Tabriklaymiz! '+mv2+' urinishda.';add(5)}}
+else{lock=1;const x=a[1];a=null;setTimeout(()=>{x.textContent=b.textContent='❓';lock=0},800)}};el.querySelector('.mem').appendChild(b)})}},
+{n:'Viktorina',r:el=>quiz(el,VK,3)}];
+function setGame(i){$('#gb').innerHTML='';OG.forEach((x,k)=>{const b=document.createElement('button');b.textContent=(k+1)+'. '+x.n;b.className=k==i?'pr':'';b.onclick=()=>setGame(k);$('#gb').appendChild(b)});OG[i].r($('#gq'))}
+
+/* ---------- Asosiy sikl ---------- */
+let last=performance.now(),testInit=0,gInit=0,sInit=0;
+function loop(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+try{if(cur=='sim'){if(!sInit){sInit=1;setSim(0)}g.clearRect(0,0,W,H);$('#so').textContent=SIMS[sc].draw(SIMS[sc].v)}
+else if(cur=='vr')drawVR(dt);
+else if(cur=='video'){if(vid.play){vid.t+=dt;if(vid.t>=VD){vid.t=VD;vid.play=false;$('#pl').textContent='▶ Qayta';add(3)}}drawVid()}
+else if(cur=='test'&&!testInit){testInit=1;quiz($('#tq'),Q,5)}
+else if(cur=='games'&&!gInit){gInit=1;setGame(0)}}catch(e){console.error(e)}
+requestAnimationFrame(loop)}
+ui();go(0);show('slides');requestAnimationFrame(loop);
+</script>
+<!-- ===== E-MAKTAB SUPABASE TEST SYNC ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
+<script>
+(function() {
+  'use strict';
+  if (window.__EMAKTAB_TEST_HOOK_INJECTED__) return;
+  window.__EMAKTAB_TEST_HOOK_INJECTED__ = true;
+
+  try {
+    if (Object.prototype.hasOwnProperty.call(window, 'localStorage')) {
+      delete window.localStorage;
+    }
+  } catch(e) {}
+
+  function getStudent() {
+    try {
+      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student");
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return null;
+  }
+
+  var hasSubmitted = false;
+
+  async function submitTestResults(score, total) {
+    if (hasSubmitted) return;
+    hasSubmitted = true;
+
+    var student = getStudent();
+    var lessonTitle = document.title || document.querySelector("h1, h2, .lesson-title")?.textContent?.trim() || "7-sinf Fizika darsi";
+    lessonTitle = lessonTitle.replace(/—\s*7-sinf.*$/i, '').trim();
+
+    var record = {
+      student_id: (student && student.id) ? student.id : null,
+      student_name: student ? [student.first_name, student.last_name].filter(Boolean).join(" ") : "Nomaʼlum oʻquvchi",
+      phone: (student && student.phone) ? student.phone : "",
+      grade: "7-sinf",
+      subject: "Fizika",
+      lesson_title: lessonTitle,
+      score: Number(score || 0),
+      total_questions: Number(total || 10),
+      created_at: new Date().toISOString()
+    };
+
+    var client = (window.getSupabaseClient && window.getSupabaseClient()) || window.supabaseClient;
+    if (client) {
+      try {
+        var res = await client.from("test_results").insert([record]);
+        if (res.error) {
+          console.warn("[E-Maktab] Test submission error:", res.error);
+        } else {
+          showBadgeInTestCard("✅ Natija serverga yuborildi");
+        }
+      } catch(err) {
+        console.warn("[E-Maktab] Test submission failed:", err);
+      }
+    }
+  }
+
+  function showBadgeInTestCard(msg) {
+    var card = document.querySelector("#test .card, #test, #tq, main");
+    if (!card) return;
+    if (document.getElementById("emaktab-sync-badge")) return;
+    var badge = document.createElement("div");
+    badge.id = "emaktab-sync-badge";
+    badge.setAttribute("style", "margin-top:14px;padding:8px 14px;background:rgba(27,158,85,0.12);border:1px solid #1b9e55;border-radius:10px;color:#1b9e55;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px;");
+    badge.textContent = msg;
+    card.appendChild(badge);
+  }
+
+  function checkTestContainer() {
+    if (hasSubmitted) return;
+    var root = document.querySelector("#test, #tq, main") || document.body;
+    if (!root) return;
+    var text = root.innerText || root.textContent || "";
+
+    // Pattern 1: "Siz X savoldan Y tasiga to'g'ri javob berdingiz"
+    var m1 = text.match(/(\d+)\s*savoldan\s*(\d+)\s*tasiga/i);
+    if (m1) {
+      var total1 = parseInt(m1[1], 10);
+      var score1 = parseInt(m1[2], 10);
+      submitTestResults(score1, total1);
+      return;
+    }
+
+    // Pattern 2: "Natija: X / Y to'g'ri"
+    var m2 = text.match(/Natija:\s*(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m2) {
+      var score2 = parseInt(m2[1], 10);
+      var total2 = parseInt(m2[2], 10);
+      submitTestResults(score2, total2);
+      return;
+    }
+
+    // Pattern 3: "X / Y to'g'ri"
+    var m3 = text.match(/(\d+)\s*\/\s*(\d+)\s*to[‘'ʻ]g[‘'ʻ]ri/i);
+    if (m3) {
+      var score3 = parseInt(m3[1], 10);
+      var total3 = parseInt(m3[2], 10);
+      submitTestResults(score3, total3);
+      return;
+    }
+  }
+
+  var observer = new MutationObserver(function() {
+    checkTestContainer();
+  });
+
+  document.addEventListener("click", function(e) {
+    if (e.target && (e.target.id === "qRetry" || e.target.id === "qr" || e.target.closest("#qRetry, #qr"))) {
+      hasSubmitted = false;
+      var b = document.getElementById("emaktab-sync-badge");
+      if (b) b.remove();
+    }
+  });
+
+  function startObserver() {
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    checkTestContainer();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startObserver);
+  } else {
+    startObserver();
+  }
+})();
+</script>
+<!-- ===== END E-MAKTAB SUPABASE TEST SYNC ===== -->
+</body>
+</html>
