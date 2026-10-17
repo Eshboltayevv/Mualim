@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "^/admin/?$",
+      "dest": "/admin_oyna.html"
+    },
+    {
+      "src": "^/student/?$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/?$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/Darslar/(.*)$",
+      "dest": "/Darslar/$1"
+    },
+    {
+      "src": "^/(.*)$",
+      "dest": "/$1"
+    }
+  ]
+}
