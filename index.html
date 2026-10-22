@@ -1216,13 +1216,14 @@ const rt=()=>{
     saveR();
     var client=(window.getSupabaseClient&&window.getSupabaseClient())||window.supabaseClient;
     if(client){
-      var st=(window.getStudent&&window.getStudent())||{};
-      var fullName=st.full_name||st.student_name||pname||"O'quvchi";
+      var st=(window.getRegisteredStudent&&window.getRegisteredStudent())||(window.getStudent&&window.getStudent())||{};
+      var isUnk=(window.isUnknownName&&window.isUnknownName(st.full_name))||(!st.full_name||/noma[’'ʼ`]lum/i.test(st.full_name));
+      var fullName=(!isUnk&&st.full_name)||(st.student_name&&!/noma[’'ʼ`]lum/i.test(st.student_name)?st.student_name:null)||pname||"O'quvchi";
       var tRecord={
         student_id: st.id||null,
         student_name: fullName,
         full_name: fullName,
-        phone: st.phone||'',
+        phone: (window.cleanPhone?window.cleanPhone(st.phone):st.phone)||'',
         school: st.school||st.sch||'',
         region: st.region||st.vil||'',
         district: st.district||st.tum||'',
@@ -13842,7 +13843,8 @@ body:has(>.emaktab-overlay) .l3v.l3full{z-index:999990!important}
    yordamchi funksiyalar faqat YO'Q bo'lsa qo'shiladi — supabase-config.js'dagi asl funksiyalar o'zgarmaydi */
 (function(){function fb(){
  if(typeof window.cleanPhone!=='function')window.cleanPhone=function(v){v=String(v||'').replace(/[^\d+]/g,'');if(v.indexOf('+')>0)v=v.replace(/\+/g,'');return v};
- if(typeof window.saveStudent!=='function')window.saveStudent=function(o){try{['currentStudent','emaktab_student','muallim_profile'].forEach(function(k){localStorage.setItem(k,JSON.stringify(o))})}catch(e){}};
+ if(typeof window.saveStudent!=='function')window.saveStudent=function(o){try{['currentStudent','emaktab_student','muallim_profile','studentProfile','activeProfile'].forEach(function(k){localStorage.setItem(k,JSON.stringify(o))})}catch(e){}};
+ if(typeof window.getRegisteredStudent!=='function'&&typeof window.getStudent==='function')window.getRegisteredStudent=window.getStudent;
  if(typeof window.genUUID!=='function')window.genUUID=function(){if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)})};
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fb);else fb();addEventListener('load',fb)})();
@@ -14007,38 +14009,13 @@ if(document.body)start();else document.addEventListener('DOMContentLoaded',start
 <!-- E-MAKTAB INTEGRATSIYASI: SUPABASE + O'QUVCHI ONBOARDING + 21 DARS    -->
 <!-- ==================================================================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./supabase-config.js"></script>
+<script src="./supabase-config.js" onerror="this.onerror=null;this.src='../supabase-config.js';"></script>
 
 <style id="emaktab-student-styles">
-  /* Suzuvchi Admin Tugmasi (Floating Admin Shortcut) */
+  /* Admin Tugmasini butunlay yashirish */
+  #emaktab-admin-shortcut,
   .emaktab-admin-float {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 99999;
-    background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    border-radius: 999px;
-    padding: 9px 18px;
-    font-size: 13px;
-    font-weight: 700;
-    font-family: system-ui, -apple-system, sans-serif;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    transition: all 0.2s ease;
-  }
-  .emaktab-admin-float:hover {
-    background: #1e293b;
-    color: #38bdf8;
-    border-color: #38bdf8;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.25);
+    display: none !important;
   }
 
   /* Asosiy overlay va modal oynalar */
@@ -14338,14 +14315,20 @@ if(document.body)start();else document.addEventListener('DOMContentLoaded',start
 
   // LocalStorage xavfsiz boshqaruvi
   function getStudent() {
+    if (window.getRegisteredStudent && typeof window.getRegisteredStudent === "function") {
+      return window.getRegisteredStudent();
+    }
     if (window.getStudent && window.getStudent !== getStudent) {
       return window.getStudent();
     }
     try {
-      var raw = localStorage.getItem("currentStudent") || localStorage.getItem("emaktab_student") || localStorage.getItem("muallim_profile");
-      if (raw) {
-        var obj = JSON.parse(raw);
-        if (obj && (obj.first_name || obj.student_name || obj.full_name)) return obj;
+      var keys = ["emaktab_student", "currentStudent", "muallim_profile", "studentProfile", "activeProfile"];
+      for (var i = 0; i < keys.length; i++) {
+        var raw = localStorage.getItem(keys[i]);
+        if (raw) {
+          var obj = JSON.parse(raw);
+          if (obj && (obj.first_name || obj.student_name || obj.full_name)) return obj;
+        }
       }
     } catch (e) {}
     return null;
@@ -14353,14 +14336,17 @@ if(document.body)start();else document.addEventListener('DOMContentLoaded',start
 
   function saveStudent(obj) {
     if (window.saveStudent && window.saveStudent !== saveStudent) {
-      window.saveStudent(obj);
-      return;
+      return window.saveStudent(obj);
     }
     try {
-      localStorage.setItem("currentStudent", JSON.stringify(obj));
-      localStorage.setItem("emaktab_student", JSON.stringify(obj));
-      localStorage.setItem("muallim_profile", JSON.stringify(obj));
-      if (obj && obj.full_name) localStorage.setItem("pn", obj.full_name);
+      var json = JSON.stringify(obj);
+      var keys = ["emaktab_student", "currentStudent", "muallim_profile", "studentProfile", "activeProfile"];
+      for (var i = 0; i < keys.length; i++) {
+        try { localStorage.setItem(keys[i], json); } catch (e) {}
+      }
+      if (obj && obj.full_name) {
+        try { localStorage.setItem("pn", obj.full_name); } catch (e) {}
+      }
     } catch (e) {}
   }
 
@@ -14578,8 +14564,15 @@ if(document.body)start();else document.addEventListener('DOMContentLoaded',start
     overlay.id = "emaktab-lib-overlay";
     overlay.className = "emaktab-overlay";
 
+    function getLessonHref(file) {
+      var p = window.location.pathname || "";
+      var inSubfolder = p.indexOf("/ver_4/") !== -1 || p.indexOf("\\ver_4\\") !== -1 || p.endsWith("/ver_4") || p.endsWith("/ver_4/index.html") || p.endsWith("\\ver_4\\index.html");
+      var prefix = inSubfolder ? "../Darslar/" : "Darslar/";
+      return prefix + encodeURI(file);
+    }
+
     var cardsHtml = LESSONS_21.map(function (item) {
-      var href = "Darslar/" + encodeURI(item.file);
+      var href = getLessonHref(item.file);
       return [
         '<a href="' + href + '" class="emaktab-lesson-card" data-num="' + item.num + '" data-title="' + item.title.replace(/"/g, '&quot;') + '">',
         '  <div class="emaktab-card-meta">',
