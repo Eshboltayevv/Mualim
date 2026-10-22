@@ -10543,7 +10543,7 @@ const hx=h=>{const n=parseInt(h.slice(1),16);return [((n>>16)&255)/255,((n>>8)&2
 function tw(d,fn,done){S.tws.push({k:0,d,fn,done})}
 function itm(id){return S.ITEMS.find(i=>i.id===id)}
 function wpos(px,pz,dy){const T=S.TB;const q=T.L(px,.24+pz);return [q[0],T.h+(dy||0),q[1]]}
-function fxStep(dt,rdt){const F=S.FX;const r=Math.min(rdt||dt,.25);if(S.vrCal)lvrCalStep(r,S.vrCal.ev);if(RG3)RG3.mvN=null;for(const f of [opnStep,scnStep,rigStep,flowStep,handStep])try{f(r)}catch(e){const k=f.name+(e&&e.message);S.fxW=S.fxW||{};if(!S.fxW[k]){S.fxW[k]=1;console.warn('fx',k)}}
+function fxStep(dt,rdt){const F=S.FX;const r=Math.min(rdt||dt,.25);if(S.vrCal)lvrCalStep(r,S.vrCal.ev);if(RG3)RG3.mvN=null;for(const f of [opnStep,scnStep,rigStep,flowStep,handStep,trkStep])try{f(r)}catch(e){const k=f.name+(e&&e.message);S.fxW=S.fxW||{};if(!S.fxW[k]){S.fxW[k]=1;console.warn('fx',k)}}
  for(let i=S.tws.length-1;i>=0;i--){const w=S.tws[i];w.k=Math.min(1,w.k+r/w.d);const e=w.k<.5?2*w.k*w.k:1-Math.pow(-2*w.k+2,2)/2;w.fn(e);if(w.k>=1){S.tws.splice(i,1);w.done&&w.done()}}
  for(const d of F.drops){if(!d.on)continue;d.t+=r;if(d.t<0){d.n.vis=false;continue}const y=d.y0-4.9*d.t*d.t;d.n.vis=true;d.n.pos=[d.x,Math.max(d.y1,y),d.z];if(y<=d.y1){d.on=false;d.n.vis=false}}
  chTick(r);
@@ -10679,6 +10679,8 @@ function pourMenu(src,tgt,cx,cy){const m=$('labPour'),r=$('labw').getBoundingCli
  m.onclick=e=>{const b=e.target.closest('[data-pm]');if(!b)return;const v=b.dataset.pm;const f=$('labPF');m.hidden=true;if(v==='x')return;const p=v.split(':');
   const go=()=>{if(src.tw||tgt.tw){setTimeout(go,120);return}if(p[0]==='c'){if(f)S.filt=f.checked;pourC(src.id,tgt.id,+p[1],!!(f&&f.checked))}else pourR(p[1],+p[2],tgt.id)};go()};
  const fb=m.querySelector('button');if(fb)fb.focus()}
+/* ✋ kamera orqali qo'l kuzatuvi (lab-hands-js) — har kadrda protsedura qo'llaridan keyin chaqiriladi */
+function trkStep(dt){const f=window.__labHandHook;if(f)f(dt)}
 let grabTip=0;
 /* 🧤 qo'llar harakati: kursorga cho'ziladi, jihozni ushlaganda barmoqlar yumiladi, quyishda shishani tutadi */
 function handStep(dt){const HS=S.HANDS;if(!HS)return;const cm=camMat(0),e=cm.e,f=cm.f;const rt=V3.norm(V3.cross(f,[0,1,0])),up=V3.cross(rt,f);
@@ -11672,13 +11674,13 @@ function castBind(){$('labCastB').onclick=()=>{const b=$('labCast');b.hidden=!b.
 
 function bindInput(){const cv=S.cv,W=$('labw');let drag=null,pts=new Map();simBind();
  const drags=new Map();S.hg=[null,null];S.keep=[null,null];
- const handFor=x=>{const r=cv.getBoundingClientRect();let h=x<r.left+r.width/2?1:0;const used=[...drags.values()].filter(q=>q.hand!=null).map(q=>q.hand);if(used.includes(h)||S.keep[h])h=1-h;return h};
+ const handFor=x=>{if(S.hptrHand!=null)return S.hptrHand;const r=cv.getBoundingClientRect();let h=x<r.left+r.width/2?1:0;const used=[...drags.values()].filter(q=>q.hand!=null).map(q=>q.hand);if(used.includes(h)||S.keep[h])h=1-h;return h};
  const hN=h=>h?'🤚 Chap qo\'l':'✋ O\'ng qo\'l';const kb=$('labKeep');
  const kbUpd=()=>{const on=[...drags.values()].some(q=>q.mode==='item');kb.hidden=!on};
  kb.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();for(const q of drags.values())if(q.mode==='item')q.keep=true;toastL('🤲 Qo\'yib yuborsangiz — jihoz qo\'lda ushlanib turadi')});
  cv.addEventListener('pointerdown',e=>{$('labTip').hidden=true;$('labPour').hidden=true;cv.setPointerCapture(e.pointerId);
   if(RG3&&RG3.any&&RG3.ph>=1&&RG3.ph<=2){RG3.any();return}const d={x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,t:performance.now(),moved:false,mode:null,it:null,hand:null};
-  if(!S.vr){const rp=RG3&&rigPick(e.clientX,e.clientY);if(rp)d.rp=rp;else{const it=pick(e.clientX,e.clientY,true);if(it){d.it=it;d.sp=subPick(it,e.clientX,e.clientY)}}}drags.set(e.pointerId,d);S.fly=null});
+  if(!S.vr||S.hptr){const rp=RG3&&rigPick(e.clientX,e.clientY);if(rp)d.rp=rp;else{const it=pick(e.clientX,e.clientY,true);if(it){d.it=it;d.sp=subPick(it,e.clientX,e.clientY)}}}drags.set(e.pointerId,d);S.fly=null});
  cv.addEventListener('pointermove',e=>{S.ptr={x:e.clientX,y:e.clientY,in:true,m:e.pointerType==='mouse',dirty:true,P:S.ptr&&S.ptr.P};const d=drags.get(e.pointerId);
   if(d){const dx=e.clientX-d.x,dy=e.clientY-d.y;d.x=e.clientX;d.y=e.clientY;if(Math.hypot(e.clientX-d.x0,e.clientY-d.y0)>6)d.moved=true;
    if(d.moved&&!d.mode){if(d.rp&&d.rp.rh){d.mode='rig';d.hand=handFor(d.x0)}
@@ -11755,10 +11757,387 @@ function open(){if(!S){try{init();boardDraw()}catch(e){fail(e);return}}const l=$
 function stop(){if(S){rigEnd();S.run=false;S.keys={};S.mv={};if(S.vr)vrOff();if(S.xp)xpEnd();labEnd();simClose();$('labMic').hidden=true}}
 const nv=document.getElementById('nv');if(nv)nv.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-t]');if(!b)return;if(b.dataset.t==='lab')setTimeout(open,30);else stop()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else if(SEC.classList.contains('on'))open()});
-window.labCtl={lab:id=>labStart(id),sim:(id,lab)=>simOpen(id,lab),simClose:()=>simClose(),simRec:()=>simRec(),sm:()=>SM,ev:()=>S&&[...S.ev],labs:()=>LABS.map(l=>l.id),board:()=>S&&S.BOARD.c.toDataURL(),pourMenu:(a,b)=>pourMenu(itm(a),itm(b),400,300),opn:()=>S.OPN.map((o,i)=>({i,kind:o.kind,t:o.t,k:+o.k.toFixed(2),n:o.items?o.items.length:0})),tog:i=>opnTog(S.OPN[i]),putIn:(id,i)=>putIn(itm(id),S.OPN[i]),rig:()=>RG3&&{lab:RG3.lab,hs:RG3.hs.map(h=>h.tip),cs:RG3.cs.map(c=>c.tip)},rigH:(i,v)=>{const h=RG3.hs[i];h.set(v);return h.get()},rigC:i=>{const c=RG3.cs[i];hAct(null,700,.65,c.n);c.fn()},rigRec:()=>rigRec(),pickId:(x,y)=>{const it=pick(x,y,true);return it&&it.id},dbgA:(x,y)=>{const R=ray(x,y),t=itm('tube1'),sp=itm('splint');return JSON.stringify({hit:rayHit(R,t,.2),tw:!!t.tw,onT:t.onT,ch:!!S.ch.tube1,act:(()=>{const a=actTgt(sp,R);return a&&[a.k,a.o.id]})(),d:R.d[1]})},dbgD:()=>JSON.stringify({hg:(S.hg||[]).map(g=>g&&(g.it?g.it.id:'n')),at:S.at&&[S.at.k,S.at.o.id],pt:S.pt&&S.pt.id,hp:S.hp&&S.hp.tid}),handMinY:()=>S.HANDS.map(h=>Math.min(...h.tips.concat(h.palm).map(n=>n.wm?n.wm[13]:9))-S.TB.h),rigScr:n=>w2s(rigW(n)),rigPickAt:(x,y)=>{const r=rigPick(x,y);return r?(r.rt?'rt:'+r.rt.E.key+r.rt.i:r.rc?'rc:'+r.rc.tip:r.rh?'rh':'?'):null},rigTerm:(k,i)=>{const t=RG3.ts.find(x=>x.E.key===k&&x.i===i);return w2s(rigW(t.n))},rigRead:()=>RG3&&RG3.D.read&&RG3.D.read(RG3),rigSt:()=>RG3,labState:()=>S&&S.lab&&{id:S.lab.L.id,done:S.lab.done.slice()},heat:id=>heatOn(id),splint:id=>splintTest(id),pour:(r,a,t)=>pourR(r,a,t),pourC:(a,b,m)=>pourC(a,b,m),ch:id=>S.ch&&S.ch[id]&&Object.assign({pH:chPH(S.ch[id])},S.ch[id]),empty:id=>chEmpty(id),busy:()=>busy||PQ.length>0,setU:u=>setU(u),setL:l=>setPendL(l),setM:m=>setMass(m),mic:sm=>micOpen(sm),report:()=>report(),screen:(id,dy)=>{const it=itm(id);const w=V3.add(tpos(it),[0,dy||.03,0]);const cm=camMat(0);const r=S.cv.getBoundingClientRect();const VP=M4.mul(M4.persp(1.12,r.width/r.height,.03,30),cm.V);const x=VP[0]*w[0]+VP[4]*w[1]+VP[8]*w[2]+VP[12],y=VP[1]*w[0]+VP[5]*w[1]+VP[9]*w[2]+VP[13],ww=VP[3]*w[0]+VP[7]*w[1]+VP[11]*w[2]+VP[15];return [r.left+(x/ww*.5+.5)*r.width,r.top+(1-(y/ww*.5+.5))*r.height]},book:id=>bookOpen(id),bookPage:()=>bkPg,dragTo:(id,x,z)=>{const it=itm(id);if(!it)return false;it.onT=true;it.tw=null;it.g.pos=[x,S.TB.h+.025,z];settle(it);return tpos(it)},pos:id=>tpos(itm(id)),open,stop,view,sit:()=>sitDown(),stand:()=>standUp(),exp:id=>xpStart(id),next:()=>xpNext(),end:()=>xpEnd(),xp:()=>S&&S.xp&&{id:S.xp.e.id,k:S.xp.k},pick:(id)=>{const it=S&&S.ITEMS.find(i=>i.id===id);if(it)info(it);return !!it},put:()=>$('labPut').click(),run:()=>$('labRun').click(),clear:()=>$('labClr').click(),state:()=>S&&{cam:S.cam,onT:S.ITEMS.filter(i=>i.onT).map(i=>i.id),sel:S.sel&&S.sel.id,n:S.ITEMS.length}};
+window.labCtl={hx:()=>S&&{S,ray,pick,rigPick:(x,y)=>RG3?rigPick(x,y):null,upd,camMat,w2s,canDrag:it=>{if(it.tw)return false;if(S.xp&&S.xp.items.includes(it)&&S.xp.k>=0)return false;return true}},lab:id=>labStart(id),sim:(id,lab)=>simOpen(id,lab),simClose:()=>simClose(),simRec:()=>simRec(),sm:()=>SM,ev:()=>S&&[...S.ev],labs:()=>LABS.map(l=>l.id),board:()=>S&&S.BOARD.c.toDataURL(),pourMenu:(a,b)=>pourMenu(itm(a),itm(b),400,300),opn:()=>S.OPN.map((o,i)=>({i,kind:o.kind,t:o.t,k:+o.k.toFixed(2),n:o.items?o.items.length:0})),tog:i=>opnTog(S.OPN[i]),putIn:(id,i)=>putIn(itm(id),S.OPN[i]),rig:()=>RG3&&{lab:RG3.lab,hs:RG3.hs.map(h=>h.tip),cs:RG3.cs.map(c=>c.tip)},rigH:(i,v)=>{const h=RG3.hs[i];h.set(v);return h.get()},rigC:i=>{const c=RG3.cs[i];hAct(null,700,.65,c.n);c.fn()},rigRec:()=>rigRec(),pickId:(x,y)=>{const it=pick(x,y,true);return it&&it.id},dbgA:(x,y)=>{const R=ray(x,y),t=itm('tube1'),sp=itm('splint');return JSON.stringify({hit:rayHit(R,t,.2),tw:!!t.tw,onT:t.onT,ch:!!S.ch.tube1,act:(()=>{const a=actTgt(sp,R);return a&&[a.k,a.o.id]})(),d:R.d[1]})},dbgD:()=>JSON.stringify({hg:(S.hg||[]).map(g=>g&&(g.it?g.it.id:'n')),at:S.at&&[S.at.k,S.at.o.id],pt:S.pt&&S.pt.id,hp:S.hp&&S.hp.tid}),handMinY:()=>S.HANDS.map(h=>Math.min(...h.tips.concat(h.palm).map(n=>n.wm?n.wm[13]:9))-S.TB.h),rigScr:n=>w2s(rigW(n)),rigPickAt:(x,y)=>{const r=rigPick(x,y);return r?(r.rt?'rt:'+r.rt.E.key+r.rt.i:r.rc?'rc:'+r.rc.tip:r.rh?'rh':'?'):null},rigTerm:(k,i)=>{const t=RG3.ts.find(x=>x.E.key===k&&x.i===i);return w2s(rigW(t.n))},rigRead:()=>RG3&&RG3.D.read&&RG3.D.read(RG3),rigSt:()=>RG3,labState:()=>S&&S.lab&&{id:S.lab.L.id,done:S.lab.done.slice()},heat:id=>heatOn(id),splint:id=>splintTest(id),pour:(r,a,t)=>pourR(r,a,t),pourC:(a,b,m)=>pourC(a,b,m),ch:id=>S.ch&&S.ch[id]&&Object.assign({pH:chPH(S.ch[id])},S.ch[id]),empty:id=>chEmpty(id),busy:()=>busy||PQ.length>0,setU:u=>setU(u),setL:l=>setPendL(l),setM:m=>setMass(m),mic:sm=>micOpen(sm),report:()=>report(),screen:(id,dy)=>{const it=itm(id);const w=V3.add(tpos(it),[0,dy||.03,0]);const cm=camMat(0);const r=S.cv.getBoundingClientRect();const VP=M4.mul(M4.persp(1.12,r.width/r.height,.03,30),cm.V);const x=VP[0]*w[0]+VP[4]*w[1]+VP[8]*w[2]+VP[12],y=VP[1]*w[0]+VP[5]*w[1]+VP[9]*w[2]+VP[13],ww=VP[3]*w[0]+VP[7]*w[1]+VP[11]*w[2]+VP[15];return [r.left+(x/ww*.5+.5)*r.width,r.top+(1-(y/ww*.5+.5))*r.height]},book:id=>bookOpen(id),bookPage:()=>bkPg,dragTo:(id,x,z)=>{const it=itm(id);if(!it)return false;it.onT=true;it.tw=null;it.g.pos=[x,S.TB.h+.025,z];settle(it);return tpos(it)},pos:id=>tpos(itm(id)),open,stop,view,sit:()=>sitDown(),stand:()=>standUp(),exp:id=>xpStart(id),next:()=>xpNext(),end:()=>xpEnd(),xp:()=>S&&S.xp&&{id:S.xp.e.id,k:S.xp.k},pick:(id)=>{const it=S&&S.ITEMS.find(i=>i.id===id);if(it)info(it);return !!it},put:()=>$('labPut').click(),run:()=>$('labRun').click(),clear:()=>$('labClr').click(),state:()=>S&&{cam:S.cam,onT:S.ITEMS.filter(i=>i.onT).map(i=>i.id),sel:S.sel&&S.sel.id,n:S.ITEMS.length}};
 })();
 
 </script>
+<script id="lab-hands-js">
+/* =====================================================================================
+   ✋ 3D TAJRIBA XONASI — KAMERA ORQALI QO'L VA BARMOQLARNI KUZATISH (Camera Hand Tracking)
+   -------------------------------------------------------------------------------------
+   Me'morchilik (har bir qism alohida modul, pastda tartib bilan):
+     1. CameraStream     — kamera oqimi (WebRTC getUserMedia), ekranda KO'RINMAYDIGAN <video>
+     2. HandDetector     — MediaPipe Tasks Vision «HandLandmarker»: har kadrda 21 ta bo'g'im (2 qo'l)
+     3. OneEuro          — titrashni yo'qotuvchi filtr (kechikishni oshirmasdan silliqlash)
+     4. HandMapper       — 21 bo'g'im → 3D olam: bilak joyi, kaft yo'nalishi, barmoq bo'g'imlari burchaklari
+     5. RigDriver        — tajriba xonasidagi tayyor 3D qo'l modelini (bo'g'imli, rigged) haqiqiy qo'lga bog'lash
+     6. Gestures         — «chimchilash» (pinch) va «musht» (grab): ushlash, ko'tarish, burash, tugma bosish
+     7. BookFlip         — qo'llanma sahifasini barmoq bilan varoqlash (prujina fizikasi)
+     8. UI / hayot sikli — tugma, holat paneli, kichik ko'zgu (ixtiyoriy), xato va yorug'lik ogohlantirishlari
+   Fizika: xonaning o'z fizikasi (stolga qo'yish, quyish, qizdirish, tortish) to'liq qayta ishlatiladi —
+   qo'l harakati xona dvigateliga «virtual barmoq» (pointer) hodisalari sifatida uzatiladi. Shu sabab
+   ikkinchi fizika dvigateli (Cannon/Ammo) qo'shilmadi: ikki dvigatel bir jismni boshqarsa ziddiyat bo'ladi.
+   Kamera tasviri hech qayerga yuborilmaydi va saqlanmaydi — faqat shu qurilmada qayta ishlanadi.
+   ===================================================================================== */
+(function(){
+'use strict';
+const SEC=document.getElementById('lab');if(!SEC)return;
+const MP_VER='0.10.14';                                                     // MediaPipe versiyasi (barqaror)
+const MP_BASE='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@'+MP_VER;
+const MP_MODEL='https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+const toast=t=>{try{(window.toast||function(){})(t)}catch(_){}};
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+/* kichik vektor yordamchilari (3D) */
+const v3={sub:(a,b)=>[a[0]-b[0],a[1]-b[1],a[2]-b[2]],add:(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]],mul:(a,s)=>[a[0]*s,a[1]*s,a[2]*s],
+ dot:(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2],cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],
+ len:a=>Math.hypot(a[0],a[1],a[2]),norm:a=>{const l=Math.hypot(a[0],a[1],a[2])||1e-9;return [a[0]/l,a[1]/l,a[2]/l]},
+ ang:(a,b)=>{const la=Math.hypot(a[0],a[1],a[2]),lb=Math.hypot(b[0],b[1],b[2]);if(la<1e-9||lb<1e-9)return 0;return Math.acos(clamp((a[0]*b[0]+a[1]*b[1]+a[2]*b[2])/(la*lb),-1,1))},
+ dist:(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2])};
+/* tajriba xonasi dvigatelining ichki API'si (lab-js tomonidan beriladi) */
+const LX=()=>{try{return window.labCtl&&window.labCtl.hx&&window.labCtl.hx()}catch(_){return null}};
+
+/* =============================== 3. OneEuro filtr =============================== */
+/* Tez harakatda kechikmaydi, sekin harakatda titrashni yo'qotadi (Casiez va b., 2012) */
+class OneEuro{
+ constructor(minCut=1.2,beta=.02,dCut=1){this.mc=minCut;this.b=beta;this.dc=dCut;this.x=null;this.dx=null;this.t=0}
+ static a(cut,dt){const r=2*Math.PI*cut*dt;return r/(r+1)}
+ f(v,t){if(this.x===null||t-this.t>.5){this.x=v.slice();this.dx=v.map(()=>0);this.t=t;return this.x}
+  const dt=Math.max(1e-3,t-this.t);this.t=t;const ad=OneEuro.a(this.dc,dt);
+  for(let i=0;i<v.length;i++){const d=(v[i]-this.x[i])/dt;this.dx[i]+=ad*(d-this.dx[i]);const c=this.mc+this.b*Math.abs(this.dx[i]);this.x[i]+=OneEuro.a(c,dt)*(v[i]-this.x[i])}
+  return this.x}
+ reset(){this.x=null}}
+
+/* =============================== 1. CameraStream =============================== */
+class CameraStream{
+ constructor(){
+  /* ekranda ko'rinmaydigan video: DOM'ga 1×1 px, shaffof, sichqonchani o'tkazadi;
+     «lw-skip» — o'qituvchi monitoringida (translyatsiyada) ham ko'rinmaydi */
+  const v=document.createElement('video');v.className='lw-skip';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('aria-hidden','true');
+  v.style.cssText='position:fixed;left:-2px;top:-2px;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
+  this.v=v;this.stream=null;this.facing='user';this.tok=0;this.lumC=document.createElement('canvas');this.lumC.width=32;this.lumC.height=24}
+ get ok(){return !!(this.stream&&this.v.readyState>=2&&this.v.videoWidth)}
+ async start(facing){
+  /* telefon xotirasidan (content://, file://) yoki http:// orqali ochilgan sahifaga brauzer kamerani bermaydi (ba'zan so'ramasdan rad etadi) */
+  const insecure=!window.isSecureContext||/^(content|file|blob):$/.test(location.protocol)||(location.protocol==='http:'&&!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname));
+  if(insecure)throw Object.assign(new Error('https'),{uz:'Kamera faqat xavfsiz (https://) saytda ishlaydi. Saytni GitHub Pages yoki https manzil orqali oching.'});
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw Object.assign(new Error('nomedia'),{uz:'Bu brauzer kamerani qo\'llamaydi. Chrome, Edge yoki Safari\'ning yangi versiyasida oching.'});
+  this.stop();this.facing=facing||'user';const tok=this.tok;const abort=()=>Object.assign(new Error('abort'),{abort:true});
+  // 640×480 — aniqlik va tezlik muvozanati; 30–60 FPS so'raladi
+  const C={audio:false,video:{facingMode:{ideal:this.facing},width:{ideal:640},height:{ideal:480},frameRate:{ideal:60,min:15}}};
+  try{this.stream=await navigator.mediaDevices.getUserMedia(C)}
+  catch(e){const n=e&&e.name;
+   if(n==='NotAllowedError'||n==='SecurityError')throw Object.assign(e,{uz:'Kameraga ruxsat berilmadi. Manzil satridagi 🔒 belgisini bosib, kamerani «Ruxsat berish»ga o\'zgartiring.'});
+   if(n==='NotFoundError'||n==='OverconstrainedError'){try{this.stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false})}catch(e2){throw Object.assign(e2,{uz:'Kamera topilmadi.'})}}
+   else if(n==='NotReadableError')throw Object.assign(e,{uz:'Kamera boshqa ilovada band. Uni yopib, qayta urinib ko\'ring.'});
+   else throw Object.assign(e,{uz:'Kamerani ochib bo\'lmadi: '+(e&&e.message||n)})}
+  if(tok!==this.tok){try{this.stream.getTracks().forEach(t=>t.stop())}catch(_){}this.stream=null;throw abort()}
+  if(!this.v.isConnected)document.body.appendChild(this.v);
+  this.v.srcObject=this.stream;
+  // ba'zi brauzerlarda play() va'dasi kechikadi — kutib qolmaslik uchun vaqt chegarasi
+  try{await Promise.race([this.v.play(),new Promise(r=>setTimeout(r,1500))])}catch(_){}
+  await new Promise(r=>{if(this.v.readyState>=2)return r();const t=setTimeout(r,2500);this.v.onloadeddata=()=>{clearTimeout(t);r()}});
+  this.v.onloadeddata=null;
+  /* agar foydalanuvchi kamerani tizim orqali o'chirsa — modulga xabar beriladi */
+  this.stream.getVideoTracks().forEach(t=>t.onended=()=>{if(this.onend)this.onend()})}
+ stop(){this.tok++;if(this.stream){this.stream.getTracks().forEach(t=>{t.onended=null;try{t.stop()}catch(_){}});this.stream=null}try{this.v.srcObject=null}catch(_){}}
+ /* o'rtacha yorug'lik (0–255): kichik nusxadan tez hisoblanadi */
+ luma(){if(!this.ok)return 128;try{const g=this.lumC.getContext('2d',{willReadFrequently:true});g.drawImage(this.v,0,0,32,24);const d=g.getImageData(0,0,32,24).data;let s=0;for(let i=0;i<d.length;i+=4)s+=d[i]*.299+d[i+1]*.587+d[i+2]*.114;return s/(d.length/4)}catch(_){return 128}}}
+
+/* =============================== 2. HandDetector =============================== */
+class HandDetector{
+ constructor(){this.hl=null;this.vis=null;this.busy=false;this.ema=16;this.skip=0;this.n=0;this.hands=2;this.lastTs=0;this.delegate='GPU'}
+ async load(onStep){
+  if(this.hl)return;
+  onStep&&onStep('Qo\'l modeli yuklanmoqda…');
+  try{this.vis=await import(/* webpackIgnore: true */ MP_BASE+'/vision_bundle.mjs')}
+  catch(e){throw Object.assign(e||new Error('mp'),{uz:'Qo\'lni aniqlash kutubxonasi yuklanmadi — internet aloqasini tekshiring (birinchi marta ~8 MB yuklanadi, keyin brauzer xotirasidan olinadi).'})}
+  const fs=await this.vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');
+  const mk=d=>this.vis.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:MP_MODEL,delegate:d},runningMode:'VIDEO',numHands:this.hands,
+   minHandDetectionConfidence:.6,minHandPresenceConfidence:.55,minTrackingConfidence:.5});
+  try{this.hl=await mk('GPU');this.delegate='GPU'}
+  catch(e){try{this.hl=await mk('CPU');this.delegate='CPU'}catch(e2){throw Object.assign(e2||e,{uz:'Qo\'l modeli ishga tushmadi: '+((e2||e)&&(e2||e).message||'')})}}}
+ /* bitta kadrni tahlil qilish; vaqt belgisi doim o'sib borishi shart */
+ detect(video){if(!this.hl||this.busy)return null;let ts=performance.now();if(ts<=this.lastTs)ts=this.lastTs+.01;this.lastTs=ts;this.busy=true;const t0=performance.now();let r=null;
+  try{r=this.hl.detectForVideo(video,ts);this.errs=0}catch(e){r=null;this.errs=(this.errs||0)+1;if(this.errs===8&&this.delegate==='GPU')this.toCPU()}finally{this.busy=false}
+  const dt=performance.now()-t0;this.ema=this.ema*.9+dt*.1;this.n++;this.adapt();return r}
+ /* ⚡ moslashuvchan tezlik: qurilma sekin bo'lsa kadr tashlab ketadi, juda sekin bo'lsa 1 qo'lga o'tadi */
+ adapt(){if(this.n%30)return;const e=this.ema;
+  this.skip=e>45?2:e>28?1:0;
+  const want=e>70?1:2;if(want!==this.hands&&this.hl&&this.hl.setOptions){this.hands=want;try{this.hl.setOptions({numHands:want})}catch(_){}}}
+ /* GPU tahlilda ishlamasa — CPU bilan qayta yaratiladi (sekinroq, lekin ishlaydi) */
+ async toCPU(){if(!this.vis||this.cpuTry)return;this.cpuTry=1;try{const fs=await this.vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');const h=await this.vis.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:MP_MODEL,delegate:'CPU'},runningMode:'VIDEO',numHands:this.hands,minHandDetectionConfidence:.6,minHandPresenceConfidence:.55,minTrackingConfidence:.5});try{this.hl&&this.hl.close()}catch(_){}this.hl=h;this.delegate='CPU';this.errs=0;this.lastTs=0}catch(e){console.warn('[qo\'l] CPU ham ishlamadi',e)}}
+ close(){try{this.hl&&this.hl.close()}catch(_){}this.hl=null}}
+
+/* =============================== 4. HandMapper =============================== */
+/* MediaPipe bo'g'imlari: 0 bilak; 1-4 bosh barmoq; 5-8 ko'rsatkich; 9-12 o'rta; 13-16 nomsiz; 17-20 jimjiloq */
+const FING=[[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]];
+class HandMapper{
+ constructor(){this.fW=new OneEuro(1.4,.04);this.fS=new OneEuro(1.6,.6);this.pl0=null;this.lastRoll=null}
+ reset(){this.fW.reset();this.fS.reset();this.lastRoll=null}
+ /* kamera koordinatasi → virtual kamera fazosi.
+    Old (selfi) kamera: (−x, −y, +z) — ko'zgudek, qo'lingizni ekranga yaqinlashtirsangiz u xonaga «kiradi»;
+    Orqa kamera (VR ko'zoynak): (x, −y, −z) — kamera siz qaragan tomonga qaraydi. Ikkalasi ham burilish (det=+1) — qo'l shakli buzilmaydi */
+ cam(p,front){return front?[-p.x,-p.y,p.z]:[p.x,-p.y,-p.z]}
+ /** @returns {object} qo'l holati: bo'g'im burchaklari, kaft o'qlari, chimchilash, ekran nuqtasi */
+ map(lm,wl,front,t,aspect,hold){
+  // 1) metrik (metr) 3D bo'g'imlar → virtual kamera fazosi + OneEuro silliqlash
+  const raw=[];for(let i=0;i<21;i++){const q=this.cam(wl[i],front);raw.push(q[0],q[1],q[2])}
+  const sm=this.fW.f(raw,t);const W=i=>[sm[i*3],sm[i*3+1],sm[i*3+2]];
+  // 2) kaft koordinata tizimi: F — barmoqlar tomon, P — ko'rsatkichdan jimjiloqqa
+  const w0=W(0),F=v3.norm(v3.sub(W(9),w0)),P0=v3.norm(v3.sub(W(17),W(5)));
+  // 3) bo'g'im burchaklari (aylanishga bog'liq emas): MCP, PIP, DIP bukilishi + yoyilish
+  const fl=FING.map(([a,b,c,d])=>{const m=v3.sub(W(a),w0),p1=v3.sub(W(b),W(a)),p2=v3.sub(W(c),W(b)),p3=v3.sub(W(d),W(c));
+   const pp=v3.sub(p1,v3.mul(v3.norm(v3.cross(F,P0)),v3.dot(p1,v3.norm(v3.cross(F,P0)))));const sp=Math.atan2(v3.dot(pp,P0),v3.dot(pp,F));
+   return {mcp:clamp(v3.ang(m,p1)-.08,0,1.65),pip:clamp(v3.ang(p1,p2),0,1.9),dip:clamp(v3.ang(p2,p3),0,1.4),sp:clamp(sp,-.45,.45)}});
+  const th=clamp(.3*v3.ang(v3.sub(W(1),w0),v3.sub(W(2),W(1)))+.75*v3.ang(v3.sub(W(2),W(1)),v3.sub(W(3),W(2)))+.75*v3.ang(v3.sub(W(3),W(2)),v3.sub(W(4),W(3))),0,1.3);
+  // 4) imo-ishoralar uchun o'lchovlar (metrda): chimchilash va musht
+  const pinchD=v3.dist(W(4),W(8)),palmL=Math.max(.05,v3.dist(w0,W(9)));
+  const fist=(v3.dist(W(8),w0)+v3.dist(W(12),w0)+v3.dist(W(16),w0)+v3.dist(W(20),w0))/4/palmL;
+  // 5) ekrandagi nuqta: bosh va ko'rsatkich barmoq uchlari o'rtasi (tasvir koordinatasi)
+  let sx=(lm[4].x+lm[8].x)/2,sy=(lm[4].y+lm[8].y)/2;if(front)sx=1-sx;
+  // kadr chetiga yetib bormaslik uchun markaziy 80% maydon butun ekranga yoyiladi
+  sx=clamp((sx-.1)/.8,0,1);sy=clamp((sy-.08)/.8,0,1);
+  // 6) chuqurlik: kaftning tasvirdagi kattaligi (kameraga yaqin = katta)
+  const pl=Math.hypot((lm[9].x-lm[0].x)*aspect,lm[9].y-lm[0].y);
+  if(this.pl0===null)this.pl0=pl;else if(!hold)this.pl0+=(pl-this.pl0)*.0015;          // sekin moslashuvchi «markaz»
+  const ratio=clamp(pl/Math.max(.02,this.pl0),.5,2);const depth=clamp(.5*(front?ratio:1/ratio),.24,1.05);
+  const S2=this.fS.f([sx,sy,depth],t);
+  // 7) kaftning o'z o'qi atrofida burilishi (burash uchun): bo'g'imlar chizig'ining ekrandagi burchagi
+  const roll=Math.atan2(P0[1],P0[0]);
+  const edge=lm.some(p=>p.x<.015||p.x>.985||p.y<.015||p.y>.985);
+  return {w:W,F,P:P0,fl,th,pinchD,fist,sx:S2[0],sy:S2[1],depth:S2[2],roll,edge}}}
+
+/* =============================== 5. RigDriver =============================== */
+/* Xonadagi 3D qo'l: g (kaft) → f[4] barmoq × 3 bo'g'im (rot[0] — bukilish, rot[1] — yoyilish), th[3] bosh barmoq.
+   Model o'qlari: −z barmoqlar tomon, +x jimjiloq tomon (o'ng qo'l), +y kaft orqasi. Chap qo'l modeli x bo'yicha ko'zgulangan. */
+function eulerYXZ(x,y,z){ // R = Ry·Rx·Rz (xona dvigatelidagi M4.trs tartibi) → [rx, ry, rz]
+ const rx=Math.asin(clamp(-z[1],-1,1)),ry=Math.atan2(z[0],z[2]),rz=Math.atan2(x[1],y[1]);return [rx,ry,rz]}
+function poseRig(H,st,L,side,target){
+ const cm=L.camMat(0),f=cm.f,rt=v3.norm(v3.cross(f,[0,1,0])),up=v3.cross(rt,f);
+ const toW=c=>v3.add(v3.add(v3.mul(rt,c[0]),v3.mul(up,c[1])),v3.mul(f,-c[2]));     // kamera fazosi → olam yo'nalishi
+ const Fw=v3.norm(toW(st.F)),Pw=v3.norm(toW(st.P));
+ const z=v3.mul(Fw,-1);let x=side>0?Pw:v3.mul(Pw,-1);x=v3.norm(v3.sub(x,v3.mul(z,v3.dot(x,z))));const y=v3.cross(z,x);
+ H.g.rot=eulerYXZ(x,y,z);
+ // barmoqlar: haqiqiy burchaklar to'g'ridan-to'g'ri bo'g'imlarga
+ H.f.forEach((js,i)=>{const a=st.fl[i];js[0].rot=[-a.mcp,-a.sp*.8,0];js[1].rot=[-a.pip,0,0];js[2].rot=[-a.dip,0,0]});
+ const tq=st.th;H.th[0].rot=[-.22-tq*.42,.95-tq*.7,-.5-tq*.3];H.th[1].rot=[-.08-tq*.5,0,0];H.th[2].rot=[-.12-tq*.7,0,0];
+ // joylashuv: avval taxminiy, keyin model barmoqlari uchrashgan nuqta aniq nishonga tushiriladi
+ if(!H.g.pos||!isFinite(H.g.pos[0]))H.g.pos=target.slice();
+ const S=L.S;L.upd(H.g,S.root.wm||null);
+ const tI=H.tips[0]&&H.tips[0].wm,tT=H.tips[4]&&H.tips[4].wm;
+ if(tI&&tT){const mid=[(tI[12]+tT[12])/2,(tI[13]+tT[13])/2,(tI[14]+tT[14])/2];H.g.pos=v3.add(H.g.pos,v3.sub(target,mid));L.upd(H.g,S.root.wm||null)}
+ // stol ichiga kirib ketmasin
+ const T=S.TB;let minY=1e9;for(const n of H.tips.concat(H.palm)){if(n.wm)minY=Math.min(minY,n.wm[13])}
+ if(minY<T.h+.008&&Math.abs(H.g.pos[0]-T.x)<T.hx+.3&&Math.abs(H.g.pos[2]-T.z)<T.hz+.3){H.g.pos=[H.g.pos[0],H.g.pos[1]+(T.h+.008-minY),H.g.pos[2]];L.upd(H.g,S.root.wm||null)}
+ H.p=H.g.pos.slice();H.r=H.g.rot.slice();H.v=[0,0,0];H.grip=clamp(st.fl[1].pip/1.6,0,1)}
+
+/* =============================== 7. BookFlip =============================== */
+/* Qo'llanma sahifasini barmoq bilan varoqlash: sahifa umurtqa (chap qirra) atrofida aylanadi.
+   p∈[0,1]: 0 — joyida, 0.5 — qirrasi bilan turibdi (shu payt keyingi sahifa almashadi), 1 — to'liq varoqlandi.
+   Qo'yib yuborilganda kritik so'nuvchi prujina (ω=13) eng yaqin holatga yoki tezlik yo'nalishiga olib boradi. */
+class BookFlip{
+ constructor(){this.on=false;this.p=0;this.v=0;this.dir=0;this.sw=false;this.raf=0;this.x0=0;this.w=1;this.lastX=0;this.lastT=0}
+ el(){return document.getElementById('labBkP')}
+ open(){const b=document.getElementById('labBook');return b&&!b.hidden&&getComputedStyle(b).display!=='none'}
+ begin(x){const e=this.el();if(!e)return false;const r=e.getBoundingClientRect();this.on=true;this.x0=x;this.w=Math.max(200,r.width*.6);this.p=0;this.v=0;this.dir=0;this.sw=false;this.lastX=x;this.lastT=performance.now();
+  e.style.transformOrigin='0 50%';e.style.willChange='transform';e.style.transition='none';cancelAnimationFrame(this.raf);return true}
+ move(x){if(!this.on)return;const now=performance.now(),dt=Math.max(.008,(now-this.lastT)/1000);const dx=this.x0-x;
+  if(!this.dir&&Math.abs(dx)>18)this.dir=dx>0?1:-1;if(!this.dir)return;
+  const np=clamp(dx*this.dir/this.w,0,1);this.v=(np-this.p)/dt;this.p=np;this.lastX=x;this.lastT=now;this.paint()}
+ swap(fwd){const id=fwd?'labBkNext':'labBkPrev';const b=document.getElementById(id);if(b&&!b.disabled)b.click()}
+ paint(){const e=this.el();if(!e)return;const half=this.p>=.5;
+  if(half!==this.sw){this.swap(this.dir>0?half:!half);this.sw=half}
+  const a=half?(this.p-1)*180:this.p*180;const deg=this.dir>0?-a:a;const sh=1-Math.abs(Math.sin(this.p*Math.PI))*.35;
+  e.style.transform='perspective(1600px) rotateY('+deg.toFixed(2)+'deg)';e.style.filter='brightness('+sh.toFixed(3)+')'}
+ end(){if(!this.on)return;this.on=false;if(!this.dir){this.reset();return}
+  const tgt=(this.p>.5||this.v>1.6)&&this.v>-1.6?1:0;let last=performance.now();
+  const stp=()=>{const now=performance.now(),dt=Math.min(.033,(now-last)/1000);last=now;const w=13;const a=-2*w*this.v-w*w*(this.p-tgt);this.v+=a*dt;this.p=clamp(this.p+this.v*dt,0,1);this.paint();
+   if(Math.abs(this.p-tgt)<.004&&Math.abs(this.v)<.05){this.p=tgt;this.reset();return}this.raf=requestAnimationFrame(stp)};this.raf=requestAnimationFrame(stp)}
+ reset(){const e=this.el();if(e){e.style.transform='';e.style.filter='';e.style.willChange='';e.style.transformOrigin=''}this.p=0;this.v=0;this.dir=0;this.sw=false}}
+
+/* =============================== 6 + 8. Boshqaruv (Controller) =============================== */
+const ST={on:false,starting:false,cam:new CameraStream(),det:new HandDetector(),maps:[new HandMapper(),new HandMapper()],book:new BookFlip(),
+ hands:[null,null],seen:[0,0],g:[null,null],tg:[null,null],ui:0,hc:[{t:0,x:0,y:0,v:null},{t:0,x:0,y:0,v:null}],stT:0,raf:0,vcb:0,fps:0,fN:0,fT:0,lowT:0,noT:0,edgeT:0,prev:false,lumT:0,warnT:{}};
+let ui=null;
+function hint(k,t,ms){const now=performance.now();if(ST.warnT[k]&&now-ST.warnT[k]<(ms||9000))return;ST.warnT[k]=now;toast(t)}
+
+/* ---- UI: asboblar paneliga tugma, holat paneli, kursorlar, ko'zgu ---- */
+function buildUI(){
+ if(ui)return ui;const W=document.getElementById('labw'),tr=W&&W.querySelector('.lb-tr');if(!W||!tr)return null;
+ const css=document.createElement('style');css.id='lab-hands-css';css.textContent=`
+#labHand.on{background:linear-gradient(135deg,#19b5c9,#0b78d1)!important;color:#fff!important}
+.lh-bar{position:absolute;left:10px;bottom:62px;z-index:6;display:flex;align-items:center;gap:6px;padding:5px 6px 5px 10px;border-radius:999px;background:rgba(10,24,52,.78);color:#e8f4ff;font:600 12.5px/1.2 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);backdrop-filter:blur(6px);max-width:calc(100% - 20px)}
+.lh-bar[hidden]{display:none}.lh-bar.lh-help{border-radius:16px;align-items:flex-start;max-width:min(560px,calc(100% - 20px));line-height:1.4;padding:10px 8px 10px 12px}.lh-bar.lh-help #lhTx{white-space:normal}.lh-bar.lh-help #lhPrev{display:none}.lh-bar b{font-weight:800}.lh-bar button{font:inherit;border:0;border-radius:999px;padding:5px 9px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;min-height:30px}
+.lh-bar button:hover{background:rgba(255,255,255,.26)}.lh-dot{width:9px;height:9px;border-radius:50%;background:#9aa7b8;flex:none}.lh-dot.ok{background:#2ee59d;box-shadow:0 0 8px #2ee59d}.lh-dot.wait{background:#ffc94d}
+.lh-cur{position:absolute;left:0;top:0;z-index:7;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:2.5px solid rgba(255,255,255,.95);box-shadow:0 0 0 2px rgba(11,120,209,.7),0 2px 10px rgba(0,0,0,.35);pointer-events:none;transition:width .12s,height .12s,margin .12s,background .12s,border-color .12s;will-change:transform}
+.lh-cur[hidden]{display:none}.lh-cur.hv{border-color:#ffd84d;box-shadow:0 0 0 2px rgba(255,170,0,.7),0 0 16px rgba(255,216,77,.6)}.lh-cur.pn{width:18px;height:18px;margin:-9px 0 0 -9px;background:rgba(46,229,157,.55);border-color:#2ee59d}
+.lh-cur i{position:absolute;left:50%;top:100%;transform:translate(-50%,4px);font:700 11px system-ui,sans-serif;font-style:normal;color:#fff;text-shadow:0 1px 3px #000;white-space:nowrap}
+.lh-prev{position:absolute;left:10px;bottom:102px;z-index:6;width:168px;height:126px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.7);box-shadow:0 6px 18px rgba(0,0,0,.35);pointer-events:none;background:#000}
+.lh-prev[hidden]{display:none}.lh-prev canvas{width:100%;height:100%;display:block}
+.lh-press{outline:3px solid #2ee59d!important;outline-offset:2px;transform:scale(.97)}
+.lb-w.lb-vr .lh-bar,.lb-w.lb-vr .lh-cur,.lb-w.lb-vr .lh-prev{display:none!important}
+@media(max-width:600px){.lh-bar{bottom:118px;font-size:11.5px}.lh-prev{width:128px;height:96px;bottom:158px}}`;
+ document.head.appendChild(css);
+ const b=document.createElement('button');b.type='button';b.id='labHand';b.setAttribute('aria-label','Kameraga ulanish — qo\'llaringiz bilan boshqarish');b.setAttribute('aria-pressed','false');
+ b.innerHTML='✋<span class="lb-t"> Kameraga ulanish</span>';const vr=document.getElementById('labVr');tr.insertBefore(b,vr||null);
+ const bar=document.createElement('div');bar.className='lh-bar';bar.hidden=true;bar.setAttribute('role','status');bar.setAttribute('aria-live','polite');
+ bar.innerHTML='<span class="lh-dot" id="lhDot"></span><span id="lhTx">Kamera…</span><button type="button" id="lhPrev" aria-pressed="false" title="Kamera ko\'zgusini ko\'rsatish">📷</button><button type="button" id="lhOff" title="Kamerani o\'chirish" aria-label="Kamerani o\'chirish">✕</button>';
+ W.appendChild(bar);
+ const cur=[0,1].map(i=>{const c=document.createElement('div');c.className='lh-cur lw-skip';c.hidden=true;c.innerHTML='<i></i>';W.appendChild(c);return c});
+ const pv=document.createElement('div');pv.className='lh-prev lw-skip';pv.hidden=true;pv.innerHTML='<canvas width="320" height="240"></canvas>';W.appendChild(pv);
+ b.onclick=()=>{ST.on||ST.starting?stopAll(true):startAll()};
+ bar.querySelector('#lhOff').onclick=()=>stopAll(true);
+ bar.querySelector('#lhPrev').onclick=e=>{if(!ST.on){toast('📷 Ko\'zgu kamera ulangandan keyin ishlaydi');return}ST.prev=!ST.prev;pv.hidden=!ST.prev;e.currentTarget.setAttribute('aria-pressed',String(ST.prev))};
+ ui={W,b,bar,dot:bar.querySelector('#lhDot'),tx:bar.querySelector('#lhTx'),cur,pv,pc:pv.querySelector('canvas')};return ui}
+function status(t,k){if(!ui)return;if(k)ui.bar.classList.remove('lh-help');ui.tx.innerHTML=t;ui.dot.className='lh-dot'+(k?' '+k:'')}
+
+/* ---- ishga tushirish / to'xtatish ---- */
+async function startAll(){
+ if(!buildUI()||ST.on||ST.starting)return;const L=LX();if(!L||!L.S){toast('Avval 3D tajriba xonasi yuklansin');return}
+ ST.starting=true;ui.b.classList.add('on');ui.b.setAttribute('aria-pressed','true');ui.bar.hidden=false;status('Kameraga ulanmoqda…','wait');
+ try{
+  const facing=L.S.vr?'environment':'user';                  // VR ko'zoynakda orqa kamera qo'lni ko'radi
+  await ST.cam.start(facing);
+  if(!ST.starting){ST.cam.stop();return}                    // ulanish paytida o'chirilgan bo'lsa — kamera yonib qolmaydi
+  status('Qo\'l modeli yuklanmoqda…','wait');
+  await ST.det.load(t=>status(t,'wait'));
+  if(!ST.starting){ST.cam.stop();return}                    // shu vaqt ichida o'chirilgan bo'lsa
+  ST.on=true;ST.starting=false;ST.cam.onend=()=>{hint('end','📷 Kamera uzildi');stopAll(true)};
+  ST.maps.forEach(m=>{m.reset();m.pl0=null});ST.fT=performance.now();ST.fN=0;ST.noT=performance.now();
+  patchLab(L);window.__labHandHook=frameHook;loopVideo();cancelAnimationFrame(ST.ui);ST.ui=requestAnimationFrame(uiTick);
+  status('Qo\'lingizni kameraga ko\'rsating','wait');
+  hint('start','✋ Qo\'lingizni kameraga ko\'rsating. Ushlash — bosh va ko\'rsatkich barmoqni chimchilang (yoki musht qiling), qo\'yib yuborish — barmoqlarni oching. Burash — bilakni buring.',1)
+ }catch(e){if(e&&e.abort){ST.starting=false;return}const m=(e&&e.uz)||'Kamera ishga tushmadi';
+  if(e&&e.message==='https'){ST.starting=false;stopAll(false);ui.bar.hidden=false;ui.bar.classList.add('lh-help');status('🔒 <b>Kamera bu ochilishda ishlamaydi.</b> Fayl telefon xotirasidan (content:// yoki file://) ochilgan — brauzer xavfsizlik uchun kamerani faqat <b>https://</b> saytlarga beradi. Saytni GitHub Pages manzili (https://…github.io/…) orqali oching va kameraga ruxsat bering.','');toast('🔒 Kamera faqat https:// saytda ishlaydi — saytni GitHub Pages manzili orqali oching');return}
+  status('⚠️ '+m.split(/[.—]/)[0].trim(),'');toast('⚠️ '+m);console.warn('[qo\'l kuzatuv]',e);ST.starting=false;stopAll(false);ui.bar.hidden=false;setTimeout(()=>{if(!ST.on&&!ST.starting&&ui)ui.bar.hidden=true},7000)}}
+function stopAll(user){
+ ST.starting=false;const was=ST.on;ST.on=false;window.__labHandHook=null;
+ cancelAnimationFrame(ST.raf);if(ST.vcb&&ST.cam.v.cancelVideoFrameCallback){try{ST.cam.v.cancelVideoFrameCallback(ST.vcb)}catch(_){}}ST.vcb=0;
+ [0,1].forEach(i=>releaseG(i,true));ST.hands=[null,null];ST.tg=[null,null];cancelAnimationFrame(ST.ui);ST.ui=0;ST.cam.stop();ST.book.on&&ST.book.end();
+ const L=LX();if(L&&L.S){L.S.hov=null;(L.S.HANDS||[]).forEach(h=>{h.trk=0})}
+ if(ui){ui.b.classList.remove('on');ui.b.setAttribute('aria-pressed','false');ui.cur.forEach(c=>c.hidden=true);ui.pv.hidden=true;ST.prev=false;ui.bar.querySelector('#lhPrev').setAttribute('aria-pressed','false');if(user||was)ui.bar.hidden=true}
+ if(user&&was)toast('📷 Kamera o\'chirildi — sichqoncha/barmoq bilan boshqarish davom etadi')}
+
+/* tajriba xonasidagi hodisa qabul qilgichlarga moslash (bir marta) */
+function patchLab(L){const cv=L.S.cv;if(cv.__lh)return;cv.__lh=1;
+ // sun'iy (virtual) barmoq hodisalarida brauzer «pointer capture»ni rad etadi — xatoni jimgina o'tkazamiz
+ ['setPointerCapture','releasePointerCapture'].forEach(k=>{const o=cv[k];if(typeof o==='function')cv[k]=function(id){try{return o.call(this,id)}catch(_){}}})}
+
+/* ---- video kadrlar sikli: har yangi kadrda bir marta (requestVideoFrameCallback), aks holda rAF ---- */
+function loopVideo(){const v=ST.cam.v;let k=0;const gen=ST.lg=(ST.lg||0)+1;
+ const tick=()=>{if(!ST.on||gen!==ST.lg)return;
+  if(!document.hidden&&ST.cam.ok&&(ST.det.skip===0||(k++%(ST.det.skip+1))===0))processFrame();
+  if(v.requestVideoFrameCallback)ST.vcb=v.requestVideoFrameCallback(tick);else ST.raf=requestAnimationFrame(tick)};
+ if(v.requestVideoFrameCallback)ST.vcb=v.requestVideoFrameCallback(tick);else ST.raf=requestAnimationFrame(tick)}
+function processFrame(){
+ const r=ST.det.detect(ST.cam.v);if(!r)return;feed(r,ST.cam.facing==='user',ST.cam.v.videoWidth/Math.max(1,ST.cam.v.videoHeight))}
+/** natijani qabul qilish (sinov uchun tashqaridan ham beriladi) */
+function feed(r,front,aspect){
+ const now=performance.now(),t=now/1000;ST.fN++;if(now-ST.fT>1000){ST.fps=Math.round(ST.fN*1000/(now-ST.fT));ST.fN=0;ST.fT=now}
+ const lms=r.landmarks||[],wls=r.worldLandmarks||[],hd=r.handedness||r.handednesses||[];
+ const got=[null,null];
+ for(let i=0;i<lms.length&&i<2;i++){if(!wls[i]||lms[i].length<21)continue;
+  let lab=(hd[i]&&hd[i][0]&&hd[i][0].categoryName)||'Right';if(!front)lab=lab==='Left'?'Right':'Left';   // orqa kamerada o'ng-chap almashadi
+  let slot=lab==='Left'?1:0;if(got[slot])slot=1-slot;if(got[slot])continue;
+  got[slot]={lm:lms[i],wl:wls[i]}}
+ for(const s of [0,1]){if(got[s]){ST.hands[s]=ST.maps[s].map(got[s].lm,got[s].wl,front,t,aspect||4/3,!!ST.g[s]);ST.seen[s]=now}}
+ // ⚠️ ogohlantirishlar: qo'l yo'q, kadr chetida, yorug'lik kam
+ const any=got[0]||got[1];if(any)ST.noT=now;else if(now-ST.noT>5000)hint('none','🖐 Qo\'l ko\'rinmayapti — qo\'lingizni kamera oldiga, 30–60 sm masofaga keltiring',12000);
+ if(any&&((got[0]&&ST.hands[0].edge)||(got[1]&&ST.hands[1].edge)))hint('edge','↔️ Qo\'lingiz kadr chetida — biroz markazga suring',8000);
+ if(now-ST.lumT>1500){ST.lumT=now;const l=ST.cam.luma();ST.dark=l<42;if(ST.dark)hint('dark','💡 Yorug\'lik kam — qo\'l yomon aniqlanadi. Xonani yoriting yoki yorug\'likka qarab o\'tiring',15000)}
+ const n=(got[0]?1:0)+(got[1]?1:0);
+ if(now-ST.stT>250||(n>0)!==ST.stN){ST.stT=now;ST.stN=n>0;status(n?'<b>'+n+' qo\'l</b> · '+ST.fps+' FPS'+(ST.det.delegate==='CPU'?' · CPU':'')+(ST.dark?' · 💡 kam yorug\'':''):'Qo\'lingizni kameraga ko\'rsating',n?'ok':'wait')}
+ if(ST.prev)drawPrev(lms)}
+function drawPrev(lms){const c=ui&&ui.pc;if(!c)return;const g=c.getContext('2d');const front=ST.cam.facing==='user';g.save();if(front){g.translate(c.width,0);g.scale(-1,1)}
+ try{g.drawImage(ST.cam.v,0,0,c.width,c.height)}catch(_){}g.strokeStyle='#2ee59d';g.lineWidth=3;g.fillStyle='#fff';
+ const E=[[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[0,17],[17,18],[18,19],[19,20]];
+ for(const lm of lms){g.beginPath();for(const [a,b] of E){g.moveTo(lm[a].x*c.width,lm[a].y*c.height);g.lineTo(lm[b].x*c.width,lm[b].y*c.height)}g.stroke();for(const p of lm){g.beginPath();g.arc(p.x*c.width,p.y*c.height,3,0,7);g.fill()}}g.restore()}
+
+/* ---- ikki mustaqil sikl:
+   (a) uiTick — o'z requestAnimationFrame'i: kursor, imo-ishoralar, ushlash/qo'yish. Xona chizishdan mustaqil,
+       shuning uchun qo'llanma oynasi ochiq bo'lsa yoki 3D sekinlashsa ham qo'l boshqaruvi kechikmaydi;
+   (b) frameHook — xona dvigateli har kadrida chaqiradi: 3D qo'l modelini chizishdan oldin joylaydi ---- */
+function uiTick(){
+ if(!ST.on){ST.ui=0;return}ST.ui=requestAnimationFrame(uiTick);
+ const L=LX();if(!L||!L.S||!ui)return;const S=L.S,now=performance.now();
+ // tajriba xonasidan chiqilgan bo'lsa — kamera avtomatik o'chadi (batareya va maxfiylik)
+ if(!SEC.classList.contains('on')){stopAll(false);return}
+ // VR ↔ oddiy rejim almashsa: kamera tomoni almashadi (VR ko'zoynakda orqa kamera qo'llarni ko'radi)
+ const want=S.vr?'environment':'user';if(ST.cam.stream&&ST.cam.facing!==want&&!ST.swc){ST.swc=1;status('📷 '+(want==='environment'?'Orqa':'Old')+' kameraga o\'tilmoqda…','wait');ST.cam.start(want).then(()=>{ST.maps.forEach(m=>{m.reset();m.pl0=null});loopVideo()}).catch(e=>{if(!(e&&e.abort))toast('⚠️ '+((e&&e.uz)||'Kamera almashmadi'))}).finally(()=>{ST.swc=0})}
+ const cr=S.cv.getBoundingClientRect(),wr=ui.W.getBoundingClientRect();
+ for(const s of [0,1]){const st=ST.hands[s],c=ui.cur[s];const fresh=st&&now-ST.seen[s]<260;
+  if(!fresh){ST.tg[s]=null;c.hidden=true;if(ST.g[s]&&now-ST.seen[s]>420)releaseG(s);continue}
+  // ekran nuqtasi → 3D nishon (kamera nuri bo'ylab, taxminiy chuqurlikda)
+  const px=cr.left+st.sx*cr.width,py=cr.top+st.sy*cr.height;const R=L.ray(px,py);const target=v3.add(R.o,v3.mul(R.d,st.depth));
+  ST.tg[s]={st,target};
+  c.hidden=false;c.style.transform='translate('+(px-wr.left).toFixed(1)+'px,'+(py-wr.top).toFixed(1)+'px)';
+  try{gesture(s,st,px,py,L,target)}catch(e){console.warn('[qo\'l imo-ishora]',e)}}}
+function frameHook(){
+ if(!ST.on)return;const L=LX();if(!L||!L.S)return;const S=L.S;
+ for(const s of [0,1]){const H=S.HANDS&&S.HANDS[s];if(!H)continue;const T=ST.tg[s];if(!T){H.trk=0;continue}H.trk=1;poseRig(H,T.st,L,H.side,T.target)}}
+
+/* ---- 6. imo-ishoralar: pinch/grab (gisterezis bilan), hover, ushlash, ko'tarish, burash ---- */
+function gesture(s,st,px,py,L,target){
+ const S=L.S,c=ui.cur[s];let G=ST.g[s];
+ const pinchOn=st.pinchD<.032||st.fist<1.02,pinchOff=st.pinchD>.052&&st.fist>1.18;   // yoqish/o'chirish chegaralari farqli — miltillamaydi
+ if(!G){
+  // hover: barmoq ostidagi jihozni yoritish
+  const hc=ST.hc[s],now2=performance.now();let hv=hc.v;
+  if(now2-hc.t>90||Math.hypot(px-hc.x,py-hc.y)>14||pinchOn){hc.t=now2;hc.x=px;hc.y=py;try{hv=L.pick(px,py,false)}catch(_){hv=null}hc.v=hv}
+  if(S.hov!==hv&&!ST.g[1-s])S.hov=hv;c.classList.toggle('hv',!!hv);c.classList.remove('pn');
+  const lbl=c.firstChild;lbl.textContent=hv?(hv.book?'📖':hv.opn?'🚪':'✋'):'';
+  if(pinchOn)beginG(s,px,py,L,st,target,hv)}
+ else{
+  c.classList.add('pn');
+  if(pinchOff){releaseG(s);return}
+  G.px=px;G.py=py;
+  if(G.kind==='book'){ST.book.move(px);return}
+  if(G.kind==='dom'){G.moved=G.moved||Math.hypot(px-G.x0,py-G.y0)>24;return}
+  if(G.kind==='ptr'){ptr('pointermove',G,px,py,L);
+   // ko'tarish va burash: stol ustidagi jihoz qo'l bilan birga ko'tariladi va bilak burilishi bilan buriladi
+   const it=G.it;if(it&&it.g&&!S.pt&&!S.at&&!it.tw&&!S.hp){const T=S.TB;
+    if(it.dragged){const dy=clamp(target[1]-G.ty0,0,.32);it.g.pos=[it.g.pos[0],Math.max(it.g.pos[1],T.h+.13+dy),it.g.pos[2]]}
+    let d=st.roll-G.r0;d=Math.atan2(Math.sin(d),Math.cos(d));if(Math.abs(d)>.06||G.rot)G.rot=1,it.g.rot=[it.g.rot[0],G.ry0-d*1.1,it.g.rot[2]]}}}}
+function beginG(s,px,py,L,st,target,hv){const S=L.S;
+ // 1) DOM tugmalar va qo'llanma (ekran ustidagi oynalar) — elementFromPoint
+ const el=document.elementFromPoint(px,py);const lw=ui.W;
+ if(el&&lw.contains(el)&&el!==S.cv&&!el.closest('.lh-cur,.lh-prev')){
+  if(ST.book.open()&&el.closest('#labBkP')){if(ST.book.begin(px))ST.g[s]={kind:'book'};return}
+  const btn=el.closest('button,[role=button],a,label,input,select,summary,[data-lv],[data-mv]');
+  if(btn){btn.classList.add('lh-press');ST.g[s]={kind:'dom',el:btn,x0:px,y0:py,moved:false};return}
+  ST.g[s]={kind:'none'};return}
+ if(el&&!lw.contains(el)){ST.g[s]={kind:'none'};return}
+ // 2) 3D xona: faqat nishon bo'lsa (jihoz, eshik, qo'llanma, asbob tutqichi) — bo'sh joyda kamera aylanmaydi
+ let rp=null;try{rp=L.rigPick&&L.rigPick(px,py)}catch(_){}
+ if(!hv&&!rp){ST.g[s]={kind:'none'};return}
+ // qo'llanma, eshik/tortma, javondagi kitob — bosish kifoya (chimchilash = bosish)
+ if(!rp&&hv&&(hv.book||hv.opn||hv.bkl)){const C={id:7100+s};ptr('pointerdown',C,px,py,L);ptr('pointerup',C,px,py,L);ST.g[s]={kind:'none'};try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}return}
+ const G={kind:'ptr',id:7100+s,it:hv&&hv.g&&!hv.book&&!hv.opn&&!hv.bkl?hv:null,x0:px,y0:py,px,py,ty0:target[1],r0:st.roll,ry0:0};
+ if(G.it&&L.canDrag&&!L.canDrag(G.it)){ptr('pointerdown',G,px,py,L);ptr('pointerup',G,px,py,L);ST.g[s]={kind:'none'};return}
+ if(G.it)G.ry0=G.it.g.rot[1];ST.g[s]=G;ptr('pointerdown',G,px,py,L);try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}}
+function releaseG(s,cancel){const G=ST.g[s];if(!G)return;ST.g[s]=null;const L=LX();
+ if(G.kind==='ptr'&&L&&L.S)ptr(cancel?'pointercancel':'pointerup',G,G.px,G.py,L);
+ else if(G.kind==='dom'){G.el.classList.remove('lh-press');if(!cancel&&!G.moved&&G.el.isConnected){try{G.el.focus({preventScroll:true})}catch(_){}G.el.click()}}
+ else if(G.kind==='book')ST.book.end()}
+/* virtual barmoq: xona dvigateliga oddiy sensor-barmoq hodisasi sifatida uzatiladi (VR rejimda ham) */
+function ptr(type,G,x,y,L){const S=L.S;let ev;
+ try{ev=new PointerEvent(type,{pointerId:G.id,pointerType:'touch',isPrimary:false,clientX:x,clientY:y,bubbles:true,cancelable:true,buttons:type==='pointerup'||type==='pointercancel'?0:1,button:0})}
+ catch(_){ev=new MouseEvent(type.replace('pointer','mouse'),{clientX:x,clientY:y,bubbles:true})}
+ S.hptr=true;S.hptrHand=G.id>=7100?G.id-7100:null;try{S.cv.dispatchEvent(ev)}finally{S.hptr=false;S.hptrHand=null}}
+
+/* ---- hayot sikli: boshqa bo'limga o'tilsa yoki sahifa yashirilsa — kamera o'chadi ---- */
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&(ST.on||ST.starting))stopAll(false)});
+const nv=document.getElementById('nv');if(nv)nv.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-t]');if(b&&b.dataset.t!=='lab'&&(ST.on||ST.starting))stopAll(false)});
+/* xona birinchi marta ochilganda tugma qo'shiladi */
+const mo=new MutationObserver(()=>{if(document.getElementById('labw')&&!ui)buildUI()});mo.observe(SEC,{childList:true,subtree:true});if(document.getElementById('labw'))buildUI();
+
+/* sinov va diagnostika uchun ochiq API */
+window.labHands={start:startAll,stop:()=>stopAll(true),state:()=>({on:ST.on,starting:ST.starting,fps:ST.fps,delegate:ST.det.delegate,facing:ST.cam.facing,hands:ST.hands.map(h=>!!h),grab:ST.g.map(g=>g&&g.kind),roll:ST.hands.map(h=>h&&+h.roll.toFixed(2)),gi:ST.g.map(g=>g&&g.it&&[g.it.id,g.it.dragged,+g.r0.toFixed(2)]),ema:+ST.det.ema.toFixed(1),skip:ST.det.skip}),
+ _feed:(r,front,aspect)=>{if(!ST.on){ST.on=true;window.__labHandHook=frameHook;buildUI();const L=LX();if(L)patchLab(L);ui.bar.hidden=false;ui.b.classList.add('on');ST.ui=requestAnimationFrame(uiTick)}feed(r,front!==false,aspect||4/3)},
+ _book:ST.book};
+})();
+</script>
+
 
 <style id="qt-day-css">
 /* Kunduzgi rejim: iqtibos kartasi — oqqa moyil och fon, aniq to'q yozuv */
@@ -11774,9 +12153,9 @@ html:not([data-t=night]) body .hero .hc{background:rgba(8,32,78,.72)!important;b
 html:not([data-t=night]) body .hero .gr{background:rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.28)!important}
 @media(max-width:899px){
 html:not([data-t=night]) body .hero{background-image:linear-gradient(180deg,#1a4890,#0f2f66)!important}
-html:not([data-t=night]) body .hero::before{background:linear-gradient(180deg,rgba(26,72,144,0) 62%,#1a4890 100%),linear-gradient(90deg,rgba(22,62,135,.72) 0%,rgba(22,62,135,.5) 30%,rgba(22,62,135,.12) 50%,rgba(22,62,135,0) 58%),var(--hero-day) 72% center/cover no-repeat!important}
+html:not([data-t=night]) body .hero::before{background:linear-gradient(180deg,rgba(26,72,144,0) 64%,#1a4890 100%),linear-gradient(90deg,rgba(22,62,135,.35) 0%,rgba(22,62,135,0) 30%),var(--hero-day) 100% 8%/188% auto no-repeat!important}
 }
-@media(max-width:480px){html:not([data-t=night]) body .hero::before{background-position:0 0,0 0,76% center!important}}
+@media(max-width:480px){html:not([data-t=night]) body .hero::before{background-position:0 0,0 0,100% 8%!important}}
 </style>
 <style id="emaktab-bridge-css">
 /* E-Maktab oynalari (o'quvchi profili, 21 dars) 3D kutubxona to'liq ekranidan ham ustida ko'rinsin */
