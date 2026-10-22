@@ -3791,7 +3791,9 @@ function remember(){try{if(session)sessionStorage.setItem('live-session',JSON.st
 function clear(){session=null;state=null;earned=0;lastRender='';remember();}
 function base(){if(service)return service;return new URL('./',location.href).href;}
 /* sayt o'z serverida ochilgan bo'lsa (masalan, maktab serveri), o'sha serverdagi jonli sinfdan foydalanamiz */
-async function probe(){if(probed||!/^https?:$/.test(location.protocol)||service!==ENIF)return;probed=true;try{if(sessionStorage.getItem('live-service'))return}catch{}try{const r=await fetch(new URL('api/state',location.href),{cache:'no-store'});const d=await r.json();if(d&&typeof d.error==='string'&&!session){service=''}}catch{}}
+async function probe(){if(probed||!/^https?:$/.test(location.protocol)||service!==ENIF)return;probed=true;
+/* statik hostingda (GitHub Pages va h.k.) server yo'q — so'rov konsolda 404 xatosini chiqarmasin */
+if(/(^|\.)(github\.io|gitlab\.io|netlify\.app|pages\.dev|vercel\.app|web\.app|firebaseapp\.com)$/i.test(location.hostname))return;try{if(sessionStorage.getItem('live-service'))return}catch{}try{const r=await fetch(new URL('api/state',location.href),{cache:'no-store'});const d=await r.json();if(d&&typeof d.error==='string'&&!session){service=''}}catch{}}
 async function api(route,body){
  if(location.protocol==='file:'&&!service)throw Error('HTML faylni alohida ochganda, quyidagi maydonga saytning internet manzilini kiriting.');
  const requestToken=session?.token,requestMentorVersion=mentorVersion;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),8000);
@@ -4193,6 +4195,7 @@ function prep(raw){let s=String(raw==null?'':raw).replace(/Δ/g,'§').split(/(\s
  return s.replace(/§/g,'Δ')}
 /* ---------- iboralar (eng uzunlari birinchi) ---------- */
 const PH=[
+ [/\b(mc ?2|m c 2)\b/g,' m c ^2 '],[/\b(foydali)\b/g,' _ f '],[/\b(toliq|sarflangan)\b/g,' _ t '],
  [/\b(kelib chiqadi|demak|shuning uchun|sledovatelno)\b/g,' ⇒ '],
  [/\b(plyus minus|plus minus|plyus-minus)\b/g,' ± '],
  [/\b(katta yoki teng|kattayoki teng|bolshe ili ravno|greater than or equal to)\b/g,' GE '],
@@ -4211,7 +4214,7 @@ const PH=[
  [/\b(kvadratga|kvadrati|kvadratda|kvadrat|v kvadrate|squared)\b/g,' ^2 '],
  [/\b(kubga|kubi|kubda|kub|v kube|cubed)\b/g,' ^3 '],
  [/\b(darajasi|darajaga|darajada|darajali|daraja|v stepeni|stepen|to the power of|power)\b/g,' POW '],
- [/\b(kopaytiruv|kopaytirish|kopaytirilgan|kopaytirilsa|kopaytiramiz|kopaytirib|kopaytir\w*|karra|umnozhit na|umnozhennoe na|umnozhit|umnozhennoe|times|multiplied by)\b/g,' * '],
+ [/\b(kopaytiruv|kopaytirish|kopaytirilgan|kopaytirilsa|kopaytiramiz|kopaytirib|kopaytir\w*|karra|karrali|marta|umnojit na|umnojennoe na|umnojit|umnojennoe|umnozhit na|umnozhennoe na|umnozhit|umnozhennoe|times|multiplied by)\b/g,' * '],
  [/\b(bolingan|boluv|bolish|bolinsa|bolinadi|bolinganda|bolib|bolamiz|taqsim|razdelit na|delit na|podelit na|razdelennoe na|delennoe na|divided by|over)\b/g,' : '],
  [/\b(qoshuv|qoshish|qoshilsa|qoshilgan|qoshib|qoshamiz|plyus|plus|pilyus)\b/g,' + '],
  [/\b(ayiruv|ayirish|ayirilsa|ayirilgan|ayirib|ayiramiz|minus|minis)\b/g,' - '],
@@ -4232,9 +4235,16 @@ const PH=[
  [/\b(metr sekund kvadrat|metr taqsim sekund kvadrat)\b/g,' "m/s²" '],[/\b(metr sekundiga|metr sekund|metr taqsim sekund|metr bolingan sekund)\b/g,' "m/s" '],[/\b(kilometr soatiga|kilometr soat)\b/g,' "km/soat" ']
 ];
 const UNITS={metr:'m',metrga:'m',metrni:'m',santimetr:'sm',millimetr:'mm',kilometr:'km',sekund:'s',sekundda:'s',soniya:'s',soniyada:'s',minut:'min',daqiqa:'min',soat:'soat',kilogramm:'kg',kilogram:'kg',gramm:'g',nyuton:'N',joul:'J',vatt:'W',paskal:'Pa',gerts:'Hz',litr:'l',kelvin:'K',amper:'A',volt:'V',om:'Ω',metr_kub:'m³'};
-const LET={ye:'e',iks:'x',eks:'x',igrek:'y',zet:'z',be:'b',ve:'v',ge:'g',de:'d',ef:'f',ha:'h',ka:'k',el:'l',em:'m',en:'n',pe:'p',ku:'q',er:'r',es:'s',te:'t',dablyu:'w',kyu:'q',ey:'a',bi:'b',si:'c',di:'d',ji:'g',ay:'i',jey:'j',kay:'k',ar:'r',ti:'t',yu:'u',vi:'v',ze:'z'};
+const LET={tse:'c',zhe:'g',je:'g',xa:'h',ye:'e',iks:'x',eks:'x',igrek:'y',zet:'z',be:'b',ve:'v',ge:'g',de:'d',ef:'f',ha:'h',ka:'k',el:'l',em:'m',en:'n',pe:'p',ku:'q',er:'r',es:'s',te:'t',dablyu:'w',kyu:'q',ey:'a',bi:'b',si:'c',di:'d',ji:'g',ay:'i',jey:'j',kay:'k',ar:'r',ti:'t',yu:'u',vi:'v',ze:'z'};
 const FILL=/^(chi|inchi|nchi|chisi|ni|ga|da|dan|ning|va|bu|esa|endi|yani|keyin|biz|bizda|bor|ham|uchun|agar|bolsa|qilib|qilamiz|yozamiz|yoz|formula|formulasi|ifoda|tenglama|tenglamani|yech|yechamiz|yeching|i|a_?)$/;
 /* ---------- gap → chiziqli formula ---------- */
+/* fizikadagi odatiy yozuvlarga moslash (nutq tanishdagi tipik xatolar) */
+function postLin(l){let s=String(l);
+ s=s.replace(/(^|=\s*|\(\s*)([A-Za-zα-ω])\s*-\s*\2_(\w+)\s*:/g,'$1($2 - $2_$3) :');            // v − v₀ bo'lingan t → (v − v₀)/t
+ s=s.replace(/(^|=\s*|\(\s*)([A-Za-zα-ω])_(\w+)\s*-\s*\2_(\w+)\s*:/g,'$1($2_$3 - $2_$4) :');  // x₂ − x₁ bo'lingan t
+ s=s.replace(/(^|[=(+\-:*\s])E k(?=\s|$|[=)+\-:*^])/g,'$1E_k').replace(/(^|[=(+\-:*\s])E p(?=\s|$|[=)+\-:*^])/g,'$1E_p');
+ s=s.replace(/^e = m c\^2$/,'E = m c^2').replace(/^f = m \* a$|^f = m a$/,m=>m.replace(/^f/,'F')).replace(/^u = i r$/,'U = I R').replace(/^i = u : r$/,'I = U : R');
+ return s}
 function speak2lin(raw){
  let s=' '+prep(raw)+' ';
  for(const [re,r] of PH)s=s.replace(re,r);
@@ -4262,6 +4272,8 @@ function speak2lin(raw){
   if(/^[a-z]{1,3}\d+$/.test(w)||/^\d+[a-z]{1,2}$/.test(w)){w.match(/\d+|[a-z]/g).forEach(p=>T.push(/\d/.test(p)?{k:'n',v:+p}:{k:'v',v:p}));known++;continue}
   if(FILL.test(w))continue;
   if(/^\d+$/.test(w)){T.push({k:'n',v:+w});known++;continue}
+  /* nutq tanish harflarni qo'shib yozadi («mc», «gh», «ek») — formula (teng belgisi bor) ichida alohida harflarga ajratiladi */
+  if(W.includes('=')&&/^[a-z]{2,3}$/.test(w)){if(w==='ek'||w==='ep'){T.push({k:'v',v:'E'},{k:'o',v:'_'},{k:'v',v:w[1]});known++;continue}for(const ch of w)T.push({k:'v',v:ch});known++;continue}
   unknown++;T.push({k:'w',v:w})}
  /* qayta ishlash: o'nli kasr, kasrlar, solishtirish */
  const R=[];
@@ -4329,6 +4341,7 @@ function speak2lin(raw){
  let d=0;for(const c of lin){if(c==='(')d++;else if(c===')')d--}while(d>0){lin+=')';d--}
  while(d<0){lin='('+lin;d++}
  const ops=(lin.match(/[=<>+\-*:/^]|sqrt|cbrt|±|⇒/g)||[]).length;
+ lin=postLin(lin);
  return {lin,unknown,known,ops,isMath:known>0&&ops>0}}
 function fmtN(v){if(!isFinite(v))return String(v);let s=String(+(+v).toFixed(10));if(/e/.test(s))s=(+v).toPrecision(10).replace(/\.?0+$/,'');return s}
 /* ---------- tahlil (parser) ---------- */
@@ -5472,7 +5485,7 @@ function norm(s){s=String(s==null?'':s).toLowerCase().replace(/[\u0400-\u04ff]/g
 var NW={nol:0,bir:1,ikki:2,uch:3,tort:4,besh:5,olti:6,yetti:7,sakkiz:8,toqqiz:9,on:10,yigirma:20,ottiz:30,qirq:40,ellik:50,oltmish:60,yetmish:70,sakson:80,toqson:90,yuz:100,
  one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,first:1,second:2,third:3,
  odin:1,dva:2,tri:3,chetire:4,pyat:5,shest:6,sem:7,vosem:8,devyat:9,desyat:10,pervyy:1,vtoroy:2,tretiy:3};
-function w2n(w){if(/^\d+$/.test(w))return +w;var c=[w,w.replace(/(i?nchi|inchi|chi)$/,''),w.replace(/(i?nchi|inchi)$/,''),w.replace(/(ta|tasi|nchisi|inchisi|chisi)$/,'')];
+function w2n(w){if(/^\d+$/.test(w))return +w;var c=[w,w.replace(/nchi$/,''),w.replace(/nchisi$/,''),w.replace(/(i?nchi|inchi|chi)$/,''),w.replace(/(i?nchi|inchi)$/,''),w.replace(/(ta|tasi|nchisi|inchisi|chisi)$/,'')];
  for(var i=0;i<c.length;i++){if(NW[c[i]]!=null)return NW[c[i]]}var m=w.match(/^(\d+)(chi|inchi|nchi|ta|sinf)?$/);return m?+m[1]:null}
 /* so'zli sonlarni raqamga aylantirish: \u00absakkizinchi sinf\u00bb \u2192 \u00ab8 sinf\u00bb, \u00abo'n ikki\u00bb \u2192 \u00ab12\u00bb */
 function digits(s){var w=s.split(' '),o=[],acc=null;for(var i=0;i<w.length;i++){var v=w2n(w[i]);
@@ -5502,7 +5515,7 @@ function labels(el){var a=[];var g=function(k){var v=el.getAttribute&&el.getAttr
  if(!L.length||L.every(function(x){return x.length<2})){var raw=(el.innerText||el.textContent||el.value||'')+'';for(var k in ICO){if(raw.indexOf(k)>=0){L.push(ICO[k])}}}
  return L}
 function cands(all){var R=all?D.body:root(),L=[].slice.call(R.querySelectorAll(SEL));if(R!==D.body&&R.matches&&R.matches(SEL))L.unshift(R);
- var seen=new Set(),out=[];for(var i=0;i<L.length;i++){var e=L[i];if(seen.has(e))continue;seen.add(e);if(!vis(e))continue;
+ var seen=new Set(),out=[];for(var i=0;i<L.length;i++){var e=L[i];if(seen.has(e))continue;seen.add(e);if(!vis(e)||(e.hasAttribute&&e.hasAttribute('data-vc-skip')))continue;
   /* ichma-ich bosiladigan elementlardan eng tashqisini qoldirish (ichidagi ikonka emas) */
   var par=e.parentElement&&e.parentElement.closest&&e.parentElement.closest('button,a[href],[role=button],.sp,.kt,.m-kt,.gc,.opt,label');if(par&&seen.has(par)&&vis(par)&&!/^(INPUT|SELECT|TEXTAREA)$/.test(e.tagName))continue;
   out.push(e)}return out}
@@ -5872,7 +5885,7 @@ addEventListener('pagehide',()=>{stop()});
 /* ---- bo'limlar tarixi ---- */
 function track(){const s=document.querySelector('main>section.on');if(s&&s.id!==cur){hist.push(cur);if(hist.length>30)hist.shift();cur=s.id}sync()}
 new MutationObserver(track).observe(q('main'),{attributes:true,subtree:true,attributeFilter:['class']});track();
-const SEC=[['home',/^(bosh sahifa|bosh|asosiy|uy|domoy|главная|домой|home)$/],['slides',/(taqdimot|slayd(lar)?$|презентаци|prezentatsiya|slides)/],['sim',/(simulyatsiya|симуляц|simulation)/],['lab',/(tajriba xona|3d xona|3 d xona|laboratoriya xona|kimyo xona|jihozlar|shkaf|лаборатория комнат|опыт)/],['vr',/(^vr$|^vr |vi ?ar|vir$|ви ?(ар|эр)|virtual|laboratoriya|в р)/],['video',/(^video|видео)/],['test',/(^test|тест)/],['games',/(oyin(lar)?$|игры|games)/],['lib',/(kutubxona|biblioteka|библиотек|library)/],['doska',/(doska|доск)/],['rej',/(reja|rejalar|kunlik|raspisanie|расписан|plan)/],['fr',/(dost|друзь|druz|friends)/],['ut',/(ustoz chat|chat|чат)/],['live',/(jonli|живой|zhivoy)/],['mentors',/(ustozlar|murabbiy|наставник)/],['rate',/(reyting|рейтинг|rating)/],['cert',/(sertifikat|сертификат)/],['kab',/(kabinet|profil|кабинет)/]];
+const SEC=[['home',/^(bosh sahifa|bosh|asosiy|uy|domoy|главная|домой|home)$/],['slides',/(taqdimot|slayd(lar)?$|презентаци|prezentatsiya|slides)/],['sim',/(simulyatsiya|симуляц|simulation)/],['lab',/(tajriba xona|vr tajriba|3d xona|3 d xona|laboratoriya xona|kimyo xona|jihozlar|shkaf|лаборатория комнат|опыт)/],['vr',/(^vr$|^vr |vi ?ar|vir$|ви ?(ар|эр)|virtual|laboratoriya|в р)/],['video',/(^video|видео)/],['test',/(^test|тест)/],['games',/(oyin(lar)?$|игры|games)/],['lib',/(kutubxona|biblioteka|библиотек|library)/],['doska',/(doska|доск)/],['rej',/(reja|rejalar|kunlik|raspisanie|расписан|plan)/],['fr',/(dost|друзь|druz|friends)/],['ut',/(ustoz chat|chat|чат)/],['live',/(jonli|живой|zhivoy)/],['mentors',/(ustozlar|murabbiy|наставник)/],['rate',/(reyting|рейтинг|rating)/],['cert',/(sertifikat|сертификат)/],['kab',/(kabinet|profil|кабинет)/]];
 const SIM=[[/(quvur|труб|pipe)/,0],[/(torichelli|торичелли)/,1],[/(stoks|стокс)/,2],[/(reynolds|рейнольдс)/,3]];
 const SECN={home:'Bosh sahifa',slides:'Taqdimot',sim:'Simulyatsiya',vr:'VR laboratoriya',lab:'3D tajriba xonasi',video:'Video',test:'Test',games:"O'yinlar",lib:'Kutubxona',doska:'Ovozli doska',rej:'Kunlik rejalar',fr:"Do'stlar",ut:'Ustoz chat',live:'Jonli sinf',mentors:'Ustozlar',rate:'Reyting',cert:'Sertifikat',kab:'Kabinet',edit:'Tahrirlash'};
 const SIMN=['Quvur (Bernulli)','Torichelli','Stoks','Reynolds'];
@@ -5919,7 +5932,32 @@ const kbBtn=c=>[...document.querySelectorAll('section.on .kb button')].find(z=>z
 function letter(x){x=norm(x);const c=LETN[x]||(/^[a-z]$/.test(x)?x.toUpperCase():null);const b=c&&kbBtn(c);if(!b)return false;b.click();return 'Harf '+c}
 function word(w){w=norm(tl(w)).replace(/ /g,'').toUpperCase();let n=0;for(const c of w){const b=kbBtn(c);if(b){b.click();n++}}return n?"So'z: "+w:false}
 const nth=(sel,n)=>n?[...document.querySelectorAll(sel)].filter(b=>b.getClientRects().length)[n-1]:null;
+/* ✍️ ro'yxat/profil maydonlarini ovoz bilan to'ldirish (asosiy sahifa yoki kirish oynasi) */
+function fld(sels,val){const docs=[document];const ed=entryDoc();if(ed)docs.unshift(ed);for(const d of docs)for(const sl of sels){const e=d.querySelector(sl);if(e&&e.getClientRects().length&&!e.disabled){
+  if(e.tagName==='SELECT'){const n=norm(val);const o=[...e.options].find(o=>o.value&&norm(o.textContent).includes(n))||[...e.options].find(o=>o.value&&n.split(' ').some(w=>w.length>3&&norm(o.textContent).includes(w)));if(!o)return null;e.value=o.value}else e.value=val;
+  e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));try{e.focus({preventScroll:true})}catch(_){}return e}}return null}
+const rest=(raw,n)=>String(raw).trim().split(/\s+/).slice(n).join(' ').replace(/[.,!?]+$/,'').trim();
+const title=v=>v.split(' ').filter(Boolean).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+function phoneOf(raw){let d=UT().digits(norm(raw)).replace(/[^0-9]/g,'');if(!d)return '';if(d.length===9)d='998'+d;return (d.startsWith('998')?'+':'')+d}
+function hisobdanChiq(){const o=q('#m-out');if(o){o.click();return 'Hisobdan chiqildi'}return false}
+function xavfsizYop(){/* hech qachon hisobdan chiqarmaydi: oynalar, to'liq ekran, VR, yordamchi */
+ const x=[...document.querySelectorAll('.emaktab-lib-close,#labBkX,#labInfoX,#labVrx,#labSimX,#labMicX,#cx,#vrx,.lb-x,[aria-label*="Yopish"],[aria-label*="yopish"]')].find(e=>vis(e));if(x){x.click();return 'Yopildi'}
+ if(document.fullscreenElement){try{document.exitFullscreen()}catch(_){}return "To'liq ekrandan chiqildi"}
+ if(!pan.hidden){closePan();return 'Yopildi'}try{UT().key('esc')}catch(_){}return "Yopiladigan oyna yo'q. Hisobdan chiqish uchun «hisobdan chiqish» deng"}
 const CMDS=[
+ [/^(?:hisobdan|tizimdan|profildan|akkauntdan) chiq\w*$/,()=>hisobdanChiq()],
+ [/^(chiq|chiqish|chiqib ket\w*|yop|yopish|yopib qoy\w*|bekor qil\w*)$/,()=>xavfsizYop()],
+ [/^(?:ism(?:im)?|ism va familiya\w*|ism familiya\w*|ismim|mening ismim|ism sharif\w*|familiya ism\w*) (.+)$/,(m,raw)=>{const k=norm(raw).split(' ').length-norm(m[1]).split(' ').length;const v=title(rest(raw,k));if(v.length<2)return false;const e=fld(['#kn','#em-inp-fullname','#kn_edit','#tkn','#lnm'],v);return e?'Ism: '+v:false}],
+ [/^(?:telefon\w*|telefon raqam\w*|raqamim|nomerim|nomer|tel) (.+)$/,(m,raw)=>{const v=phoneOf(m[1]);if(v.replace(/\D/g,'').length<7)return false;const e=fld(['#kph','#em-inp-phone','#kph_edit'],v);return e?'Telefon: '+v:false}],
+ [/^(?:maktab\w*) (.+)$/,(m,raw)=>{const v=rest(raw,1);const e=fld(['#ks','#em-inp-school'],/^\d+$/.test(UT().digits(norm(v)))?UT().digits(norm(v))+'-maktab':v);return e?'Maktab: '+e.value:false}],
+ [/^(?:tuman\w*|shahar\w*) (.+)$/,(m,raw)=>{const v=title(rest(raw,1));const e=fld(['#kt','#em-inp-district'],v);return e?'Tuman: '+v:false}],
+ [/^(?:viloyat\w*) (.+)$/,(m,raw)=>{const e=fld(['#kv','#em-inp-region'],m[1]);return e?'Viloyat: '+(e.options?e.options[e.selectedIndex].textContent:e.value):false}],
+ [/^(?:ustoz\w*|oqituvchi\w*) (.+)$/,(m,raw)=>{const v=title(rest(raw,1));if(v.split(' ').length>4)return false;const e=fld(['#ku','#em-inp-teacher'],v);return e?'Ustoz: '+v:false}],
+ [/^(?:sinf\w*) (.+)$/,(m,raw)=>{const n=pn(m[1])||+(UT().digits(norm(m[1])).match(/\d+/)||[])[0];if(!(n>=1&&n<=11))return false;const e=fld(['#kc','#em-inp-grade'],n+'-sinf');return e?'Sinf: '+n:false}],
+ [/^(?:saqla\w*|saqlash va boshla\w*|royxatdan ot\w*|tasdiqla\w*)$/,()=>{const b=['#kok','.emaktab-btn-primary','#ksv'].map(x=>q(x)).find(e=>e&&vis(e));if(b){b.click();return 'Saqlandi'}return false}],
+ /* ✋ 3D tajriba xonasi: kamera orqali qo'l boshqaruvi */
+ [/^(?:qol kamera\w*|qollar? bilan boshqar\w*|qolni kuzat\w*|kameraga ulan\w*|kamerani (?:yoq\w*|ula\w*|ulan\w*|och(?!ir)\w*)|kamera yoq\w*)$/,()=>{const on=()=>{const b=q('#labHand');if(!b)return false;if(!b.classList.contains('on'))b.click();return true};if(curSec()!=='lab'){const nb=q('#nv button[data-t="lab"]');if(!nb||!vis(nb))return "🔒 3D tajriba xonasi siz uchun yopiq";go('lab');setTimeout(on,1600);return "3D tajriba xonasi: kamera ulanmoqda"}return on()?"Kameraga ulanmoqda — qo'lingizni ko'rsating":false}],
+ [/^(?:kamerani|kamera|qol kamerasini) (?:ochir|yop|toxtat|uz)\w*$/,()=>{if(window.labHands&&window.labHands.state().on){window.labHands.stop();return "Kamera o'chirildi"}return "Kamera yoqilmagan"}],
  [/^(?:(?:ovozni|ovoz boshqaruvini|ovozli boshqaruvni|mikrofonni|golosovoe upravlenie) ?(?:ochir\w*|stop|toxtat\w*|выключи|отключи)|ovoz ?(?:ochir|stop)|voice off|stop listening)$/,()=>{toggle(false);return "O'chirildi"}],
  [/^(yordam|buyruqlar|помощь|help|commands)$/,()=>{openPan();return "Buyruqlar ro'yxati"}],
  [/^(keyingi|keyingisi|oldinga|davom|davom et|далее|следующий|next)( slayd| savol| sahifa| topshiriq)?$/,()=>act('next')],
@@ -5972,9 +6010,11 @@ const CMDS=[
 const VERB=new Set(['otish','oting','ot','bor','boring','och','ochish','ochib','ber','bering','kirish','kiring','ga','ni','bolimiga','bolimga','bolimi','bolim','sahifasiga','sahifaga','sahifasi','menga','iltimos','go','to','open','show','pereydi','otkroy','otkryt','pokazat','pokazhi','перейди','открой','открыть','показать','раздел','в']);
 function nav(t){const s=t.split(' ').filter(w=>!VERB.has(w)).join(' ');
  /* uzun gaplar (dars paytida gapirilgan) bo'limni tasodifan almashtirmasin */
- if(!s||s.split(' ').length>3||(s===t&&s.split(' ').length>2))return false;
+ if(!s||s.split(' ').length>3||(s===t&&s.split(' ').length>3))return false;
  for(const [rx,i] of SIM)if(rx.test(s))return openSim(i);
- for(const [id,rx] of SEC)if(rx.test(s)){const nb=q('#nv button[data-t="'+id+'"]');if(!nb||!vis(nb))return "🔒 «"+(SECN[id]||id)+"» bo'limi siz uchun yopiq";go(id);return SECN[id]}
+ for(const [id,rx] of SEC)if(rx.test(s)){const nb=q('#nv button[data-t="'+id+'"]');if(!nb||!vis(nb))return "🔒 «"+(SECN[id]||id)+"» bo'limi siz uchun yopiq";
+  if(id!=='kab'&&document.documentElement.classList.contains('m-reg')){go('kab');return "🔒 Avval ro'yxatdan o'ting: «ism …» va «telefon …» deb ayting, so'ng «saqlash»"}
+  go(id);return SECN[id]}
  return false}
 let ctxFail=false;
 const CANON=['keyingi','oldingi','orqaga','tepaga','pastga','yordam','taqdimot','simulyatsiya','video','oyinlar','kutubxona','boshiga','tekshirish','natija','boshla','yordamchi','sertifikat','kabinet','reyting','tahrirlash','bosh sahifa','tun rejimi','kun rejimi','oqib ber','qayta urinish','yangi nishon','torichelli','reynolds','stoks','glitserin'];
@@ -8046,7 +8086,7 @@ html.m-kid #vs,html.m-kid #vsp,html.m-kid #vt,html.m-kid #vsx{display:none!impor
  function badge(){let w=document.getElementById('m-who'),o=document.getElementById('m-out');const row=document.querySelector('header .row');if(!row)return;
   if(!P){w&&w.remove();o&&o.remove();return}
   if(w)w.remove();
-  if(!o){o=document.createElement('button');o.id='m-out';o.type='button';o.textContent='🚪 Chiqish';o.title='Hisobdan chiqish';o.onclick=chiqish;row.append(o)}}
+  if(!o){o=document.createElement('button');o.id='m-out';o.type='button';o.setAttribute('data-vc-skip','');o.textContent='🚪 Chiqish';o.title='Hisobdan chiqish';o.onclick=chiqish;row.append(o)}}
  function sinfBel(){window.mSinf=P&&P.rol=='oquvchi'&&P.sinf>=1&&P.sinf<=11?+P.sinf:null;window.mFan=P&&P.rol=='oqituvchi'&&P.fan?P.fan:null;window.mBarcha=0}
  function sinfgaKir(){if(P&&P.rol=='qiziquvchi'){try{lPg=0}catch(_){}const b=navBtn('lib');b&&setTimeout(()=>{b.click();try{toast('📚 Kutubxonaga xush kelibsiz!')}catch(_){}},60);return}if(!window.mSinf&&!window.mFan)return;try{lPg=0}catch(_){}const b=navBtn('lib');b&&setTimeout(()=>{b.click();try{toast(window.mFan?'📘 '+window.mFan+' — dars beradigan sinflaringiz kitoblari':'🎓 '+window.mSinf+'-sinf o\'quv oynasi ochildi')}catch(_){}},60)}
  function qollash(){sinfBel();document.documentElement.classList.toggle('m-tch',!!P&&P.rol=='oqituvchi');document.documentElement.classList.toggle('m-stu',!!P&&P.rol=='oquvchi');document.documentElement.classList.toggle('m-qiz',!!P&&P.rol=='qiziquvchi');document.documentElement.classList.toggle('m-ro',!!P&&P.rol!='oqituvchi');document.documentElement.classList.toggle('m-olm',!!P&&P.rol=='olimpiadachi');const ok=new Set(ruxsat(P));document.documentElement.classList.toggle('m-kid',kichikmi(P));document.documentElement.classList.toggle('m-reg',regKerak(P));
@@ -11761,6 +11801,1550 @@ window.labCtl={hx:()=>S&&{S,ray,pick,rigPick:(x,y)=>RG3?rigPick(x,y):null,upd,ca
 })();
 
 </script>
+<script id="camera-kit-js">
+/**
+ * CameraKit (oddiy <script> versiyasi: window.CameraKit) — AR/VR va qo'l kuzatuvi (hand tracking) uchun kamera boshqaruvi.
+ * ---------------------------------------------------------------------------
+ *  • Telefon/planshetda birlamchi — ORQA kamera:
+ *      facingMode {exact:"environment"} → facingMode "environment" → eng yaxshi orqa kamera (deviceId)
+ *      → istalgan kamera. Har bir pog'onada faqat «kamera mos kelmadi» turidagi xatoda keyingisiga o'tiladi;
+ *      ruxsat rad etilsa zanjir darhol to'xtaydi (foydalanuvchidan qayta-qayta so'ralmaydi).
+ *  • Kompyuterda — mavjud veb-kamera (orqa kamera so'ralmaydi, shuning uchun xato ham bo'lmaydi).
+ *  • Barcha kameralar ro'yxati (enumerateDevices), tomoni va turi (asosiy / ultra-wide / tele / USB) aniqlanadi,
+ *    almashtirish (switch) va tanlash (select) uchun toza API.
+ *  • Video → <video>, Three.js / A-Frame foniga «cover» moslash (cho'zilmaydi), old kamerada ko'zgu.
+ *  • Kadr sikli: requestVideoFrameCallback, faqat yangi kadrlar, FPS cheklovi, band bo'lsa kadr tashlash.
+ *  • Xatolar: o'zbekcha aniq xabar + nima qilish kerakligi (err.uz, err.hint, err.code).
+ *
+ * Bog'liqliklar: yo'q (Three.js / A-Frame ixtiyoriy, tashqaridan beriladi).
+ * Brauzerlar: Chrome/Edge/Samsung Internet/Firefox (Android, Windows, macOS, Linux), Safari (iOS 14.3+, macOS).
+ * Talab: sahifa https:// (yoki http://localhost) orqali ochilishi shart.
+ */
+
+(function (global) {
+'use strict';
+if (global.CameraKit) return;
+/* ============================== 1. Qurilma va muhit ============================== */
+
+const UA = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
+
+/** Qurilma turini aniqlaydi: telefon / planshet / kompyuter. */
+function detectDevice() {
+  const uaData = typeof navigator !== 'undefined' && navigator.userAgentData;
+  const touch = typeof navigator !== 'undefined' && (navigator.maxTouchPoints || 0) > 1;
+  const coarse = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+  const iPadOS = /Macintosh/.test(UA) && touch;                          // iPadOS o'zini «Mac» deb ko'rsatadi
+  const ios = /iPhone|iPad|iPod/.test(UA) || iPadOS;
+  const android = /Android/i.test(UA);
+  const phoneUA = /Mobi|iPhone|iPod|Android.+Mobile|Windows Phone|Opera Mini/i.test(UA);
+  const tabletUA = /iPad|Tablet|Android(?!.*Mobile)|Silk|Kindle/i.test(UA) || iPadOS;
+  let type = 'desktop';
+  if ((uaData && uaData.mobile) || phoneUA) type = 'phone';
+  else if (tabletUA || (touch && coarse && (ios || android))) type = 'tablet';
+  return {
+    type,
+    isMobile: type !== 'desktop',                                        // orqa kamerasi bo'lishi kutiladigan qurilma
+    ios, android,
+    inApp: /FBAN|FBAV|Instagram|Telegram|Line\/|MicroMessenger|; wv\)/i.test(UA) // ilova ichidagi brauzer
+  };
+}
+
+/** Kamera umuman ishlay oladigan muhitmi? (xatoni oldindan, so'rovsiz aniqlash) */
+function checkSupport() {
+  if (typeof window === 'undefined') return fail('NO_WINDOW');
+  const p = location.protocol, h = location.hostname;
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(h);
+  if (!window.isSecureContext || /^(file|content|blob):$/.test(p) || (p === 'http:' && !local)) return fail('INSECURE');
+  if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') return fail('NO_API');
+  return { ok: true };
+  function fail(code) { return { ok: false, error: makeError(code) }; }
+}
+
+/** Ruxsat holati: 'granted' | 'denied' | 'prompt' | 'unknown' (Safari/Firefox ba'zan bilmaydi). */
+async function getPermissionState() {
+  try {
+    if (!navigator.permissions || !navigator.permissions.query) return 'unknown';
+    const r = await navigator.permissions.query({ name: 'camera' });
+    return r.state || 'unknown';
+  } catch (_) { return 'unknown'; }
+}
+
+/* ============================== 2. Xatolar ============================== */
+
+const MESSAGES = {
+  INSECURE: ['Kamera faqat xavfsiz (https://) sahifada ishlaydi.',
+    'Sahifani GitHub Pages yoki boshqa https manzil orqali oching. Faylni telefon xotirasidan (file://, content://) ochganda brauzer kamerani bermaydi.'],
+  NO_API: ['Bu brauzer kamerani qo\'llab-quvvatlamaydi.',
+    'Chrome, Edge, Firefox yoki Safari\'ning yangi versiyasida oching.'],
+  IN_APP: ['Ilova ichidagi brauzer (Telegram, Instagram va h.k.) kamerani bermadi.',
+    'Havolani «Brauzerda ochish» orqali Chrome yoki Safari\'da oching.'],
+  DENIED: ['Kameraga ruxsat berilmadi.',
+    'Manzil satridagi 🔒 (yoki ⓘ) belgisini bosing → «Kamera» → «Ruxsat berish», so\'ng sahifani yangilang.'],
+  DENIED_SYSTEM: ['Kamera tizim sozlamalarida yopilgan.',
+    'Telefon/kompyuter sozlamalari → Maxfiylik → Kamera bo\'limida brauzerga ruxsat bering.'],
+  NOT_FOUND: ['Kamera topilmadi.',
+    'Qurilmada kamera borligini va ulanganini tekshiring (USB-kamerani qayta ulang).'],
+  BUSY: ['Kamera boshqa ilova yoki boshqa oynada band.',
+    'Zoom, Telegram, boshqa brauzer oynasi kabi kamerani ishlatayotgan dasturlarni yoping va qayta urinib ko\'ring.'],
+  OVERCONSTRAINED: ['Tanlangan kamera so\'ralgan sozlamalarni qo\'llamaydi.',
+    'Boshqa kamerani tanlang yoki pastroq sifat (720p/480p) bilan urinib ko\'ring.'],
+  ABORTED: ['Kamerani ishga tushirish to\'xtatildi.', 'Qayta urinib ko\'ring.'],
+  UNKNOWN: ['Kamerani ochib bo\'lmadi.', 'Sahifani yangilab, qayta urinib ko\'ring.'],
+  NO_WINDOW: ['Brauzer muhiti topilmadi.', '']
+};
+
+/** CameraKit xatosi: code (dasturchi uchun), uz (foydalanuvchi uchun xabar), hint (nima qilish kerak). */
+class CameraError extends Error {
+  constructor(code, cause) {
+    const [uz, hint] = MESSAGES[code] || MESSAGES.UNKNOWN;
+    super(uz);
+    this.name = 'CameraError';
+    this.code = code; this.uz = uz; this.hint = hint; this.cause = cause;
+  }
+}
+function makeError(code, cause) { return new CameraError(code, cause); }
+
+/** Brauzerning DOMException xatosini CameraError'ga aylantiradi. */
+function normalizeError(e) {
+  if (e instanceof CameraError) return e;
+  const n = e && e.name, m = String((e && e.message) || '');
+  switch (n) {
+    case 'NotAllowedError': case 'PermissionDeniedError':
+      // macOS/Windows tizim darajasida yopilgan bo'lsa Chrome «Permission denied by system» deydi
+      if (/system/i.test(m)) return makeError('DENIED_SYSTEM', e);
+      return makeError(detectDevice().inApp ? 'IN_APP' : 'DENIED', e);
+    case 'SecurityError': return makeError('INSECURE', e);
+    case 'NotFoundError': case 'DevicesNotFoundError': return makeError('NOT_FOUND', e);
+    case 'NotReadableError': case 'TrackStartError': return makeError('BUSY', e);
+    case 'OverconstrainedError': case 'ConstraintNotSatisfiedError': return makeError('OVERCONSTRAINED', e);
+    case 'AbortError': return makeError('ABORTED', e);
+    case 'TypeError': return makeError('NO_API', e);
+    default: return makeError('UNKNOWN', e);
+  }
+}
+/** Bu xatoda keyingi (yumshoqroq) talab bilan qayta urinish mantiqiymi? */
+const isRetryable = err => err.code === 'OVERCONSTRAINED' || err.code === 'NOT_FOUND' || err.code === 'BUSY' || err.code === 'ABORTED' || err.code === 'UNKNOWN';
+
+/* ============================== 3. Kameralar ro'yxati ============================== */
+
+const RESOLUTIONS = {
+  '480p': { width: 640, height: 480 },     // qo'l kuzatuvi uchun eng tez
+  '720p': { width: 1280, height: 720 },    // AR fon + kuzatuv uchun muvozanat (tavsiya)
+  '1080p': { width: 1920, height: 1080 }   // faqat fon sifati muhim bo'lsa
+};
+
+const RX = {
+  back: /back|rear|environment|world|orqa|задн|тыл|arrière|trasera|rück|후면|背面|後/i,
+  front: /front|user|facetime|selfie|фронт|передн|avant|frontal|vorder|전면|前/i,
+  ultra: /ultra|0[.,]5|wide[\s-]?angle|широк/i,
+  tele: /tele|zoom|телефото/i,
+  aux: /depth|infrared|\bir\b|tof|macro|глубин/i,
+  virtual: /virtual|obs|snap camera|manycam|xsplit|nvidia broadcast/i,
+  multi: /dual|triple/i,
+  usb: /usb|logitech|webcam|hd pro|c9\d\d|brio|razer|elgato/i
+};
+
+/**
+ * Bitta kamerani tasniflaydi.
+ * @returns {{deviceId:string,groupId:string,label:string,facing:'user'|'environment'|'unknown',kind:string,score:number}}
+ */
+function classify(dev, index, settingsByDevice) {
+  const label = dev.label || '';
+  const s = settingsByDevice[dev.deviceId];
+  let facing = (s && s.facingMode) || 'unknown';
+  if (Array.isArray(facing)) facing = facing[0] || 'unknown';
+  if (facing === 'left' || facing === 'right') facing = 'environment';
+  if (facing === 'unknown') facing = RX.back.test(label) ? 'environment' : RX.front.test(label) ? 'user' : 'unknown';
+  let kind = 'main';
+  if (RX.ultra.test(label)) kind = 'ultrawide';
+  else if (RX.tele.test(label)) kind = 'tele';
+  else if (RX.aux.test(label)) kind = 'aux';
+  else if (RX.virtual.test(label)) kind = 'virtual';
+  else if (RX.multi.test(label)) kind = 'multi';
+  else if (RX.usb.test(label)) kind = 'usb';
+  // Asosiy kamera birinchi: Android'da «camera2 0» odatda asosiy orqa, iOS'da «Back Camera» — oddiy keng burchakli
+  const n = /camera2?\s*(\d+)/i.exec(label);
+  const score = { main: 0, usb: 1, multi: 2, ultrawide: 3, tele: 4, virtual: 6, aux: 8 }[kind] * 10 + (n ? Math.min(+n[1], 9) : index % 10);
+  return { deviceId: dev.deviceId, groupId: dev.groupId, label, facing, kind, score };
+}
+
+/** Kameralarga foydalanuvchiga tushunarli nom beradi: «Orqa kamera», «Orqa ultra-wide», «Old kamera», «USB kamera». */
+function niceName(cam, i, dev) {
+  const side = cam.facing === 'environment' ? 'Orqa' : cam.facing === 'user' ? 'Old' : '';
+  const extra = { ultrawide: ' ultra-wide', tele: ' telefoto', aux: ' (yordamchi)', virtual: ' (virtual)', multi: ' (ko\'p linzali)' }[cam.kind] || '';
+  if (side) return side + (extra || ' kamera');
+  if (!dev.isMobile) return cam.label ? cam.label.replace(/\s*\([0-9a-f]{4}:[0-9a-f]{4}\)\s*$/i, '') : 'Veb-kamera ' + (i + 1);
+  return cam.label || 'Kamera ' + (i + 1);
+}
+
+/* ============================== 4. CameraManager ============================== */
+
+const STORE_KEY = 'camerakit.lastDevice';
+const store = {
+  get() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch (_) { return null; } },
+  set(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch (_) { /* yashirin rejim */ } }
+};
+const stopStream = s => { if (s) s.getTracks().forEach(t => { t.onended = null; try { t.stop(); } catch (_) {} }); };
+
+/**
+ * Kamera boshqaruvchisi.
+ * Hodisalar (addEventListener): 'start' {info}, 'stop', 'error' {error}, 'devicechange' {cameras}, 'ended'.
+ *
+ * @example
+ *   const cam = new CameraManager({ video: document.querySelector('video'), resolution: '720p' });
+ *   cam.addEventListener('error', e => showMessage(e.detail.error.uz, e.detail.error.hint));
+ *   await cam.start();           // telefonda orqa, kompyuterda veb-kamera
+ *   await cam.switchCamera();    // keyingi kamera
+ */
+class CameraManager extends EventTarget {
+  /**
+   * @param {object}  [o]
+   * @param {HTMLVideoElement} [o.video]   oqim ulanadigan video (bo'lmasa yashirin video yaratiladi)
+   * @param {'environment'|'user'|'auto'} [o.facing='auto']  auto: telefonda orqa, kompyuterda old/veb-kamera
+   * @param {'480p'|'720p'|'1080p'} [o.resolution='720p']
+   * @param {number}  [o.frameRate=30]     so'raladigan FPS (ideal; majburiy emas)
+   * @param {boolean} [o.remember=true]    tanlangan kamerani eslab qolish (localStorage)
+   * @param {boolean} [o.pauseWhenHidden=true] boshqa varaqqa o'tganda kamerani bo'shatish (batareya, maxfiylik)
+   */
+  constructor(o = {}) {
+    super();
+    this.opts = { facing: 'auto', resolution: '720p', frameRate: 30, remember: true, pauseWhenHidden: true, ...o };
+    this.device = detectDevice();
+    this.video = o.video || createHiddenVideo();
+    this.stream = null;
+    this.info = null;            // {deviceId,label,name,facing,kind,width,height,frameRate,mirrored}
+    this.cameras = [];           // listCameras() natijasi
+    this._token = 0;             // eski (bekor qilingan) so'rovlarni tanish uchun
+    this._busy = null;
+    this._settings = {};         // deviceId → oxirgi ma'lum sozlamalar (facingMode)
+    this._wasRunning = false;
+    this._onDeviceChange = () => this.listCameras().then(c => this._emit('devicechange', { cameras: c })).catch(() => {});
+    this._onVisibility = () => this._handleVisibility();
+    if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) navigator.mediaDevices.addEventListener('devicechange', this._onDeviceChange);
+    if (this.opts.pauseWhenHidden) document.addEventListener('visibilitychange', this._onVisibility);
+  }
+
+  get active() { return !!(this.stream && this.stream.active); }
+  /** Oldingi kamera tasvirini ko'zgudek ko'rsatish kerakmi (old kamera va kompyuter veb-kamerasi). */
+  get mirrored() { return !!(this.info && this.info.mirrored); }
+
+  /** Kerakli tomon: 'auto' telefonda orqa, kompyuterda old. */
+  resolveFacing(f = this.opts.facing) {
+    if (f === 'environment' || f === 'user') return f;
+    return this.device.isMobile ? 'environment' : 'user';
+  }
+
+  /**
+   * Kamerani ishga tushiradi.
+   * @param {object} [o]  {facing, deviceId, resolution, frameRate} — bir martalik o'zgartirishlar
+   * @returns {Promise<object>} this.info
+   */
+  async start(o = {}) {
+    const sup = checkSupport();
+    if (!sup.ok) return this._fail(sup.error);
+    const token = ++this._token;
+    const facing = this.resolveFacing(o.facing);
+    const res = RESOLUTIONS[o.resolution || this.opts.resolution] || RESOLUTIONS['720p'];
+    const fps = o.frameRate || this.opts.frameRate;
+    const remembered = this.opts.remember && !o.facing && !o.deviceId ? store.get() : null;
+    const deviceId = o.deviceId || (remembered && remembered.deviceId) || null;
+
+    // Telefonda bir vaqtda ikki kamera ochib bo'lmaydi — avval eskisini yopamiz
+    const previous = this.info;
+    this._release();
+
+    const attempts = this._buildAttempts({ facing, deviceId, res, fps });
+    let lastErr = null, stream = null, used = null;
+    for (const a of attempts) {
+      if (token !== this._token) return this._fail(makeError('ABORTED'), true);
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: a.video });
+        used = a; break;
+      } catch (e) {
+        lastErr = normalizeError(e);
+        if (!isRetryable(lastErr)) break;                // ruxsat yo'q / xavfsiz emas — boshqa urinish befoyda
+      }
+    }
+    if (!stream) {
+      // yangi kamera ochilmasa — avvalgisiga qaytishga urinamiz (foydalanuvchi kamerasiz qolmasin)
+      if (previous && o.deviceId && previous.deviceId !== o.deviceId && lastErr && isRetryable(lastErr)) {
+        try { await this.start({ deviceId: previous.deviceId }); } catch (_) {}
+        if (this.active) { this._emit('error', { error: lastErr }); throw lastErr; }
+      }
+      return this._fail(lastErr || makeError('NOT_FOUND'));
+    }
+    if (token !== this._token) { stopStream(stream); return this._fail(makeError('ABORTED'), true); }
+
+    this.stream = stream;
+    const track = stream.getVideoTracks()[0];
+    await this.listCameras().catch(() => {});           // ruxsatdan keyin nomlar (label) paydo bo'ladi
+
+    // Telefonda orqa so'ralgan-u, old kamera berilgan bo'lsa (ba'zi Android brauzerlari) — orqani deviceId bilan ochamiz
+    const got = this._describe(track);
+    if (facing === 'environment' && this.device.isMobile && got.facing === 'user' && !deviceId && !o._retried) {
+      const back = this.cameras.find(c => c.facing === 'environment');
+      if (back) return this.start({ ...o, deviceId: back.deviceId, _retried: true }).catch(() => this.start({ ...o, facing: 'user', _retried: true }));
+    }
+    // Brauzer ultra-wide / telefoto / chuqurlik linzasini bergan bo'lsa — AR uchun asosiy (keng) orqa kameraga o'tamiz:
+    // ultra-wide chetlarda qiyshaytiradi, telefoto esa qo'lni sig'dirmaydi
+    if (facing === 'environment' && this.device.isMobile && !deviceId && !o._retried && /^(ultrawide|tele|aux)$/.test(got.kind)) {
+      const main = this.cameras.find(c => c.facing === 'environment' && (c.kind === 'main' || c.kind === 'multi') && c.deviceId);
+      if (main && main.deviceId !== got.deviceId) return this.start({ ...o, deviceId: main.deviceId, _retried: true });
+    }
+
+    track.onended = () => { this._emit('ended'); this.stop(); };
+    await attachStream(this.video, stream, got.mirrored);
+    if (token !== this._token) { stopStream(stream); return this._fail(makeError('ABORTED'), true); }
+    this.info = { ...got, ...readVideoSize(this.video, track), strategy: used.name };
+    if (this.opts.remember && o.deviceId && !o._retried) store.set({ deviceId: this.info.deviceId, facing: this.info.facing });
+    this._emit('start', { info: this.info });
+    return this.info;
+  }
+
+  /** Kamerani to'xtatadi va qurilmani bo'shatadi (kamera chirog'i o'chadi). */
+  stop() {
+    this._token++;
+    const was = this.active;
+    this._release();
+    this.info = null;
+    if (was) this._emit('stop');
+  }
+
+  /** Barcha resurslarni tozalaydi (sahifadan chiqishda). */
+  destroy() {
+    this.stop();
+    if (navigator.mediaDevices && navigator.mediaDevices.removeEventListener) navigator.mediaDevices.removeEventListener('devicechange', this._onDeviceChange);
+    document.removeEventListener('visibilitychange', this._onVisibility);
+    if (this.video && this.video.dataset.camerakit === 'hidden') this.video.remove();
+  }
+
+  /**
+   * Mavjud kameralar ro'yxati. Ruxsatdan oldin nomlar bo'sh bo'lishi mumkin — start()dan keyin to'liq bo'ladi.
+   * @returns {Promise<Array<{deviceId,label,name,facing,kind,active}>>}
+   */
+  async listCameras() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return (this.cameras = []);
+    const all = await navigator.mediaDevices.enumerateDevices();
+    const vids = all.filter(d => d.kind === 'videoinput');
+    const cur = this.stream && this.stream.getVideoTracks()[0];
+    if (cur) { const s = safeSettings(cur); if (s.deviceId) this._settings[s.deviceId] = s; }
+    const list = vids.map((d, i) => classify(d, i, this._settings));
+    // tartib: telefonda — orqa (asosiy birinchi), keyin old; kompyuterda — tizim tartibi, virtual oxirida
+    const sideRank = c => this.device.isMobile ? (c.facing === 'environment' ? 0 : c.facing === 'unknown' ? 1 : 2) : 0;
+    list.sort((a, b) => sideRank(a) - sideRank(b) || a.score - b.score);
+    const activeId = cur && safeSettings(cur).deviceId;
+    this.cameras = list.map((c, i) => ({ ...c, name: niceName(c, i, this.device), active: !!activeId && c.deviceId === activeId }));
+    // bir xil nomlarni raqamlaymiz: «Orqa kamera 2»
+    const seen = {};
+    this.cameras.forEach(c => { seen[c.name] = (seen[c.name] || 0) + 1; if (seen[c.name] > 1) c.name += ' ' + seen[c.name]; });
+    return this.cameras;
+  }
+
+  /** Bir nechta kamera bormi (almashtirish tugmasini ko'rsatish uchun). */
+  async hasMultipleCameras() { return (await this.listCameras()).filter(c => c.kind !== 'aux').length > 1; }
+
+  /**
+   * Keyingi kameraga o'tadi.
+   * mode 'facing' — old ↔ orqa (telefon uchun qulay), 'cycle' — ro'yxatdagi barcha kameralar bo'yicha.
+   */
+  async switchCamera(mode = this.device.isMobile ? 'facing' : 'cycle') {
+    await this.listCameras();
+    const usable = this.cameras.filter(c => c.kind !== 'aux');
+    if (usable.length < 2) return this.info;
+    const cur = this.info;
+    if (mode === 'facing' && cur && cur.facing !== 'unknown') {
+      const want = cur.facing === 'environment' ? 'user' : 'environment';
+      const target = usable.find(c => c.facing === want);
+      if (target) return this.selectCamera(target.deviceId);
+    }
+    const i = cur ? usable.findIndex(c => c.deviceId === cur.deviceId) : -1;
+    return this.selectCamera(usable[(i + 1) % usable.length].deviceId);
+  }
+
+  /** Aniq kamerani tanlaydi (UI ro'yxatidan). */
+  selectCamera(deviceId) { return this.start({ deviceId }); }
+
+  /** Sifatni o'zgartiradi (oqimni qayta ochmasdan, iloji bo'lsa). */
+  async setResolution(name) {
+    const r = RESOLUTIONS[name]; if (!r) return this.info;
+    this.opts.resolution = name;
+    const t = this.stream && this.stream.getVideoTracks()[0];
+    if (!t) return this.info;
+    try { await t.applyConstraints({ width: { ideal: r.width }, height: { ideal: r.height }, frameRate: { ideal: this.opts.frameRate } }); }
+    catch (_) { return this.start({ deviceId: this.info && this.info.deviceId }); }
+    await waitFrame(this.video);
+    Object.assign(this.info, readVideoSize(this.video, t));
+    this._emit('start', { info: this.info });
+    return this.info;
+  }
+
+  /** Chiroq (torch) — faqat qo'llaydigan orqa kameralarda (Android Chrome). */
+  async setTorch(on) {
+    const t = this.stream && this.stream.getVideoTracks()[0];
+    const caps = t && t.getCapabilities ? t.getCapabilities() : {};
+    if (!caps.torch) return false;
+    try { await t.applyConstraints({ advanced: [{ torch: !!on }] }); return true; } catch (_) { return false; }
+  }
+
+  /**
+   * WebXR immersive-ar sessiyasidan OLDIN chaqiring: Android'da kamera bitta — XR uni o'zi ishlatadi.
+   * Sessiya tugagach cam.start() bilan qaytadan yoqing.
+   */
+  releaseForXR() { this.stop(); }
+
+  /* ---------- ichki ---------- */
+
+  _buildAttempts({ facing, deviceId, res, fps }) {
+    const base = { width: { ideal: res.width }, height: { ideal: res.height }, frameRate: { ideal: fps } };   // faqat «ideal» — majburiy talab OverconstrainedError'ga olib kelmasin
+    const A = [];
+    if (deviceId) A.push({ name: 'deviceId', video: { ...base, deviceId: { exact: deviceId } } });
+    if (this.device.isMobile) {
+      A.push({ name: 'exact-' + facing, video: { ...base, facingMode: { exact: facing } } });
+      A.push({ name: 'ideal-' + facing, video: { ...base, facingMode: facing } });
+      // ba'zi telefonlarda yuqori sifat + facingMode birga mos kelmaydi — sifatsiz urinamiz
+      A.push({ name: 'facing-only', video: { facingMode: facing } });
+    } else {
+      // kompyuter: «orqa» so'ralsa ham ideal (exact emas) — veb-kamera baribir ochiladi
+      A.push({ name: 'desktop', video: facing === 'environment' ? { ...base, facingMode: 'environment' } : base });
+    }
+    A.push({ name: 'any-hd', video: base });
+    A.push({ name: 'any', video: true });               // eng oxirgi chora: istalgan kamera
+    return A;
+  }
+
+  _describe(track) {
+    const s = safeSettings(track);
+    if (s.deviceId) this._settings[s.deviceId] = s;
+    const cam = this.cameras.find(c => c.deviceId === s.deviceId);
+    let facing = s.facingMode || (cam && cam.facing) || 'unknown';
+    if (facing === 'left' || facing === 'right') facing = 'environment';
+    if (facing === 'unknown') {
+      const l = track.label || '';
+      facing = RX.back.test(l) ? 'environment' : RX.front.test(l) ? 'user' : this.device.isMobile ? 'unknown' : 'user';
+    }
+    return {
+      deviceId: s.deviceId || (cam && cam.deviceId) || '',
+      label: track.label || (cam && cam.label) || '',
+      name: cam ? cam.name : (facing === 'environment' ? 'Orqa kamera' : facing === 'user' ? 'Old kamera' : 'Kamera'),
+      facing, kind: cam ? cam.kind : 'main',
+      mirrored: facing === 'user'                       // old kamera ko'zgudek ko'rsatiladi (tabiiy his)
+    };
+  }
+
+  _release() {
+    stopStream(this.stream);
+    this.stream = null;
+    if (this.video) { try { this.video.pause(); } catch (_) {} this.video.srcObject = null; }
+  }
+
+  _handleVisibility() {
+    if (document.hidden) {
+      if (this.active) { this._wasRunning = this.info && this.info.deviceId; this.stop(); }
+    } else if (this._wasRunning) {
+      const id = this._wasRunning; this._wasRunning = false;
+      this.start({ deviceId: id }).catch(() => {});
+    }
+  }
+
+  _fail(err, silent) { if (!silent) this._emit('error', { error: err }); throw err; }
+  _emit(type, detail) { this.dispatchEvent(new CustomEvent(type, { detail })); }
+}
+
+/* ============================== 5. Video yordamchilari ============================== */
+
+function createHiddenVideo() {
+  const v = document.createElement('video');
+  v.dataset.camerakit = 'hidden';
+  v.setAttribute('aria-hidden', 'true');
+  v.style.cssText = 'position:fixed;left:-2px;top:-2px;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
+  document.body.appendChild(v);
+  return v;
+}
+
+function safeSettings(t) { try { return t.getSettings ? t.getSettings() : {}; } catch (_) { return {}; } }
+
+function readVideoSize(video, track) {
+  const s = safeSettings(track);
+  const width = video.videoWidth || s.width || 0, height = video.videoHeight || s.height || 0;
+  return { width, height, aspect: width && height ? width / height : 4 / 3, frameRate: s.frameRate ? Math.round(s.frameRate) : null };
+}
+
+function waitFrame(video, ms = 3000) {
+  return new Promise(res => {
+    if (video.readyState >= 2 && video.videoWidth) return res();
+    const done = () => { clearTimeout(t); video.removeEventListener('loadeddata', done); video.removeEventListener('resize', done); res(); };
+    const t = setTimeout(done, ms);
+    video.addEventListener('loadeddata', done); video.addEventListener('resize', done);
+  });
+}
+
+/**
+ * Oqimni <video>ga ulaydi. iOS Safari uchun muted + playsinline majburiy.
+ * mirrored — faqat ko'rinish uchun (CSS), kadr tahliliga ta'sir qilmaydi.
+ */
+async function attachStream(video, stream, mirrored = false) {
+  video.muted = true; video.defaultMuted = true; video.playsInline = true;
+  video.setAttribute('playsinline', ''); video.setAttribute('webkit-playsinline', ''); video.setAttribute('muted', '');
+  video.autoplay = true;
+  video.srcObject = stream;
+  if (video.dataset.camerakit !== 'hidden') video.style.transform = mirrored ? 'scaleX(-1)' : '';
+  try { await Promise.race([video.play(), new Promise(r => setTimeout(r, 1500))]); } catch (_) { /* avtoijro bloki — kadrlar baribir keladi */ }
+  await waitFrame(video);
+}
+
+/* ============================== 6. Kadr sikli (hand tracking uchun) ============================== */
+
+/**
+ * Har bir YANGI video kadrda onFrame chaqiriladi. FPS cheklanadi, onFrame tugamaguncha keyingi kadr tashlanadi
+ * (backpressure) — model sekin bo'lsa ham UI qotmaydi. Sahifa yashirin bo'lsa to'xtaydi.
+ *
+ * @param {HTMLVideoElement} video
+ * @param {(video:HTMLVideoElement, nowMs:number, meta:object)=>void|Promise<void>} onFrame
+ * @param {{maxFps?:number}} [o]
+ * @returns {{stop:()=>void, readonly fps:number, readonly dropped:number}}
+ */
+function createFrameLoop(video, onFrame, o = {}) {
+  const minGap = 1000 / (o.maxFps || 30) - 2;
+  let running = true, busy = false, last = -1, lastT = 0, handle = 0, fps = 0, dropped = 0, n = 0, t0 = performance.now();
+  const rvfc = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+  const schedule = () => { if (!running) return; handle = rvfc ? video.requestVideoFrameCallback(tick) : requestAnimationFrame(tick); };
+  function tick(now, meta) {
+    if (!running) return;
+    const mt = meta && meta.mediaTime != null ? meta.mediaTime : video.currentTime;
+    const fresh = mt !== last && video.readyState >= 2 && !document.hidden;
+    if (fresh && now - lastT >= minGap) {
+      if (busy) dropped++;
+      else {
+        last = mt; lastT = now; busy = true; n++;
+        if (now - t0 >= 1000) { fps = Math.round(n * 1000 / (now - t0)); n = 0; t0 = now; }
+        let r;
+        try { r = onFrame(video, now, meta || {}); } catch (e) { console.warn('[CameraKit] onFrame:', e); }
+        if (r && typeof r.then === 'function') r.catch(e => console.warn('[CameraKit] onFrame:', e)).finally(() => { busy = false; });
+        else busy = false;
+      }
+    }
+    schedule();
+  }
+  schedule();
+  return {
+    stop() { running = false; try { rvfc ? video.cancelVideoFrameCallback(handle) : cancelAnimationFrame(handle); } catch (_) {} },
+    get fps() { return fps; },
+    get dropped() { return dropped; }
+  };
+}
+
+/* ============================== 7. Three.js / A-Frame foni ============================== */
+
+/**
+ * Teksturani «object-fit: cover» kabi moslaydi (cho'zilmaydi, ortiqchasi kesiladi) va kerak bo'lsa ko'zgulaydi.
+ * scene.background uchun ham, to'liq ekran tekislik uchun ham ishlaydi (Three r128+).
+ */
+function fitTextureCover(texture, videoAspect, viewAspect, mirrored = false) {
+  let rx = 1, ry = 1;
+  if (videoAspect > viewAspect) rx = viewAspect / videoAspect; else ry = videoAspect / viewAspect;
+  let ox = (1 - rx) / 2; const oy = (1 - ry) / 2;
+  if (mirrored) { ox = ox + rx; rx = -rx; }
+  texture.repeat.set(rx, ry); texture.offset.set(ox, oy);
+  texture.matrixAutoUpdate = true;
+  texture.needsUpdate = true;
+}
+
+/**
+ * Kamera tasvirini Three.js sahna foniga qo'yadi (AR «sehrli oyna» rejimi).
+ * @param {object} THREE      Three.js moduli (yoki AFRAME.THREE)
+ * @param {object} renderer   THREE.WebGLRenderer
+ * @param {object} scene      THREE.Scene
+ * @param {CameraManager} cam
+ * @returns {{texture, update:()=>void, dispose:()=>void}}
+ */
+function useCameraBackground(THREE, renderer, scene, cam) {
+  const tex = new THREE.VideoTexture(cam.video);
+  tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+  if ('colorSpace' in tex && THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;   // r152+
+  else if (THREE.sRGBEncoding !== undefined) tex.encoding = THREE.sRGBEncoding;           // eski versiyalar
+  const prev = scene.background;
+  scene.background = tex;
+  const update = () => {
+    const c = renderer.domElement;
+    const va = cam.video.videoWidth && cam.video.videoHeight ? cam.video.videoWidth / cam.video.videoHeight : 4 / 3;
+    fitTextureCover(tex, va, (c.clientWidth || c.width) / Math.max(1, c.clientHeight || c.height), cam.mirrored);
+  };
+  const onStart = () => update();
+  cam.addEventListener('start', onStart);
+  cam.video.addEventListener('resize', update);         // telefon burilganda video o'lchami o'zgaradi
+  window.addEventListener('resize', update);
+  update();
+  return {
+    texture: tex, update,
+    dispose() {
+      cam.removeEventListener('start', onStart); cam.video.removeEventListener('resize', update); window.removeEventListener('resize', update);
+      if (scene.background === tex) scene.background = prev || null;
+      tex.dispose();
+    }
+  };
+}
+
+/** A-Frame komponenti: <a-scene camera-background="resolution: 720p; facing: auto"> */
+function registerAFrameComponent(AFRAME = globalThis.AFRAME) {
+  if (!AFRAME || AFRAME.components['camera-background']) return;
+  AFRAME.registerComponent('camera-background', {
+    schema: { resolution: { default: '720p' }, facing: { default: 'auto' } },
+    init() {
+      this.cam = new CameraManager({ resolution: this.data.resolution, facing: this.data.facing });
+      const go = () => {
+        this.bg = useCameraBackground(AFRAME.THREE, this.el.renderer, this.el.object3D, this.cam);
+        this.cam.start().catch(e => this.el.emit('camera-error', { error: e }));
+      };
+      this.el.hasLoaded ? go() : this.el.addEventListener('loaded', go, { once: true });
+      // immersive-ar boshlanganda kamerani XR'ga bo'shatamiz, tugaganda qaytaramiz
+      this.el.addEventListener('enter-vr', () => { if (this.el.is('ar-mode')) this.cam.releaseForXR(); });
+      this.el.addEventListener('exit-vr', () => { if (!this.cam.active) this.cam.start().catch(() => {}); });
+    },
+    remove() { if (this.bg) this.bg.dispose(); this.cam.destroy(); }
+  });
+}
+
+/* ============================== 8. Kamera tanlash UI (ixtiyoriy) ============================== */
+
+/**
+ * Tayyor, kichik boshqaruv paneli: 🔄 almashtirish tugmasi + kameralar ro'yxati + xabar qatori.
+ * Uslub CSS o'zgaruvchilari bilan o'zgartiriladi; panelni istalgan joyga qo'yish mumkin.
+ * @param {CameraManager} cam
+ * @param {HTMLElement} mount
+ * @param {{showErrors?:boolean}} [o]  showErrors:false — xatolarni o'zingiz ko'rsatsangiz (takrorlanmasin)
+ * @returns {{el:HTMLElement, refresh:()=>Promise<void>, destroy:()=>void}}
+ */
+function createCameraSwitcher(cam, mount, o = {}) {
+  const showErrors = o.showErrors !== false;
+  injectSwitcherCss();
+  const el = document.createElement('div');
+  el.className = 'ck-switch';
+  el.innerHTML =
+    '<button type="button" class="ck-btn" data-ck="flip" aria-label="Kamerani almashtirish" title="Kamerani almashtirish">🔄</button>' +
+    '<label class="ck-sel"><span class="ck-vh">Kamera</span><select data-ck="list" aria-label="Kamerani tanlash"></select></label>' +
+    '<p class="ck-msg" role="status" aria-live="polite" hidden></p>';
+  mount.appendChild(el);
+  const btn = el.querySelector('[data-ck=flip]'), sel = el.querySelector('[data-ck=list]'), msg = el.querySelector('.ck-msg');
+
+  const setBusy = b => { btn.disabled = b; sel.disabled = b; el.classList.toggle('ck-busy', b); };
+  const say = (t, kind) => { msg.hidden = !t; msg.textContent = t || ''; msg.dataset.kind = kind || ''; };
+  const run = async fn => { setBusy(true); say(''); try { await fn(); } catch (e) { if (showErrors) say(e.uz ? e.uz + ' ' + (e.hint || '') : String(e), 'err'); } finally { setBusy(false); refresh(); } };
+
+  async function refresh() {
+    const list = await cam.listCameras().catch(() => []);
+    const usable = list.filter(c => c.kind !== 'aux');
+    sel.innerHTML = '';
+    usable.forEach(c => { const o = document.createElement('option'); o.value = c.deviceId; o.textContent = c.name; o.selected = !!(cam.info && cam.info.deviceId === c.deviceId); sel.appendChild(o); });
+    const many = cam.active && usable.length > 1 && usable.every(c => c.deviceId);   // faqat kamera ishlayotganda; ruxsatdan oldin deviceId bo'sh bo'ladi
+    btn.hidden = !many; sel.parentElement.hidden = !many;
+  }
+  btn.addEventListener('click', () => run(() => cam.switchCamera()));
+  sel.addEventListener('change', () => run(() => cam.selectCamera(sel.value)));
+  const onErr = e => showErrors && say(e.detail.error.uz + ' ' + (e.detail.error.hint || ''), 'err');
+  const onStart = () => { say(''); refresh(); };
+  cam.addEventListener('error', onErr); cam.addEventListener('start', onStart); cam.addEventListener('stop', refresh); cam.addEventListener('devicechange', refresh);
+  refresh();
+  return {
+    el, refresh,
+    destroy() { cam.removeEventListener('error', onErr); cam.removeEventListener('start', onStart); cam.removeEventListener('stop', refresh); cam.removeEventListener('devicechange', refresh); el.remove(); }
+  };
+}
+
+function injectSwitcherCss() {
+  if (document.getElementById('ck-css')) return;
+  const s = document.createElement('style'); s.id = 'ck-css';
+  s.textContent = `
+.ck-switch{--ck-bg:rgba(12,20,40,.78);--ck-fg:#f1f5ff;--ck-ac:#38bdf8;display:flex;flex-wrap:wrap;align-items:center;gap:8px;font:600 14px/1.3 system-ui,sans-serif;color:var(--ck-fg)}
+.ck-btn{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:var(--ck-bg);color:var(--ck-fg);font-size:20px;cursor:pointer;backdrop-filter:blur(8px);transition:transform .25s}
+.ck-btn:hover{border-color:var(--ck-ac)}.ck-btn:active{transform:rotate(180deg)}.ck-btn:disabled{opacity:.5;cursor:progress}
+.ck-sel select{height:44px;max-width:220px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:var(--ck-bg);color:var(--ck-fg);padding:0 10px;font:inherit}
+.ck-btn:focus-visible,.ck-sel select:focus-visible{outline:3px solid var(--ck-ac);outline-offset:2px}
+.ck-msg{flex-basis:100%;margin:0;padding:8px 12px;border-radius:12px;background:var(--ck-bg)}.ck-msg[data-kind=err]{background:rgba(185,28,28,.85)}
+.ck-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ck-switch [hidden],.ck-switch[hidden]{display:none!important}`;
+  document.head.appendChild(s);
+}
+
+global.CameraKit = { detectDevice, checkSupport, getPermissionState, CameraError, normalizeError, RESOLUTIONS, CameraManager, attachStream, createFrameLoop, fitTextureCover, useCameraBackground, registerAFrameComponent, createCameraSwitcher };
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+<script id="motion-kit-js">
+/**
+ * MotionKit (oddiy <script> versiyasi: window.MotionKit) — real harakatni VR/AR sahnaga ko'chirish (tana siljishi, joyida yurish, qo'l ishoralari, ushlash).
+ * ----------------------------------------------------------------------------------------------------------
+ * CameraKit (camera-kit.js) bilan ishlaydi: kamera → MediaPipe (Pose + Hands) → filtrlar → LocomotionRig → Three.js / A-Frame.
+ *
+ *  ┌──────────────┐   kadr    ┌──────────────────────┐  landmarklar ┌─────────────────────────────┐
+ *  │ CameraKit    │ ───────▶ │ VisionBackend        │ ──────────▶ │ BodyTracker (X,Y,Z siljish) │──┐
+ *  │ (orqa/old,   │          │ Worker yoki asosiy   │             │ StepDetector (joyida yurish)│  │  LocomotionRig
+ *  │  ruxsatlar)  │          │ oqim, GPU → CPU      │             │ HandLocomotion (tortish,    │  ├─▶ (silliqlash, chegaralar)
+ *  └──────────────┘          └──────────────────────┘             │  ko'rsatish, musht=tormoz)  │  │   → camera / dolly
+ *                                                                 │ GrabInteractor (ushlash)    │──┘
+ *                                                                 └─────────────────────────────┘
+ *
+ * Koordinatalar (Three.js bilan bir xil): X — o'ngga, Y — yuqoriga, −Z — oldinga (kamera −Z ga qaraydi).
+ * «Foydalanuvchi tizimi»: right / up / forward (metr). Rig yaw burchagi bo'yicha dunyoga aylantiriladi.
+ *
+ * Mantiq qismlari (filtrlar, BodyTracker, StepDetector, ishoralar, HandLocomotion, LocomotionRig) DOM'ga bog'liq emas —
+ * Node'da ham sinash mumkin. Faqat MotionTracker va VisionBackend brauzer talab qiladi.
+ */
+
+(function (global) {
+'use strict';
+if (global.MotionKit) return;
+/* ============================== 0. Kichik yordamchilar ============================== */
+
+const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+const hyp = (x, y, z = 0) => Math.sqrt(x * x + y * y + z * z);
+const nowSec = () => (typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000;
+const isFiniteNum = v => typeof v === 'number' && Number.isFinite(v);
+
+/* ============================== 1. Silliqlash va o'lik zona ============================== */
+
+/**
+ * One Euro filtri (Casiez va b., 2012): sekin harakatda kuchli silliqlaydi (qaltirash yo'qoladi),
+ * tez harakatda kechikmaydi. minCutoff ↓ — silliqroq; beta ↑ — tez harakatga tezroq javob.
+ */
+class OneEuroFilter {
+  constructor({ minCutoff = 1.0, beta = 0.02, dCutoff = 1.0 } = {}) { Object.assign(this, { minCutoff, beta, dCutoff }); this.reset(); }
+  reset() { this.x = null; this.dx = 0; this.t = null; }
+  static alpha(cutoff, dt) { const r = 2 * Math.PI * cutoff * dt; return r / (r + 1); }
+  filter(v, t = nowSec()) {
+    if (!isFiniteNum(v)) return this.x == null ? 0 : this.x;
+    if (this.x == null) { this.x = v; this.t = t; return v; }
+    const dt = clamp(t - this.t, 1e-3, 0.5); this.t = t;
+    const d = (v - this.x) / dt;
+    this.dx += OneEuroFilter.alpha(this.dCutoff, dt) * (d - this.dx);
+    const cutoff = this.minCutoff + this.beta * Math.abs(this.dx);
+    this.x += OneEuroFilter.alpha(cutoff, dt) * (v - this.x);
+    return this.x;
+  }
+}
+
+/**
+ * 1D Kalman filtri (holat: joy + tezlik). Jitter kuchli, lekin harakat bir tekis bo'lsa yaxshi.
+ * q — jarayon shovqini (katta → tezroq javob), r — o'lchov shovqini (katta → silliqroq).
+ */
+class Kalman1D {
+  constructor({ q = 1, r = 0.0006 } = {}) { Object.assign(this, { q, r }); this.reset(); }
+  reset() { this.x = null; this.v = 0; this.P = [[1, 0], [0, 1]]; this.t = null; }
+  filter(z, t = nowSec()) {
+    if (!isFiniteNum(z)) return this.x == null ? 0 : this.x;
+    if (this.x == null) { this.x = z; this.t = t; return z; }
+    const dt = clamp(t - this.t, 1e-3, 0.5); this.t = t;
+    // bashorat
+    this.x += this.v * dt;
+    const P = this.P, q = this.q;
+    const p00 = P[0][0] + dt * (P[1][0] + P[0][1]) + dt * dt * P[1][1] + q * dt * dt * dt / 3;
+    const p01 = P[0][1] + dt * P[1][1] + q * dt * dt / 2;
+    const p10 = P[1][0] + dt * P[1][1] + q * dt * dt / 2;
+    const p11 = P[1][1] + q * dt;
+    // tuzatish
+    const S = p00 + this.r, k0 = p00 / S, k1 = p10 / S, y = z - this.x;
+    this.x += k0 * y; this.v += k1 * y;
+    this.P = [[(1 - k0) * p00, (1 - k0) * p01], [p10 - k1 * p00, p11 - k1 * p01]];
+    return this.x;
+  }
+}
+
+/** Kadr chastotasiga bog'liq bo'lmagan Lerp: rate — 1/soniya (10 ≈ 0.1 s ichida yetib boradi). */
+const expLerp = (cur, target, rate, dt) => cur + (target - cur) * (1 - Math.exp(-rate * dt));
+
+/** Silliq o'lik zona: |v| < dz bo'lsa 0, aks holda sakrashsiz davom etadi. */
+const deadzone = (v, dz) => (Math.abs(v) <= dz ? 0 : v - Math.sign(v) * dz);
+
+/** Turi bo'yicha filtr: 'oneeuro' | 'kalman' | 'lerp' | 'none'. */
+function makeFilter(kind = 'oneeuro', o = {}) {
+  if (kind === 'kalman') return new Kalman1D(o);
+  if (kind === 'lerp') {
+    const rate = o.rate || 12; let x = null, t0 = null;
+    return { filter(v, t = nowSec()) { if (x == null) { x = v; t0 = t; return v; } const dt = clamp(t - t0, 1e-3, .5); t0 = t; return (x = expLerp(x, v, rate, dt)); }, reset() { x = null; } };
+  }
+  if (kind === 'none') return { filter: v => v, reset() {} };
+  return new OneEuroFilter(o);
+}
+
+/** Bir nechta o'qli filtr (x, y, z …). */
+class VecFilter {
+  constructor(n, kind, o) { this.f = Array.from({ length: n }, () => makeFilter(kind, o)); }
+  filter(arr, t) { return arr.map((v, i) => this.f[i].filter(v, t)); }
+  reset() { this.f.forEach(f => f.reset()); }
+}
+
+/* ============================== 2. Kamera modeli (normallashtirish) ============================== */
+
+/**
+ * Pinhole kamera modeli. MediaPipe koordinatalari (0..1, x — kenglik, y — balandlik bo'yicha) kadr o'lchami va
+ * nisbatidan qat'i nazar «kenglik birligi»ga keltiriladi, so'ng ma'lum haqiqiy o'lcham (yelka kengligi, kaft) orqali
+ * metrga aylantiriladi. Shu sabab 640×480 veb-kamera ham, 1280×720 portret telefon ham bir xil natija beradi.
+ */
+class CameraModel {
+  /** @param {{hfovDeg?:number, width?:number, height?:number}} o  hfovDeg — gorizontal ko'rish burchagi */
+  constructor({ hfovDeg = 62, width = 640, height = 480 } = {}) { this.hfovDeg = hfovDeg; this.setFrame(width, height); }
+  /** Kadr o'lchami o'zgarganda (kamera almashganda, telefon burilganda) chaqiring. */
+  setFrame(width, height) {
+    if (!(width > 0 && height > 0)) return;
+    this.width = width; this.height = height; this.ar = height / width;          // y ni kenglik birligiga o'tkazish koeffitsienti
+    // telefon portret holatida kadr «tik» bo'ladi — gorizontal FOV tor tomonga to'g'ri keladi
+    const fov = this.hfovDeg * Math.PI / 180;
+    this.f = 0.5 / Math.tan(fov / 2);                                             // fokus masofasi, kenglik birligida
+  }
+  /** Ikki nuqta orasidagi masofa — kenglik birligida (kadr nisbatidan mustaqil). */
+  dist(a, b) { return hyp(a.x - b.x, (a.y - b.y) * this.ar); }
+  /** Ma'lum haqiqiy o'lchamdagi jismning kadrdagi kattaligidan masofa (metr). */
+  depthFromSize(sizeNorm, realM) { return sizeNorm > 1e-4 ? realM * this.f / sizeNorm : NaN; }
+  /** Kadr nuqtasi + masofa → kamera fazosidagi 3D nuqta (metr): x o'ngga (kadr bo'yicha), y yuqoriga, d — kameragacha. */
+  unproject(nx, ny, depth) { return { x: (nx - 0.5) / this.f * depth, y: -(ny - 0.5) * this.ar / this.f * depth, d: depth }; }
+}
+
+/** Qurilmaga mos boshlang'ich FOV: noutbuk veb-kamerasi ~60°, telefon old ~70°, orqa ~66°. Kalibrlash bilan aniqlashadi. */
+function defaultFov(device, facing) {
+  if (!device || !device.isMobile) return 62;
+  return facing === 'user' ? 70 : 66;
+}
+
+/**
+ * Kamera fazosi → foydalanuvchi tizimi (right / up / forward).
+ * 'facing-user' — kamera foydalanuvchiga qaragan (veb-kamera, stendga qo'yilgan telefon): kadrda o'ng = foydalanuvchining chapi,
+ *                 kameraga yaqinlashish = oldinga yurish.
+ * 'egocentric'  — kamera foydalanuvchi bilan bir tomonga qaragan (VR ko'zoynakdagi telefonning orqa kamerasi).
+ */
+function camToUser(p, view) {
+  return view === 'egocentric' ? { right: p.x, up: p.y, forward: p.d } : { right: -p.x, up: p.y, forward: -p.d };
+}
+
+/* ============================== 3. Tana: pozitsion kuzatuv ============================== */
+
+/** MediaPipe Pose (33 nuqta) indekslari. */
+const POSE = { NOSE: 0, L_EAR: 7, R_EAR: 8, L_SH: 11, R_SH: 12, L_HIP: 23, R_HIP: 24, L_KNEE: 25, R_KNEE: 26, L_ANK: 27, R_ANK: 28 };
+const vis = (p, min) => p && (p.visibility == null || p.visibility >= min) && isFiniteNum(p.x) && isFiniteNum(p.y);
+const mid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: ((a.z || 0) + (b.z || 0)) / 2 });
+
+/**
+ * Tananing markazi (yelkalar/son o'rtasi) bo'yicha real siljishni metrda hisoblaydi.
+ * Chuqurlik (Z) — yelka kengligidan (pinhole), burilish worldLandmarks orqali kompensatsiya qilinadi;
+ * son ko'rinsa — tana uzunligi ham qo'shiladi (burilishga sezgir emas).
+ */
+class BodyTracker {
+  constructor(o = {}) {
+    this.cfg = {
+      shoulderWidthM: 0.36,       // o'rtacha kattalar; maktab o'quvchisi uchun ~0.30–0.34
+      torsoLengthM: 0.50,         // yelka o'rtasidan son o'rtasigacha
+      minVisibility: 0.5,
+      gain: { right: 1.0, up: 0.6, forward: 1.0 },          // real 1 m → VR'da necha metr
+      deadzone: { right: 0.04, up: 0.04, forward: 0.07 },   // metr; chuqurlik shovqinliroq — kattaroq
+      maxOffset: { right: 1.5, up: 0.6, forward: 2.0 },
+      filter: 'oneeuro', filterOpts: { minCutoff: 0.8, beta: 0.4 },
+      autoCalibrateSec: 0.8,      // birinchi barqaror 0.8 s — «neytral» holat
+      ...o, gain: { right: 1, up: .6, forward: 1, ...(o.gain || {}) }, deadzone: { right: .04, up: .04, forward: .07, ...(o.deadzone || {}) },
+      maxOffset: { right: 1.5, up: .6, forward: 2, ...(o.maxOffset || {}) }
+    };
+    this.cam = o.cameraModel || new CameraModel();
+    this.view = o.view || 'facing-user';
+    this.f = new VecFilter(3, this.cfg.filter, this.cfg.filterOpts);
+    this.base = null; this._cal = null; this.state = { ok: false };
+  }
+  /** Joriy holatni «nol nuqta» qilib oladi (foydalanuvchi joyida turibdi). durationSec davomida o'rtachalanadi. */
+  calibrate(durationSec = 0.8) { this.base = null; this._cal = { until: null, dur: durationSec, n: 0, s: { x: 0, y: 0, d: 0 } }; this.f.reset(); }
+  reset() { this.base = null; this._cal = null; this.f.reset(); this.state = { ok: false }; }
+
+  /**
+   * @param {Array} lm      Pose landmarklari (normallashgan, 33 ta)
+   * @param {Array} [world] Pose worldLandmarks (metr) — burilishni hisobga olish uchun
+   * @param {number} [t]    soniya
+   * @returns {{ok:boolean, calibrated:boolean, distance:number, raw:{right,up,forward}, offset:{right,up,forward}, yaw:number, confidence:number}}
+   */
+  update(lm, world, t = nowSec()) {
+    const C = this.cfg, P = POSE;
+    if (!lm || lm.length < 25) return (this.state = { ...this.state, ok: false });
+    const ls = lm[P.L_SH], rs = lm[P.R_SH];
+    if (!vis(ls, C.minVisibility) || !vis(rs, C.minVisibility)) return (this.state = { ...this.state, ok: false });
+    const sh = mid(ls, rs);
+    // tananing burilishi (yaw): worldLandmarks'da yelkalar orasidagi chuqurlik farqi
+    let yaw = 0;
+    if (world && world[P.L_SH] && world[P.R_SH]) { const a = world[P.L_SH], b = world[P.R_SH]; yaw = Math.atan2(a.z - b.z, Math.abs(a.x - b.x) + 1e-6); }
+    const cosY = Math.max(0.5, Math.cos(yaw));
+    // 1) yelka kengligidan masofa
+    let d = this.cam.depthFromSize(this.cam.dist(ls, rs) / cosY, C.shoulderWidthM), w = 1, center = sh;
+    // 2) son ko'rinsa — tana uzunligidan ham (burilishga sezgir emas) va markaz — tana o'rtasi
+    const lh = lm[P.L_HIP], rh = lm[P.R_HIP];
+    if (vis(lh, C.minVisibility) && vis(rh, C.minVisibility)) {
+      const hp = mid(lh, rh);
+      const d2 = this.cam.depthFromSize(this.cam.dist(sh, hp), C.torsoLengthM);
+      if (isFiniteNum(d2)) { d = (d * w + d2 * 1.5) / (w + 1.5); }
+      center = { x: (sh.x + hp.x) / 2, y: sh.y };                 // Y — yelka balandligi (cho'kish/sakrash yaxshi ko'rinadi)
+    }
+    if (!isFiniteNum(d) || d < 0.25 || d > 8) return (this.state = { ...this.state, ok: false });
+    const p = this.cam.unproject(center.x, center.y, d);
+    const [fx, fy, fd] = this.f.filter([p.x, p.y, p.d], t);
+
+    // avtomatik / qo'lda kalibrlash — o'rtacha neytral holat
+    if (!this.base) {
+      if (!this._cal) this.calibrate(C.autoCalibrateSec);
+      const c = this._cal; if (c.until == null) c.until = t + c.dur;
+      c.n++; c.s.x += fx; c.s.y += fy; c.s.d += fd;
+      if (t >= c.until && c.n >= 3) { this.base = { x: c.s.x / c.n, y: c.s.y / c.n, d: c.s.d / c.n }; this._cal = null; this.calibratedAt = t; }
+    }
+    const raw = this.base ? camToUser({ x: fx - this.base.x, y: fy - this.base.y, d: fd - this.base.d }, this.view) : { right: 0, up: 0, forward: 0 };
+    const off = {};
+    for (const k of ['right', 'up', 'forward']) off[k] = clamp(deadzone(raw[k], C.deadzone[k]) * C.gain[k], -C.maxOffset[k], C.maxOffset[k]);
+    const conf = Math.min(ls.visibility ?? 1, rs.visibility ?? 1);
+    return (this.state = { ok: true, calibrated: !!this.base, justCalibrated: this.calibratedAt === t, distance: fd, raw, offset: off, yaw, confidence: conf, t });
+  }
+}
+
+/* ============================== 4. Joyida yurish (qadam aniqlash) ============================== */
+
+/**
+ * Joyida qadam tashlashni aniqlaydi va uni oldinga yurish tezligiga aylantiradi.
+ * Signal: tizzalar ko'rinsa — chap/o'ng tizza balandligi farqi (eng ishonchli);
+ * faqat yuqori tana ko'rinsa (stol yonida) — yelkalarning tebranishi (head-bobbing).
+ * Har bir qadam: gisterezisli nol kesishish + vaqt oralig'i tekshiruvi.
+ */
+class StepDetector {
+  constructor(o = {}) {
+    this.cfg = { stepLengthM: 0.55, gain: 1.0, minInterval: 0.22, maxInterval: 1.3, stopAfter: 1.1,
+      kneeThreshold: 0.10, bobThreshold: 0.035, minVisibility: 0.5, maxSpeed: 1.6, ...o };
+    this.reset();
+  }
+  reset() { this.sign = 0; this.lastEvt = null; this.lastStep = -1e9; this.streak = 0; this.cadence = 0; this.speed = 0; this.steps = 0; this.slow = null; this.mode = 'none'; this.lt = null; }
+  /**
+   * @param {Array} lm  Pose landmarklari
+   * @param {number} t  soniya
+   * @param {number} [realSpeed]  BodyTracker bo'yicha haqiqiy siljish tezligi (m/s) — rostdan yurganda qadamlar ikki marta hisoblanmasin
+   * @param {number} [ar]  kadr balandligi/kengligi (CameraModel.ar) — tebranish signalini kadr nisbatidan mustaqil qiladi
+   * @returns {{speed:number, step:boolean, cadence:number, mode:string, steps:number}}
+   */
+  update(lm, t = nowSec(), realSpeed = 0, ar = 0.75) {
+    const C = this.cfg, P = POSE; let s = null, thr = 0;
+    const dt = this.lt == null ? 1 / 30 : clamp(t - this.lt, 1e-3, .5); this.lt = t;
+    if (lm && lm.length > 26) {
+      const ls = lm[P.L_SH], rs = lm[P.R_SH], lk = lm[P.L_KNEE], rk = lm[P.R_KNEE], lh = lm[P.L_HIP], rh = lm[P.R_HIP];
+      if (vis(ls, C.minVisibility) && vis(rs, C.minVisibility)) {
+        if (vis(lk, C.minVisibility) && vis(rk, C.minVisibility) && vis(lh, C.minVisibility) && vis(rh, C.minVisibility)) {
+          // tizzalar: chap/o'ng tizza balandligi farqi, tana uzunligiga nisbatan (kadr o'lchamidan mustaqil)
+          const torso = Math.max(1e-3, Math.abs(mid(lh, rh).y - mid(ls, rs).y));
+          s = (lk.y - rk.y) / torso; thr = C.kneeThreshold;
+          if (this.mode !== 'knees') { this.mode = 'knees'; this.sign = 0; }
+        } else {
+          // faqat yuqori tana: yelkalarning vertikal tebranishi (sekin o'rtachadan farqi), yelka kengligiga nisbatan
+          const shW = Math.max(1e-3, Math.hypot(ls.x - rs.x, (ls.y - rs.y) * ar));
+          const y = mid(ls, rs).y * ar;
+          this.slow = this.slow == null ? y : expLerp(this.slow, y, 1.5, dt);
+          s = (y - this.slow) / shW; thr = C.bobThreshold;
+          if (this.mode !== 'bob') { this.mode = 'bob'; this.sign = 0; }
+        }
+      }
+    }
+    let step = false;
+    if (s != null) {
+      // gisterezis: o'rtadagi zona holatni o'zgartirmaydi; tebranishda «ko'tarilish» chegarasi pastroq (cho'kish keskinroq bo'ladi)
+      const lo = this.mode === 'bob' ? thr * 0.4 : thr;
+      const sg = s > thr ? 1 : s < -lo ? -1 : 0;
+      if (sg !== 0 && sg !== this.sign) {
+        const prev = this.sign; this.sign = sg;
+        // tizzada har bir almashinuv = 1 qadam; tebranishda har bir «pastga tushish» = 1 qadam
+        const counts = this.mode === 'knees' ? prev !== 0 : (sg === 1 && prev === -1);
+        if (counts) {
+          const gap = this.lastEvt == null ? Infinity : t - this.lastEvt;
+          if (gap >= C.minInterval) {
+            if (gap <= C.maxInterval) {
+              step = true; this.steps++; this.streak++; this.lastStep = t;
+              const c = 1 / gap; this.cadence = this.cadence ? this.cadence * .6 + c * .4 : c;
+            } else this.streak = 1;
+            this.lastEvt = t;
+          }
+        }
+      }
+    }
+    // rostdan yurilayotgan bo'lsa (tana siljiyapti) — joyida yurish emas; to'xtagach yana 2 ta yangi qadam kerak
+    if (Math.abs(realSpeed) >= 0.25) this.streak = 0;
+    const active = t - this.lastStep < C.stopAfter && this.streak >= 2 && Math.abs(realSpeed) < 0.25;
+    if (!active && t - this.lastStep >= C.stopAfter) this.streak = Math.min(this.streak, 1);
+    const target = active ? clamp(this.cadence * C.stepLengthM * C.gain, 0, C.maxSpeed) : 0;
+    this.speed = expLerp(this.speed, target, active ? 4 : 6, dt);
+    if (this.speed < 0.01) this.speed = 0;
+    return { speed: this.speed, step, cadence: this.cadence, mode: this.mode, steps: this.steps };
+  }
+}
+
+/* ============================== 5. Qo'l ishoralari ============================== */
+
+/** MediaPipe Hands (21 nuqta). */
+const HAND = { WRIST: 0, THUMB_TIP: 4, INDEX_MCP: 5, INDEX_PIP: 6, INDEX_TIP: 8, MIDDLE_MCP: 9, MIDDLE_PIP: 10, MIDDLE_TIP: 12, RING_PIP: 14, RING_TIP: 16, PINKY_MCP: 17, PINKY_PIP: 18, PINKY_TIP: 20 };
+
+/**
+ * 21 nuqtadan ishora: 'pinch' | 'point' | 'fist' | 'open' | 'none'; chimchilash gisterezisli (prev holat beriladi).
+ * Hamma masofalar kaft o'lchamiga bo'linadi — kameraga yaqin/uzoqlikdan mustaqil.
+ */
+function classifyHand(lm, cam, prev = {}) {
+  const H = HAND, d = (a, b) => cam.dist(lm[a], lm[b]);
+  const palm = Math.max(d(H.WRIST, H.MIDDLE_MCP), d(H.INDEX_MCP, H.PINKY_MCP) * 1.25, 1e-4);
+  const ext = (tip, pip) => d(H.WRIST, tip) > d(H.WRIST, pip) * 1.12;
+  const fingers = [ext(H.INDEX_TIP, H.INDEX_PIP), ext(H.MIDDLE_TIP, H.MIDDLE_PIP), ext(H.RING_TIP, H.RING_PIP), ext(H.PINKY_TIP, H.PINKY_PIP)];
+  const pinchR = d(H.THUMB_TIP, H.INDEX_TIP) / palm;
+  const indexOut = d(H.INDEX_TIP, H.MIDDLE_MCP) / palm > 0.55;           // ko'rsatkich kaftga bukilmagan (mushtdan farqi)
+  const pinch = indexOut && (prev.pinch ? pinchR < 0.5 : pinchR < 0.3);
+  const n = fingers.filter(Boolean).length;
+  const curled = [H.INDEX_TIP, H.MIDDLE_TIP, H.RING_TIP, H.PINKY_TIP].reduce((s, k) => s + d(k, H.MIDDLE_MCP), 0) / 4 / palm;
+  let g = 'none';
+  if (pinch) g = 'pinch';
+  else if (fingers[0] && !fingers[1] && !fingers[2] && !fingers[3]) g = 'point';
+  else if (n === 0 && curled < 0.85) g = 'fist';
+  else if (n === 4) g = 'open';
+  return { gesture: g, pinch, pinchRatio: pinchR, palm, fingers };
+}
+
+/**
+ * Qo'lning 3D holati (metr): chimchilash nuqtasi + ko'rsatkich yo'nalishi. Masofa — kaft o'lchamidan.
+ * @returns {{pos:{right,up,forward}, pinchPos, depth, gesture, pinch, pointDir:{right,up}}}
+ */
+function handState(lm, cam, view, prev = {}, handSizeM = 0.085) {
+  const c = classifyHand(lm, cam, prev);
+  const depth = cam.depthFromSize(c.palm, handSizeM);
+  const H = HAND, pm = { x: (lm[H.THUMB_TIP].x + lm[H.INDEX_TIP].x) / 2, y: (lm[H.THUMB_TIP].y + lm[H.INDEX_TIP].y) / 2 };
+  const wrist = camToUser(cam.unproject(lm[H.WRIST].x, lm[H.WRIST].y, depth), view);
+  const pinchPos = camToUser(cam.unproject(pm.x, pm.y, depth), view);
+  const tip = camToUser(cam.unproject(lm[H.INDEX_TIP].x, lm[H.INDEX_TIP].y, depth), view);
+  const mcp = camToUser(cam.unproject(lm[H.INDEX_MCP].x, lm[H.INDEX_MCP].y, depth), view);
+  const dl = hyp(tip.right - mcp.right, tip.up - mcp.up) || 1;
+  return { ...c, depth, pos: wrist, pinchPos, pointDir: { right: (tip.right - mcp.right) / dl, up: (tip.up - mcp.up) / dl } };
+}
+
+/**
+ * Qo'l bilan harakatlanish:
+ *  • «Dunyoni tortish» (world pull): havoda chimchilab, qo'lni o'zingizga torting → oldinga siljiysiz;
+ *    yonga torting → yonga. Ikki qo'l bilan chimchilab aylantirsangiz — burilasiz (yaw). Qo'yib yuborilganda inersiya.
+ *  • «Ko'rsatish» (point): ko'rsatkich barmoq bilan ko'rsatib turing (holdSec) → o'sha tomonga yurasiz.
+ *  • «Musht» (fist): to'xtash (inersiya va yurish bekor qilinadi).
+ * Kirish — umumiy qo'l holatlari (MediaPipe yoki WebXR Hand Input'dan), shuning uchun ikkala manba bilan ishlaydi.
+ */
+class HandLocomotion {
+  constructor(o = {}) {
+    this.cfg = { pullGain: 2.2, pullDeadzone: 0.05,   // m/s — sekin qo'l titrashi tortish emas
+      inertia: 2.5, rotateGain: 1.0, pointSpeed: 0.9, pointHoldSec: 0.45, pointStrafe: 0.6,
+      enablePull: true, enablePoint: true, enableRotate: true, ...o };
+    this.reset();
+  }
+  reset() { this.prev = [null, null]; this.vel = { right: 0, forward: 0 }; this.pointT = [null, null]; this.prevAngle = null; this.active = false; }
+  /**
+   * @param {Array<null|{pinch:boolean,gesture:string,pinchPos:{right,up,forward},pointDir?:{right,up}}>} hands  [o'ng, chap]
+   * @param {number} t  soniya
+   * @param {{blocked?:boolean[]}} [o]  blocked[i] — bu qo'l jism ushlab turibdi (tortish emas)
+   * @returns {{move:{right:number,forward:number}, yaw:number, mode:string}}  — shu kadr uchun siljish (metr) va burilish (rad)
+   */
+  update(hands, t = nowSec(), o = {}) {
+    const C = this.cfg, blocked = o.blocked || [];
+    const dt = this.lt == null ? 1 / 30 : clamp(t - this.lt, 1e-3, .25); this.lt = t;
+    const move = { right: 0, forward: 0 }; let yaw = 0, mode = 'idle';
+    const pinching = [0, 1].filter(i => hands[i] && hands[i].pinch && !blocked[i]);
+    if (hands.some(h => h && h.gesture === 'fist')) { this.vel = { right: 0, forward: 0 }; this.pointT = [null, null]; this.prev = [null, null]; this.prevAngle = null; return { move, yaw, mode: 'brake' }; }
+
+    if (C.enablePull && pinching.length) {
+      mode = 'pull'; let n = 0; const acc = { right: 0, forward: 0 };
+      for (const i of pinching) {
+        const p = hands[i].pinchPos, q = this.prev[i];
+        if (q) { acc.right += p.right - q.right; acc.forward += p.forward - q.forward; n++; }
+        this.prev[i] = { ...p };
+      }
+      for (const i of [0, 1]) if (!pinching.includes(i)) this.prev[i] = null;
+      if (n) {
+        acc.right /= n; acc.forward /= n;
+        // dunyo qo'l bilan birga suriladi → foydalanuvchi teskari tomonga siljiydi
+        // o'lik zona tezlikka qo'llanadi (kadr chastotasidan mustaqil)
+        move.right = -deadzone(acc.right / dt, C.pullDeadzone) * dt * C.pullGain;
+        move.forward = -deadzone(acc.forward / dt, C.pullDeadzone) * dt * C.pullGain;
+        this.vel = { right: expLerp(this.vel.right, move.right / dt, 12, dt), forward: expLerp(this.vel.forward, move.forward / dt, 12, dt) };
+      }
+      // ikki qo'l: qo'llar orasidagi chiziq burchagi o'zgarsa — aylanish
+      if (C.enableRotate && pinching.length === 2) {
+        const a = hands[0].pinchPos, b = hands[1].pinchPos;
+        const ang = Math.atan2(a.forward - b.forward, a.right - b.right);
+        if (this.prevAngle != null) { let da = ang - this.prevAngle; da = Math.atan2(Math.sin(da), Math.cos(da)); yaw = -da * C.rotateGain; mode = 'rotate'; }
+        this.prevAngle = ang;
+      } else this.prevAngle = null;
+    } else {
+      this.prev = [hands[0] && hands[0].pinch ? this.prev[0] : null, hands[1] && hands[1].pinch ? this.prev[1] : null];
+      this.prevAngle = null;
+      // inersiya: qo'yib yuborilgandan keyin sekin to'xtash
+      const k = Math.exp(-C.inertia * dt);
+      this.vel.right *= k; this.vel.forward *= k;
+      if (Math.abs(this.vel.right) + Math.abs(this.vel.forward) < 0.02) this.vel = { right: 0, forward: 0 };
+      move.right = this.vel.right * dt; move.forward = this.vel.forward * dt;
+      if (move.right || move.forward) mode = 'glide';
+      // ko'rsatib yurish
+      if (C.enablePoint) {
+        for (const i of [0, 1]) {
+          const h = hands[i];
+          if (h && h.gesture === 'point') {
+            if (this.pointT[i] == null) this.pointT[i] = t;
+            if (t - this.pointT[i] >= C.pointHoldSec) {
+              const dir = h.pointDir || { right: 0, up: 1 };
+              move.forward += C.pointSpeed * dt;
+              move.right += clamp(dir.right, -1, 1) * C.pointStrafe * C.pointSpeed * dt;
+              mode = 'point'; this.vel = { right: 0, forward: 0 };
+            }
+          } else this.pointT[i] = null;
+        }
+      }
+    }
+    this.active = mode !== 'idle';
+    return { move, yaw, mode };
+  }
+}
+
+/* ============================== 6. Rig: VR kamerasini siljitish ============================== */
+
+/**
+ * Foydalanuvchining virtual «tanasi». Kamerani (yoki kamerani ichiga olgan dolly/rig guruhini) boshqaradi.
+ * • Tana siljishi (BodyTracker) — absolyut ofset; har kadrda faqat o'zgarishi qo'shiladi, shuning uchun
+ *   klaviatura, joystick, teleport bilan to'qnashmaydi.
+ * • Yurish (qadam, qo'l) — nisbiy siljish, yaw bo'yicha.
+ * • Chegaralar va to'siqlar: bounds + collide(x, z) funksiyasi.
+ * • Ko'rsatish silliqlanadi (smoothRate), mantiqiy pozitsiya esa aniq qoladi.
+ */
+class LocomotionRig {
+  constructor(o = {}) {
+    this.cfg = { smoothRate: 14, bounds: null, collide: null, eyeHeight: 1.6, minY: -0.6, maxY: 0.4, ...o };
+    this.target = { x: o.x || 0, y: 0, z: o.z || 0 }; this.yaw = o.yaw || 0;
+    this.pos = { ...this.target }; this.viewYaw = this.yaw; this._body = null;
+  }
+  forward() { return { x: -Math.sin(this.yaw), z: -Math.cos(this.yaw) }; }
+  right() { return { x: Math.cos(this.yaw), z: -Math.sin(this.yaw) }; }
+  /** Foydalanuvchi tizimidagi nisbiy siljish (metr). */
+  moveLocal(right = 0, forward = 0, up = 0) {
+    const f = this.forward(), r = this.right();
+    this._tryMove(this.target.x + r.x * right + f.x * forward, this.target.z + r.z * right + f.z * forward);
+    if (up) this.target.y = clamp(this.target.y + up, this.cfg.minY, this.cfg.maxY);
+  }
+  rotate(dYaw) { if (dYaw) this.yaw += dYaw; }
+  /** BodyTracker.offset — absolyut; faqat farqi qo'llanadi. Kalibrlanganda farq nolga tushadi. */
+  setBodyOffset(off) {
+    if (!off) { this._body = null; return; }
+    if (this._body) this.moveLocal(off.right - this._body.right, off.forward - this._body.forward, (off.up - this._body.up));
+    this._body = { ...off };
+  }
+  teleport(x, z, yaw) { this.target.x = x; this.target.z = z; if (yaw != null) this.yaw = yaw; this.pos = { ...this.target }; this.viewYaw = this.yaw; }
+  _tryMove(nx, nz) {
+    const B = this.cfg.bounds;
+    if (B) { nx = clamp(nx, B.minX, B.maxX); nz = clamp(nz, B.minZ, B.maxZ); }
+    const col = this.cfg.collide;
+    if (col && col(nx, nz)) {                       // to'siq: devor bo'ylab sirpanish (o'qlar bo'yicha alohida)
+      if (!col(nx, this.target.z)) nz = this.target.z;
+      else if (!col(this.target.x, nz)) nx = this.target.x;
+      else return;
+    }
+    this.target.x = nx; this.target.z = nz;
+  }
+  /** Har kadrda: silliq ko'rinish. dt — soniya. */
+  update(dt) {
+    const k = this.cfg.smoothRate;
+    this.pos.x = expLerp(this.pos.x, this.target.x, k, dt);
+    this.pos.y = expLerp(this.pos.y, this.target.y, k, dt);
+    this.pos.z = expLerp(this.pos.z, this.target.z, k, dt);
+    let d = this.yaw - this.viewYaw; d = Math.atan2(Math.sin(d), Math.cos(d));
+    this.viewYaw = expLerp(this.viewYaw, this.viewYaw + d, k, dt);
+    return this;
+  }
+  /** Three.js: dolly (kamera ota-guruhi) yoki kameraning o'ziga qo'llash. */
+  applyTo(object3D, { includeEyeHeight = false } = {}) {
+    object3D.position.set(this.pos.x, this.pos.y + (includeEyeHeight ? this.cfg.eyeHeight : 0), this.pos.z);
+    object3D.rotation.y = this.viewYaw;
+    return object3D;
+  }
+}
+
+/* ============================== 7. Qo'l bilan ushlash (Three.js) ============================== */
+
+/**
+ * Qo'l holatini (foydalanuvchi tizimi) VR kameraga nisbatan dunyo koordinatasiga o'tkazadi va
+ * chimchilab jismlarni ushlash / ko'chirishni boshqaradi.
+ *   const grab = new GrabInteractor({ THREE, camera, objects: [linza, yuk, kolba] });
+ *   grab.update(handStates, dt) — har kadrda.  grab.isHolding(i) — i-qo'l jism ushlab turibdimi.
+ */
+class GrabInteractor {
+  /**
+   * @param {object} o
+   * @param {object} o.THREE  @param {object} o.camera  Three.js kamerasi (dolly ichida bo'lsa ham bo'ladi)
+   * @param {Array} o.objects  ushlanadigan Object3D'lar (priborlar, linzalar, yuklar)
+   * @param {number} [o.radius=0.18]  ushlash radiusi (metr)
+   * @param {{right,up,forward}} [o.neutral]  qo'lning «dam olish» nuqtasi (kamera tizimida): shu nuqta VR'da ko'z oldida reach metrda
+   * @param {number} [o.reach=0.5]  @param {{right,up,forward}} [o.gain]  real qo'l harakati → VR qo'l harakati
+   */
+  constructor({ THREE, camera, objects = [], radius = 0.18, reach = 0.5, neutral = { right: 0, up: -0.08, forward: -0.55 }, gain = { right: 1.5, up: 1.5, forward: 1.6 }, follow = 18, onGrab, onRelease } = {}) {
+    Object.assign(this, { THREE, camera, objects, radius, reach, neutral, gain, follow, onGrab, onRelease });
+    this.held = [null, null]; this._v = new THREE.Vector3(); this._w = new THREE.Vector3();
+    this.handWorld = [new THREE.Vector3(), new THREE.Vector3()];
+  }
+  isHolding(i) { return !!this.held[i]; }
+  /** Hozirgi qo'l holatini neytral nuqta qilib olish (foydalanuvchi qo'lini qulay joyda ushlab turganda). */
+  calibrate(hand) { if (hand && hand.pinchPos) this.neutral = { ...hand.pinchPos }; }
+  /** Qo'l nuqtasi (foydalanuvchi tizimi) → dunyo koordinatasi (kamera oldida). */
+  toWorld(i, p) {
+    const n = this.neutral, g = this.gain;
+    this._v.set((p.right - n.right) * g.right, (p.up - n.up) * g.up, -Math.max(0.12, this.reach + (p.forward - n.forward) * g.forward));
+    return this.camera.localToWorld(this.handWorld[i].copy(this._v));
+  }
+  update(hands, dt = 1 / 60) {
+    for (const i of [0, 1]) {
+      const h = hands[i];
+      if (h && h.pinchPos) this.toWorld(i, h.pinchPos);
+      if (!h || !h.pinch) { if (this.held[i]) { const o = this.held[i].obj; this.held[i] = null; this.onRelease && this.onRelease(o, i); } continue; }
+      const w = this.handWorld[i];
+      if (!this.held[i] && !h._grabTried) {
+        h._grabTried = true;                         // faqat chimchilash boshida qidiriladi
+        let best = null, bd = this.radius;
+        for (const o of this.objects) { if (this.held.some(x => x && x.obj === o)) continue; const d = o.getWorldPosition(this._w).distanceTo(w); if (d < bd) { bd = d; best = o; } }
+        if (best) { this.held[i] = { obj: best, off: best.getWorldPosition(new this.THREE.Vector3()).sub(w) }; this.onGrab && this.onGrab(best, i); }
+      }
+      const H = this.held[i];
+      if (H) {
+        const tgt = this._w.copy(w).add(H.off);
+        if (H.obj.parent) H.obj.parent.worldToLocal(tgt);
+        H.obj.position.lerp(tgt, 1 - Math.exp(-this.follow * dt));
+      }
+    }
+  }
+}
+
+/* ============================== 8. WebXR Hand Input adapteri ============================== */
+
+/**
+ * WebXR sessiyasida (Quest, Vision Pro, Android XR) qo'l bo'g'imlari (25 ta) → HandLocomotion/GrabInteractor qabul qiladigan holat.
+ * WebXR'ning o'zi bosh pozitsiyasini (6DoF) beradi — kameraviy BodyTracker kerak emas; bu adapter faqat qo'l ishoralari uchun.
+ * @param {XRFrame} frame  @param {XRInputSource} src (src.hand bo'lishi kerak)  @param {XRReferenceSpace} ref
+ * @param {{x:number,y:number,z:number}} [head] — viewer pozitsiyasi (pinchPos boshga nisbatan bo'ladi)
+ * @param {object} [prev] — oldingi holat (chimchilash gisterezisi)  @param {number} [headYaw=0] — boshning Y atrofidagi burchagi
+ */
+function xrHandState(frame, src, ref, head, prev = {}, headYaw = 0) {
+  if (!src || !src.hand) return null;
+  const J = n => { const s = src.hand.get(n); const p = s && frame.getJointPose && frame.getJointPose(s, ref); return p ? p.transform.position : null; };
+  const tt = J('thumb-tip'), it = J('index-finger-tip'), wr = J('wrist'), im = J('index-finger-metacarpal'), mt = J('middle-finger-tip'), rt = J('ring-finger-tip'), lt = J('pinky-finger-tip'), mm = J('middle-finger-phalanx-proximal');
+  if (!tt || !it || !wr) return null;
+  const dist = (a, b) => hyp(a.x - b.x, a.y - b.y, a.z - b.z);
+  const pd = dist(tt, it);
+  const pinch = prev.pinch ? pd < 0.035 : pd < 0.02;
+  const curled = [mt, rt, lt].filter(Boolean).every(p => mm && dist(p, mm) < 0.06);
+  const indexOut = mm ? dist(it, mm) > 0.07 : true;
+  const gesture = pinch ? 'pinch' : curled && indexOut ? 'point' : curled && !indexOut ? 'fist' : 'open';
+  const h = head || { x: 0, y: 0, z: 0 };
+  // ma'lumot fazosi o'qlari → foydalanuvchi tizimi (bosh qaragan tomon = forward)
+  const cy = Math.cos(headYaw), sy = Math.sin(headYaw);
+  const toUser = (dx, dy, dz) => ({ right: dx * cy - dz * sy, up: dy, forward: -dx * sy - dz * cy });
+  const pinchPos = toUser((tt.x + it.x) / 2 - h.x, (tt.y + it.y) / 2 - h.y, (tt.z + it.z) / 2 - h.z);
+  const dv = im ? toUser(it.x - im.x, it.y - im.y, it.z - im.z) : { right: 0, up: 1 };
+  const dir = { right: dv.right, up: dv.up };
+  const dl = hyp(dir.right, dir.up) || 1;
+  return { pinch, gesture, pinchPos, pos: pinchPos, pointDir: { right: dir.right / dl, up: dir.up / dl }, handedness: src.handedness };
+}
+
+/* ============================== 9. Vision: MediaPipe — Worker yoki asosiy oqim ============================== */
+
+const VISION_VERSION = '0.10.14';
+const VISION_BASE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VISION_VERSION}`;
+const MODELS = {
+  poseLite: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
+  poseFull: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task',
+  hand: 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task'
+};
+
+/** MediaPipe vazifalarini yaratish (asosiy oqim va worker uchun umumiy kod — matn sifatida ham ishlatiladi). */
+async function createTasks(vision, wasmBase, o, delegate) {
+  const fs = await vision.FilesetResolver.forVisionTasks(wasmBase);
+  const T = {};
+  if (o.pose) T.pose = await vision.PoseLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: o.poseModel, delegate }, runningMode: 'VIDEO', numPoses: 1, minPoseDetectionConfidence: .5, minPosePresenceConfidence: .5, minTrackingConfidence: .5 });
+  if (o.hands) T.hands = await vision.HandLandmarker.createFromOptions(fs, { baseOptions: { modelAssetPath: o.handModel, delegate }, runningMode: 'VIDEO', numHands: 2, minHandDetectionConfidence: .5, minHandPresenceConfidence: .45, minTrackingConfidence: .4 });
+  return T;
+}
+function runTasks(T, img, ts, want) {
+  const out = {};
+  if (T.pose && want.pose) { const r = T.pose.detectForVideo(img, ts); out.pose = { landmarks: r.landmarks && r.landmarks[0] || null, world: r.worldLandmarks && r.worldLandmarks[0] || null }; }
+  if (T.hands && want.hands) { const r = T.hands.detectForVideo(img, ts); out.hands = { landmarks: r.landmarks || [], handedness: (r.handedness || r.handednesses || []).map(h => h && h[0] ? h[0].categoryName : 'Right') }; }
+  return out;
+}
+
+/** Asosiy oqimda ishlovchi backend (eng mos keluvchan; Safari va eski brauzerlarda ham). */
+class MainThreadVision {
+  constructor(o) { this.o = o; this.mode = 'main'; }
+  async init() {
+    const v = await import(/* webpackIgnore: true */ /* @vite-ignore */ `${this.o.visionBase}/vision_bundle.mjs`);
+    for (const del of this.o.delegate === 'CPU' ? ['CPU'] : ['GPU', 'CPU']) {
+      try { this.T = await createTasks(v, `${this.o.visionBase}/wasm`, this.o, del); this.delegate = del; return; } catch (e) { this.err = e; }
+    }
+    throw this.err;
+  }
+  async detect(video, ts, want) { return runTasks(this.T, video, ts, want); }
+  close() { try { this.T.pose && this.T.pose.close(); this.T.hands && this.T.hands.close(); } catch (_) {} }
+}
+
+/**
+ * Web Worker backend: kadr kichraytirilgan ImageBitmap sifatida (nusxalanmasdan, transfer) workerga yuboriladi,
+ * MediaPipe u yerda ishlaydi — asosiy oqim (render, UI) bo'shaydi. Ishga tushmasa — avtomatik MainThreadVision.
+ */
+class WorkerVision {
+  constructor(o) { this.o = o; this.mode = 'worker'; this.pending = null; this.seq = 0; }
+  async init() {
+    const src = `
+      self.module = { exports: {} }; self.exports = self.module.exports;
+      ${createTasks.toString()}
+      ${runTasks.toString()}
+      let T = null, vision = null;
+      self.onmessage = async (e) => {
+        const m = e.data;
+        try {
+          if (m.type === 'init') {
+            importScripts(m.visionBase + '/vision_bundle.cjs'); vision = self.module.exports;
+            let err = null;
+            for (const del of m.o.delegate === 'CPU' ? ['CPU'] : ['GPU', 'CPU']) {
+              try { T = await createTasks(vision, m.visionBase + '/wasm', m.o, del); self.postMessage({ type: 'ready', delegate: del }); return; } catch (x) { err = x; }
+            }
+            throw err;
+          }
+          if (m.type === 'frame') { const out = runTasks(T, m.bitmap, m.ts, m.want); m.bitmap.close(); self.postMessage({ type: 'result', id: m.id, out }); }
+        } catch (x) { try { m.bitmap && m.bitmap.close(); } catch (_) {} self.postMessage({ type: 'error', id: m.id, message: String(x && x.message || x) }); }
+      };`;
+    this.url = URL.createObjectURL(new Blob([src], { type: 'text/javascript' }));
+    this.w = new Worker(this.url);
+    await new Promise((res, rej) => {
+      const to = setTimeout(() => rej(new Error('worker timeout')), this.o.workerTimeoutMs || 25000);
+      this.w.onmessage = e => {
+        const m = e.data;
+        if (m.type === 'ready') { clearTimeout(to); this.delegate = m.delegate; res(); }
+        else if (m.type === 'error' && !this.ready) { clearTimeout(to); rej(new Error(m.message)); }
+        else if (this.pending && (m.type === 'result' || m.type === 'error') && m.id === this.pending.id) { const p = this.pending; this.pending = null; m.type === 'result' ? p.res(m.out) : p.rej(new Error(m.message)); }
+      };
+      this.w.onerror = e => { clearTimeout(to); rej(new Error(e.message || 'worker error')); };
+      this.w.postMessage({ type: 'init', visionBase: this.o.visionBase, o: { pose: this.o.pose, hands: this.o.hands, poseModel: this.o.poseModel, handModel: this.o.handModel, delegate: this.o.delegate } });
+    });
+    this.ready = true;
+    const W = this.o.inputWidth || 480;
+    this.canvas = typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(W, W) : document.createElement('canvas');
+  }
+  async detect(video, ts, want) {
+    if (this.pending) return null;                                     // oldingi kadr hali tahlilda — tashlab ketamiz
+    const W = this.o.inputWidth || 480, H = Math.round(W * (video.videoHeight || 3) / (video.videoWidth || 4));
+    let bitmap;
+    try { bitmap = await createImageBitmap(video, { resizeWidth: W, resizeHeight: H, resizeQuality: 'low' }); }
+    catch (_) { this.canvas.width = W; this.canvas.height = H; this.canvas.getContext('2d').drawImage(video, 0, 0, W, H); bitmap = await createImageBitmap(this.canvas); }
+    const id = ++this.seq;
+    return new Promise((res, rej) => { this.pending = { id, res, rej }; this.w.postMessage({ type: 'frame', id, ts, want, bitmap }, [bitmap]); });
+  }
+  close() { try { this.w.terminate(); URL.revokeObjectURL(this.url); } catch (_) {} }
+}
+
+/* ============================== 10. MotionTracker — hammasini birlashtiruvchi ============================== */
+
+/**
+ * @example
+ *   const cam = new CameraKit.CameraManager({ resolution: '480p' });
+ *   const rig = new LocomotionRig({ bounds: { minX: -4, maxX: 4, minZ: -4, maxZ: 4 } });
+ *   const motion = new MotionTracker({ camera: cam, rig });
+ *   await cam.start(); await motion.start();
+ *   renderer.setAnimationLoop(() => { rig.applyTo(dolly); renderer.render(scene, camera3d); });
+ *
+ * Hodisalar: 'ready' {mode, delegate}, 'body' {state}, 'step' {speed}, 'hands' {hands}, 'gesture' {mode}, 'calibrated', 'error' {error}, 'stats'.
+ */
+class MotionTracker extends EventTarget {
+  constructor(o = {}) {
+    super();
+    this.o = {
+      body: true, hands: true, steps: true,
+      worker: 'auto',                 // 'auto' | true | false
+      delegate: 'GPU',                // GPU → CPU avtomatik
+      poseModel: MODELS.poseLite, handModel: MODELS.hand, visionBase: VISION_BASE,
+      maxFps: 30, inputWidth: 480,
+      view: null,                     // null — avtomatik: tana uchun 'facing-user', qo'l uchun kameraga qarab
+      hfovDeg: null, handSizeM: 0.085,
+      backend: null,                  // sinov yoki o'z backendingiz: {init(), detect(video, ts, want), close()}
+      ...o
+    };
+    this.camera = o.camera; this.rig = o.rig || new LocomotionRig();
+    this.model = new CameraModel({ hfovDeg: this.o.hfovDeg || 62 });
+    this.body = new BodyTracker({ cameraModel: this.model, ...(o.bodyOptions || {}) });
+    this.stepper = new StepDetector(o.stepOptions || {});
+    this.handLoco = new HandLocomotion(o.handOptions || {});
+    this.handFilters = [new VecFilter(3, 'oneeuro', { minCutoff: 1.6, beta: 0.8 }), new VecFilter(3, 'oneeuro', { minCutoff: 1.6, beta: 0.8 })];
+    this.hands = [null, null]; this.grab = o.grab || null;
+    this.stats = { fps: 0, inferMs: 0, mode: null, delegate: null, dropped: 0 };
+    this._ts = 0; this._k = 0; this._lastT = null; this._prevFwd = null; this._realSpeed = 0;
+  }
+
+  async start() {
+    const v = this.camera && this.camera.video;
+    if (!v) throw new Error('MotionTracker: camera (CameraKit.CameraManager) kerak');
+    this._syncCamera();
+    this._onCam = () => { this._syncCamera(); this.body.calibrate(); this.handLoco.reset(); this.stepper.reset(); };
+    this.camera.addEventListener('start', this._onCam);
+    this.backend = await this._makeBackend();
+    this.stats.mode = this.backend.mode; this.stats.delegate = this.backend.delegate;
+    this._emit('ready', { mode: this.backend.mode, delegate: this.backend.delegate });
+    this._loop();
+    return this;
+  }
+  stop() {
+    this._stop = true; this._loopHandle && this._loopHandle.stop();
+    if (this.camera && this._onCam) this.camera.removeEventListener('start', this._onCam);
+    this.backend && this.backend.close();
+  }
+  /** Silliqlash turini almashtirish: 'oneeuro' | 'kalman' | 'lerp' | 'none'. */
+  setFilter(kind, opts) { this.body.cfg.filter = kind; this.body.f = new VecFilter(3, kind, opts || this.body.cfg.filterOpts); this.handFilters = [0, 1].map(() => new VecFilter(3, kind, opts || { minCutoff: 1.6, beta: 0.8 })); }
+  /** Foydalanuvchi joyida tursin — shu holat «nol» bo'ladi. */
+  calibrate() { this.body.calibrate(); this.rig.setBodyOffset(null); }
+
+  _syncCamera() {
+    const v = this.camera.video, info = this.camera.info || {};
+    if (!this.o.hfovDeg) this.model.hfovDeg = defaultFov(this.camera.device, info.facing);
+    this.model.setFrame(v.videoWidth || 640, v.videoHeight || 480);
+    this.body.view = this.o.view || 'facing-user';
+    this.handView = this.o.view || (info.facing === 'environment' && this.camera.device && this.camera.device.isMobile ? 'egocentric' : 'facing-user');
+  }
+
+  async _makeBackend() {
+    const o = { ...this.o, pose: this.o.body || this.o.steps, hands: this.o.hands };
+    if (this.o.backend) { await this.o.backend.init(o); this.o.backend.mode = this.o.backend.mode || 'custom'; return this.o.backend; }
+    const canWorker = typeof Worker !== 'undefined' && typeof createImageBitmap === 'function';
+    if (this.o.worker !== false && canWorker) {
+      const w = new WorkerVision(o);
+      try { await w.init(); return w; }
+      catch (e) { w.close(); this._emit('info', { message: 'Worker ishga tushmadi, asosiy oqimga o\'tildi: ' + e.message }); if (this.o.worker === true) throw e; }
+    }
+    const m = new MainThreadVision(o); await m.init(); return m;
+  }
+
+  _loop() {
+    const v = this.camera.video;
+    const step = async (video, nowMs) => {
+      if (this._stop) return;
+      if (v.videoWidth && (v.videoWidth !== this.model.width || v.videoHeight !== this.model.height)) this.model.setFrame(v.videoWidth, v.videoHeight);
+      // ikkala model og'ir bo'lsa navbatma-navbat: qo'l ushlash paytida qo'l har kadrda
+      const both = this.o.hands && (this.o.body || this.o.steps);
+      const heavy = this.stats.inferMs > 14;
+      const k = this._k++;
+      const want = { pose: (this.o.body || this.o.steps) && (!both || !heavy || k % 2 === 0), hands: this.o.hands && (!both || !heavy || k % 2 === 1 || this.handLoco.active) };
+      this._ts = Math.max(this._ts + 1, Math.round(nowMs));            // detectForVideo uchun qat'iy o'suvchi vaqt
+      const t0 = performance.now();
+      let r;
+      try { r = await this.backend.detect(video, this._ts, want); }
+      catch (e) {
+        if (this.backend.mode === 'worker' && this.o.worker !== true) {      // worker xato bersa — asosiy oqimga
+          this.backend.close(); this.backend = new MainThreadVision({ ...this.o, pose: this.o.body || this.o.steps, hands: this.o.hands });
+          try { await this.backend.init(); this.stats.mode = 'main'; this.stats.delegate = this.backend.delegate; } catch (e2) { this._emit('error', { error: e2 }); this.stop(); }
+        } else this._emit('error', { error: e });
+        return;
+      }
+      if (!r) { this.stats.dropped++; return; }
+      const ms = performance.now() - t0; this.stats.inferMs = this.stats.inferMs ? this.stats.inferMs * .85 + ms * .15 : ms;
+      this.process(r, nowMs / 1000);
+    };
+    this._loopHandle = frameLoop(v, step, this.o.maxFps);
+    this._statT = setInterval(() => { if (this._stop) return clearInterval(this._statT); this.stats.fps = this._loopHandle.fps || 0; this._emit('stats', { ...this.stats }); }, 1000);
+  }
+
+  /**
+   * Bitta tahlil natijasini qayta ishlash (tashqi manbadan ham chaqirish mumkin — masalan, o'z modelingiz).
+   * @param {{pose?:{landmarks,world}, hands?:{landmarks:Array, handedness:Array}}} r
+   * @param {number} t soniya
+   */
+  process(r, t) {
+    const dt = this._lastT == null ? 1 / 30 : clamp(t - this._lastT, 1e-3, .25); this._lastT = t;
+    if (r.pose) this.lastPose = r.pose.landmarks;          // ko'zgu/skelet chizish uchun
+    if (r.hands) this.lastHands = r.hands.landmarks;
+    if (r.pose) {
+      const lm = r.pose.landmarks;
+      if (this.o.body) {
+        const s = this.body.update(lm, r.pose.world, t);
+        if (s.ok && s.calibrated) {
+          if (s.justCalibrated) { this.rig.setBodyOffset(null); this._emit('calibrated', { distance: s.distance }); }
+          if (this._prevFwd != null) this._realSpeed = expLerp(this._realSpeed, (s.raw.forward - this._prevFwd) / dt, 6, dt);
+          this._prevFwd = s.raw.forward;
+          this.rig.setBodyOffset(s.offset);
+        }
+        this._emit('body', { state: s });
+      }
+      if (this.o.steps) {
+        const st = this.stepper.update(lm, t, this._realSpeed, this.model.ar);
+        if (st.speed > 0) this.rig.moveLocal(0, st.speed * dt, 0);
+        if (st.step) this._emit('step', st);
+      }
+    }
+    if (r.hands) {
+      const hs = [null, null];
+      (r.hands.landmarks || []).forEach((lm, i) => {
+        if (!lm || lm.length < 21) return;
+        // MediaPipe kadrni ko'zgulangan (selfi) deb hisoblaydi; getUserMedia kadri ko'zgulanmagan — kameraga qaragan
+        // holatda belgilar teskari. Uyalar: 0 — o'ng qo'l, 1 — chap qo'l (har qo'l o'z uyasida barqaror qoladi).
+        const lab = r.hands.handedness[i] || 'Right';
+        let side = this.handView === 'egocentric' ? (lab === 'Right' ? 0 : 1) : (lab === 'Left' ? 0 : 1);
+        if (hs[side]) side = 1 - side; if (hs[side]) return;
+        const prev = this.hands[side] || {};
+        const h = handState(lm, this.model, this.handView, prev, this.o.handSizeM);
+        if (h.pinch && prev.pinch) h._grabTried = prev._grabTried;   // ushlash qidiruvi faqat chimchilash boshida
+        const [x, y, z] = this.handFilters[side].filter([h.pinchPos.right, h.pinchPos.up, h.pinchPos.forward], t);
+        h.pinchPos = { right: x, up: y, forward: z };
+        hs[side] = h;
+      });
+      [0, 1].forEach(i => { if (!hs[i]) this.handFilters[i].reset(); });
+      this.hands = hs;
+      if (this.grab) this.grab.update(hs, dt);
+      const blocked = this.grab ? [this.grab.isHolding(0), this.grab.isHolding(1)] : [];
+      const g = this.handLoco.update(hs, t, { blocked });
+      if (g.move.right || g.move.forward) this.rig.moveLocal(g.move.right, g.move.forward, 0);
+      if (g.yaw) this.rig.rotate(g.yaw);
+      if (g.mode !== this._gMode) { this._gMode = g.mode; this._emit('gesture', { mode: g.mode }); }
+      this._emit('hands', { hands: hs });
+    }
+  }
+  _emit(type, detail) { this.dispatchEvent(new CustomEvent(type, { detail })); }
+}
+
+/**
+ * Kadr sikli: faqat YANGI video kadrlarida (requestVideoFrameCallback; bo'lmasa rAF), FPS chegarasi bilan.
+ * Tahlil tugamaguncha keyingi kadr tashlanadi (backpressure) — sekin qurilmada ham render va UI qotmaydi.
+ */
+function frameLoop(video, cb, maxFps = 30) {
+  const minGap = 1000 / maxFps - 2, rvfc = typeof HTMLVideoElement !== 'undefined' && 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+  let run = true, busy = false, last = -1, lastT = 0, h = 0, n = 0, t0 = performance.now(), fps = 0;
+  const next = () => { if (run) h = rvfc ? video.requestVideoFrameCallback(tick) : requestAnimationFrame(tick); };
+  function tick(now, meta) {
+    if (!run) return;
+    const mt = meta && meta.mediaTime != null ? meta.mediaTime : video.currentTime;
+    if (!busy && mt !== last && video.readyState >= 2 && !document.hidden && now - lastT >= minGap) {
+      last = mt; lastT = now; busy = true;
+      Promise.resolve().then(() => cb(video, now)).catch(e => console.warn('[MotionKit]', e)).finally(() => {
+        busy = false; n++; const t = performance.now(); if (t - t0 >= 1000) { fps = Math.round(n * 1000 / (t - t0)); n = 0; t0 = t; }
+      });
+    }
+    next();
+  }
+  next();
+  return { stop() { run = false; try { rvfc ? video.cancelVideoFrameCallback(h) : cancelAnimationFrame(h); } catch (_) {} }, get fps() { return fps; } };
+}
+
+/* ============================== 11. A-Frame komponenti ============================== */
+
+/**
+ * <a-entity id="rig" motion-rig="hands: true; body: true; steps: true"><a-camera></a-camera></a-entity>
+ * CameraKit (window.CameraKit) avval yuklangan bo'lishi kerak.
+ */
+function registerAFrameMotion(AFRAME = globalThis.AFRAME) {
+  if (!AFRAME || AFRAME.components['motion-rig']) return;
+  AFRAME.registerComponent('motion-rig', {
+    schema: { body: { default: true }, hands: { default: true }, steps: { default: true }, resolution: { default: '480p' } },
+    init() {
+      const CK = globalThis.CameraKit;
+      this.cam = new CK.CameraManager({ resolution: this.data.resolution, facing: 'user' });
+      this.rig = new LocomotionRig({ x: this.el.object3D.position.x, z: this.el.object3D.position.z });
+      this.motion = new MotionTracker({ camera: this.cam, rig: this.rig, body: this.data.body, hands: this.data.hands, steps: this.data.steps });
+      this.cam.start().then(() => this.motion.start()).catch(e => this.el.emit('motion-error', { error: e }));
+    },
+    tick(t, dt) { this.rig.update((dt || 16) / 1000).applyTo(this.el.object3D); },
+    remove() { this.motion.stop(); this.cam.destroy(); }
+  });
+}
+
+global.MotionKit = { OneEuroFilter, Kalman1D, expLerp, deadzone, makeFilter, VecFilter, CameraModel, defaultFov, camToUser, POSE, BodyTracker, StepDetector, HAND, classifyHand, handState, HandLocomotion, LocomotionRig, GrabInteractor, xrHandState, VISION_VERSION, VISION_BASE, MODELS, MainThreadVision, WorkerVision, MotionTracker, registerAFrameMotion };
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
 <script id="lab-hands-js">
 /* =====================================================================================
    ✋ 3D TAJRIBA XONASI — KAMERA ORQALI QO'L VA BARMOQLARNI KUZATISH (Camera Hand Tracking)
@@ -11816,30 +13400,26 @@ class CameraStream{
   v.style.cssText='position:fixed;left:-2px;top:-2px;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
   this.v=v;this.stream=null;this.facing='user';this.tok=0;this.lumC=document.createElement('canvas');this.lumC.width=32;this.lumC.height=24}
  get ok(){return !!(this.stream&&this.v.readyState>=2&&this.v.videoWidth)}
+ /* CameraKit: telefonda ORQA kamera (exact → ideal → deviceId → istalgan), kompyuterda veb-kamera,
+    kameralar ro'yxati va almashtirish. facing: 'environment' | 'user' | undefined (avtomatik) | {deviceId} */
+ get mgr(){if(!this._m){const CK=window.CameraKit;if(!CK)return null;
+  this._m=new CK.CameraManager({video:this.v,resolution:'480p',frameRate:60,pauseWhenHidden:false});   // 640×480 — kuzatuv uchun eng tez
+  this._m.addEventListener('ended',()=>{this.stream=null;if(this.onend)this.onend()})}return this._m}
+ _apply(info){this.stream=this._m.stream;this.info=info;this.facing=info.facing==='user'?'user':'environment'}
+ _err(e,tok){if((e&&e.code==='ABORTED')||tok!==this.tok)return Object.assign(new Error('abort'),{abort:true});
+  if(e&&e.code==='INSECURE')return Object.assign(new Error('https'),{uz:e.uz});
+  return Object.assign(e||new Error('cam'),{uz:e&&e.uz?(e.uz+(e.hint?' '+e.hint:'')):'Kamerani ochib bo\'lmadi'})}
  async start(facing){
-  /* telefon xotirasidan (content://, file://) yoki http:// orqali ochilgan sahifaga brauzer kamerani bermaydi (ba'zan so'ramasdan rad etadi) */
-  const insecure=!window.isSecureContext||/^(content|file|blob):$/.test(location.protocol)||(location.protocol==='http:'&&!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname));
-  if(insecure)throw Object.assign(new Error('https'),{uz:'Kamera faqat xavfsiz (https://) saytda ishlaydi. Saytni GitHub Pages yoki https manzil orqali oching.'});
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw Object.assign(new Error('nomedia'),{uz:'Bu brauzer kamerani qo\'llamaydi. Chrome, Edge yoki Safari\'ning yangi versiyasida oching.'});
-  this.stop();this.facing=facing||'user';const tok=this.tok;const abort=()=>Object.assign(new Error('abort'),{abort:true});
-  // 640×480 — aniqlik va tezlik muvozanati; 30–60 FPS so'raladi
-  const C={audio:false,video:{facingMode:{ideal:this.facing},width:{ideal:640},height:{ideal:480},frameRate:{ideal:60,min:15}}};
-  try{this.stream=await navigator.mediaDevices.getUserMedia(C)}
-  catch(e){const n=e&&e.name;
-   if(n==='NotAllowedError'||n==='SecurityError')throw Object.assign(e,{uz:'Kameraga ruxsat berilmadi. Manzil satridagi 🔒 belgisini bosib, kamerani «Ruxsat berish»ga o\'zgartiring.'});
-   if(n==='NotFoundError'||n==='OverconstrainedError'){try{this.stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false})}catch(e2){throw Object.assign(e2,{uz:'Kamera topilmadi.'})}}
-   else if(n==='NotReadableError')throw Object.assign(e,{uz:'Kamera boshqa ilovada band. Uni yopib, qayta urinib ko\'ring.'});
-   else throw Object.assign(e,{uz:'Kamerani ochib bo\'lmadi: '+(e&&e.message||n)})}
-  if(tok!==this.tok){try{this.stream.getTracks().forEach(t=>t.stop())}catch(_){}this.stream=null;throw abort()}
-  if(!this.v.isConnected)document.body.appendChild(this.v);
-  this.v.srcObject=this.stream;
-  // ba'zi brauzerlarda play() va'dasi kechikadi — kutib qolmaslik uchun vaqt chegarasi
-  try{await Promise.race([this.v.play(),new Promise(r=>setTimeout(r,1500))])}catch(_){}
-  await new Promise(r=>{if(this.v.readyState>=2)return r();const t=setTimeout(r,2500);this.v.onloadeddata=()=>{clearTimeout(t);r()}});
-  this.v.onloadeddata=null;
-  /* agar foydalanuvchi kamerani tizim orqali o'chirsa — modulga xabar beriladi */
-  this.stream.getVideoTracks().forEach(t=>t.onended=()=>{if(this.onend)this.onend()})}
- stop(){this.tok++;if(this.stream){this.stream.getTracks().forEach(t=>{t.onended=null;try{t.stop()}catch(_){}});this.stream=null}try{this.v.srcObject=null}catch(_){}}
+  const m=this.mgr;if(!m)throw Object.assign(new Error('nomedia'),{uz:'Kamera moduli yuklanmadi — sahifani yangilang.'});
+  this.stop();const tok=this.tok;if(!this.v.isConnected)document.body.appendChild(this.v);
+  const o=facing&&typeof facing==='object'?facing:(facing==='environment'||facing==='user'?{facing}:{});
+  let info;try{info=await m.start(o)}catch(e){throw this._err(e,tok)}
+  if(tok!==this.tok){m.stop();throw this._err(null,tok)}
+  this._apply(info)}
+ /** keyingi kamera (telefonda old ↔ orqa, kompyuterda ro'yxat bo'yicha) */
+ async switchCam(){const m=this.mgr,tok=this.tok;let info;try{info=await m.switchCamera()}catch(e){throw this._err(e,tok)}this._apply(info);return info}
+ defaultFacing(){const m=this.mgr;return m?m.resolveFacing('auto'):'user'}
+ stop(){this.tok++;if(this._m)this._m.stop();this.stream=null}
  /* o'rtacha yorug'lik (0–255): kichik nusxadan tez hisoblanadi */
  luma(){if(!this.ok)return 128;try{const g=this.lumC.getContext('2d',{willReadFrequently:true});g.drawImage(this.v,0,0,32,24);const d=g.getImageData(0,0,32,24).data;let s=0;for(let i=0;i<d.length;i+=4)s+=d[i]*.299+d[i+1]*.587+d[i+2]*.114;return s/(d.length/4)}catch(_){return 128}}}
 
@@ -11849,11 +13429,11 @@ class HandDetector{
  async load(onStep){
   if(this.hl)return;
   onStep&&onStep('Qo\'l modeli yuklanmoqda…');
-  try{this.vis=await import(/* webpackIgnore: true */ MP_BASE+'/vision_bundle.mjs')}
+  try{this.vis=this.vis||await import(/* webpackIgnore: true */ MP_BASE+'/vision_bundle.mjs')}
   catch(e){throw Object.assign(e||new Error('mp'),{uz:'Qo\'lni aniqlash kutubxonasi yuklanmadi — internet aloqasini tekshiring (birinchi marta ~8 MB yuklanadi, keyin brauzer xotirasidan olinadi).'})}
   const fs=await this.vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');
   const mk=d=>this.vis.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:MP_MODEL,delegate:d},runningMode:'VIDEO',numHands:this.hands,
-   minHandDetectionConfidence:.6,minHandPresenceConfidence:.55,minTrackingConfidence:.5});
+   minHandDetectionConfidence:.5,minHandPresenceConfidence:.45,minTrackingConfidence:.4});
   try{this.hl=await mk('GPU');this.delegate='GPU'}
   catch(e){try{this.hl=await mk('CPU');this.delegate='CPU'}catch(e2){throw Object.assign(e2||e,{uz:'Qo\'l modeli ishga tushmadi: '+((e2||e)&&(e2||e).message||'')})}}}
  /* bitta kadrni tahlil qilish; vaqt belgisi doim o'sib borishi shart */
@@ -11862,17 +13442,17 @@ class HandDetector{
   const dt=performance.now()-t0;this.ema=this.ema*.9+dt*.1;this.n++;this.adapt();return r}
  /* ⚡ moslashuvchan tezlik: qurilma sekin bo'lsa kadr tashlab ketadi, juda sekin bo'lsa 1 qo'lga o'tadi */
  adapt(){if(this.n%30)return;const e=this.ema;
-  this.skip=e>45?2:e>28?1:0;
+  this.skip=e>60?2:e>40?1:0;
   const want=e>70?1:2;if(want!==this.hands&&this.hl&&this.hl.setOptions){this.hands=want;try{this.hl.setOptions({numHands:want})}catch(_){}}}
  /* GPU tahlilda ishlamasa — CPU bilan qayta yaratiladi (sekinroq, lekin ishlaydi) */
- async toCPU(){if(!this.vis||this.cpuTry)return;this.cpuTry=1;try{const fs=await this.vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');const h=await this.vis.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:MP_MODEL,delegate:'CPU'},runningMode:'VIDEO',numHands:this.hands,minHandDetectionConfidence:.6,minHandPresenceConfidence:.55,minTrackingConfidence:.5});try{this.hl&&this.hl.close()}catch(_){}this.hl=h;this.delegate='CPU';this.errs=0;this.lastTs=0}catch(e){console.warn('[qo\'l] CPU ham ishlamadi',e)}}
+ async toCPU(){if(!this.vis||this.cpuTry)return;this.cpuTry=1;try{const fs=await this.vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');const h=await this.vis.HandLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:MP_MODEL,delegate:'CPU'},runningMode:'VIDEO',numHands:this.hands,minHandDetectionConfidence:.5,minHandPresenceConfidence:.45,minTrackingConfidence:.4});try{this.hl&&this.hl.close()}catch(_){}this.hl=h;this.delegate='CPU';this.errs=0;this.lastTs=0}catch(e){console.warn('[qo\'l] CPU ham ishlamadi',e)}}
  close(){try{this.hl&&this.hl.close()}catch(_){}this.hl=null}}
 
 /* =============================== 4. HandMapper =============================== */
 /* MediaPipe bo'g'imlari: 0 bilak; 1-4 bosh barmoq; 5-8 ko'rsatkich; 9-12 o'rta; 13-16 nomsiz; 17-20 jimjiloq */
 const FING=[[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]];
 class HandMapper{
- constructor(){this.fW=new OneEuro(1.4,.04);this.fS=new OneEuro(1.6,.6);this.pl0=null;this.lastRoll=null}
+ constructor(){this.fW=new OneEuro(2.2,.09);this.fS=new OneEuro(2.4,1.4);this.pl0=null;this.lastRoll=null}
  reset(){this.fW.reset();this.fS.reset();this.lastRoll=null}
  /* kamera koordinatasi → virtual kamera fazosi.
     Old (selfi) kamera: (−x, −y, +z) — ko'zgudek, qo'lingizni ekranga yaqinlashtirsangiz u xonaga «kiradi»;
@@ -11905,7 +13485,8 @@ class HandMapper{
   // 7) kaftning o'z o'qi atrofida burilishi (burash uchun): bo'g'imlar chizig'ining ekrandagi burchagi
   const roll=Math.atan2(P0[1],P0[0]);
   const edge=lm.some(p=>p.x<.015||p.x>.985||p.y<.015||p.y>.985);
-  return {w:W,F,P:P0,fl,th,pinchD,fist,sx:S2[0],sy:S2[1],depth:S2[2],roll,edge}}}
+  const vx=this.fS.dx?clamp(this.fS.dx[0],-6,6):0,vy=this.fS.dx?clamp(this.fS.dx[1],-6,6):0;
+  return {w:W,F,P:P0,fl,th,pinchD,pinchN:pinchD/palmL,fist,sx:S2[0],sy:S2[1],vx,vy,depth:S2[2],roll,edge}}}
 
 /* =============================== 5. RigDriver =============================== */
 /* Xonadagi 3D qo'l: g (kaft) → f[4] barmoq × 3 bo'g'im (rot[0] — bukilish, rot[1] — yoyilish), th[3] bosh barmoq.
@@ -11967,7 +13548,7 @@ function buildUI(){
  const css=document.createElement('style');css.id='lab-hands-css';css.textContent=`
 #labHand.on{background:linear-gradient(135deg,#19b5c9,#0b78d1)!important;color:#fff!important}
 .lh-bar{position:absolute;left:10px;bottom:62px;z-index:6;display:flex;align-items:center;gap:6px;padding:5px 6px 5px 10px;border-radius:999px;background:rgba(10,24,52,.78);color:#e8f4ff;font:600 12.5px/1.2 system-ui,sans-serif;box-shadow:0 4px 14px rgba(0,0,0,.25);backdrop-filter:blur(6px);max-width:calc(100% - 20px)}
-.lh-bar[hidden]{display:none}.lh-bar.lh-help{border-radius:16px;align-items:flex-start;max-width:min(560px,calc(100% - 20px));line-height:1.4;padding:10px 8px 10px 12px}.lh-bar.lh-help #lhTx{white-space:normal}.lh-bar.lh-help #lhPrev{display:none}.lh-bar b{font-weight:800}.lh-bar button{font:inherit;border:0;border-radius:999px;padding:5px 9px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;min-height:30px}
+.lh-bar[hidden]{display:none}.lh-bar.lh-help{border-radius:16px;align-items:flex-start;max-width:min(560px,calc(100% - 20px));line-height:1.4;padding:10px 8px 10px 12px}.lh-bar.lh-help #lhTx{white-space:normal}.lh-bar.lh-help #lhPrev,.lh-bar.lh-help #lhSw,.lh-bar.lh-help #lhBody{display:none}#lhBody[aria-pressed=true]{background:linear-gradient(135deg,#22c55e,#0d9488)}#lhBody.walk{animation:lhWalk .5s ease-in-out infinite alternate}@keyframes lhWalk{to{transform:translateY(-2px)}}.lh-bar b{font-weight:800}.lh-bar button{font:inherit;border:0;border-radius:999px;padding:5px 9px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff;min-height:30px}
 .lh-bar button:hover{background:rgba(255,255,255,.26)}.lh-dot{width:9px;height:9px;border-radius:50%;background:#9aa7b8;flex:none}.lh-dot.ok{background:#2ee59d;box-shadow:0 0 8px #2ee59d}.lh-dot.wait{background:#ffc94d}
 .lh-cur{position:absolute;left:0;top:0;z-index:7;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:2.5px solid rgba(255,255,255,.95);box-shadow:0 0 0 2px rgba(11,120,209,.7),0 2px 10px rgba(0,0,0,.35);pointer-events:none;transition:width .12s,height .12s,margin .12s,background .12s,border-color .12s;will-change:transform}
 .lh-cur[hidden]{display:none}.lh-cur.hv{border-color:#ffd84d;box-shadow:0 0 0 2px rgba(255,170,0,.7),0 0 16px rgba(255,216,77,.6)}.lh-cur.pn{width:18px;height:18px;margin:-9px 0 0 -9px;background:rgba(46,229,157,.55);border-color:#2ee59d}
@@ -11981,14 +13562,22 @@ function buildUI(){
  const b=document.createElement('button');b.type='button';b.id='labHand';b.setAttribute('aria-label','Kameraga ulanish — qo\'llaringiz bilan boshqarish');b.setAttribute('aria-pressed','false');
  b.innerHTML='✋<span class="lb-t"> Kameraga ulanish</span>';const vr=document.getElementById('labVr');tr.insertBefore(b,vr||null);
  const bar=document.createElement('div');bar.className='lh-bar';bar.hidden=true;bar.setAttribute('role','status');bar.setAttribute('aria-live','polite');
- bar.innerHTML='<span class="lh-dot" id="lhDot"></span><span id="lhTx">Kamera…</span><button type="button" id="lhPrev" aria-pressed="false" title="Kamera ko\'zgusini ko\'rsatish">📷</button><button type="button" id="lhOff" title="Kamerani o\'chirish" aria-label="Kamerani o\'chirish">✕</button>';
+ bar.innerHTML='<span class="lh-dot" id="lhDot"></span><span id="lhTx">Kamera…</span><button type="button" id="lhBody" aria-pressed="false" title="Tana harakati: qadam tashlang — VR xonada ham yurasiz" aria-label="Tana harakati bilan yurish">🚶</button><button type="button" id="lhSw" hidden title="Kamerani almashtirish" aria-label="Kamerani almashtirish">🔄</button><button type="button" id="lhPrev" aria-pressed="false" title="Kamera ko\'zgusini ko\'rsatish">📷</button><button type="button" id="lhOff" title="Kamerani o\'chirish" aria-label="Kamerani o\'chirish">✕</button>';
  W.appendChild(bar);
  const cur=[0,1].map(i=>{const c=document.createElement('div');c.className='lh-cur lw-skip';c.hidden=true;c.innerHTML='<i></i>';W.appendChild(c);return c});
  const pv=document.createElement('div');pv.className='lh-prev lw-skip';pv.hidden=true;pv.innerHTML='<canvas width="320" height="240"></canvas>';W.appendChild(pv);
  b.onclick=()=>{ST.on||ST.starting?stopAll(true):startAll()};
  bar.querySelector('#lhOff').onclick=()=>stopAll(true);
+ bar.querySelector('#lhBody').onclick=()=>{BD.on||BD.loading?bodyOff(true):bodyOn()};
+ bar.querySelector('#lhSw').onclick=e=>{if(!ST.on||ST.swc)return;const btn=e.currentTarget;ST.swc=1;ST.manualCam=1;btn.disabled=true;status('📷 Kamera almashtirilmoqda…','wait');
+  ST.cam.switchCam().then(i=>{ST.maps.forEach(m=>{m.reset();m.pl0=null});bodyRecal();[0,1].forEach(k=>releaseG(k,true));loopVideo();status('📷 '+i.name+' — qo\'lingizni ko\'rsating','wait');toast('📷 '+i.name)})
+   .catch(er=>{if(!(er&&er.abort))toast('⚠️ '+((er&&er.uz)||'Kamera almashmadi'));if(!ST.cam.ok)stopAll(false);else loopVideo()}).finally(()=>{ST.swc=0;btn.disabled=false})};
  bar.querySelector('#lhPrev').onclick=e=>{if(!ST.on){toast('📷 Ko\'zgu kamera ulangandan keyin ishlaydi');return}ST.prev=!ST.prev;pv.hidden=!ST.prev;e.currentTarget.setAttribute('aria-pressed',String(ST.prev))};
  ui={W,b,bar,dot:bar.querySelector('#lhDot'),tx:bar.querySelector('#lhTx'),cur,pv,pc:pv.querySelector('canvas')};return ui}
+/* bir nechta kamera bo'lsa — 🔄 tugmasi; qaysi kamera ishlayotganini qisqa ko'rsatish */
+function camUI(){if(!ui)return;const sw=ui.bar.querySelector('#lhSw');const m=ST.cam.mgr;ST.vrWas=(LX()&&LX().S||{}).vr;
+ if(ST.cam.info)toast('📷 '+ST.cam.info.name+(ST.cam.facing==='environment'?' — qo\'lingizni kamera ko\'radigan joyga tuting':''));
+ if(m)m.hasMultipleCameras().then(x=>{sw.hidden=!x}).catch(()=>{sw.hidden=true})}
 function status(t,k){if(!ui)return;if(k)ui.bar.classList.remove('lh-help');ui.tx.innerHTML=t;ui.dot.className='lh-dot'+(k?' '+k:'')}
 
 /* ---- ishga tushirish / to'xtatish ---- */
@@ -11996,8 +13585,8 @@ async function startAll(){
  if(!buildUI()||ST.on||ST.starting)return;const L=LX();if(!L||!L.S){toast('Avval 3D tajriba xonasi yuklansin');return}
  ST.starting=true;ui.b.classList.add('on');ui.b.setAttribute('aria-pressed','true');ui.bar.hidden=false;status('Kameraga ulanmoqda…','wait');
  try{
-  const facing=L.S.vr?'environment':'user';                  // VR ko'zoynakda orqa kamera qo'lni ko'radi
-  await ST.cam.start(facing);
+  // VR ko'zoynakda — orqa kamera; oddiy rejimda — avtomatik: telefonda orqa, kompyuterda veb-kamera (yoki oxirgi tanlangan)
+  await ST.cam.start(L.S.vr?'environment':undefined);
   if(!ST.starting){ST.cam.stop();return}                    // ulanish paytida o'chirilgan bo'lsa — kamera yonib qolmaydi
   status('Qo\'l modeli yuklanmoqda…','wait');
   await ST.det.load(t=>status(t,'wait'));
@@ -12005,13 +13594,13 @@ async function startAll(){
   ST.on=true;ST.starting=false;ST.cam.onend=()=>{hint('end','📷 Kamera uzildi');stopAll(true)};
   ST.maps.forEach(m=>{m.reset();m.pl0=null});ST.fT=performance.now();ST.fN=0;ST.noT=performance.now();
   patchLab(L);window.__labHandHook=frameHook;loopVideo();cancelAnimationFrame(ST.ui);ST.ui=requestAnimationFrame(uiTick);
-  status('Qo\'lingizni kameraga ko\'rsating','wait');
+  status('Qo\'lingizni kameraga ko\'rsating','wait');camUI();
   hint('start','✋ Qo\'lingizni kameraga ko\'rsating. Ushlash — bosh va ko\'rsatkich barmoqni chimchilang (yoki musht qiling), qo\'yib yuborish — barmoqlarni oching. Burash — bilakni buring.',1)
  }catch(e){if(e&&e.abort){ST.starting=false;return}const m=(e&&e.uz)||'Kamera ishga tushmadi';
   if(e&&e.message==='https'){ST.starting=false;stopAll(false);ui.bar.hidden=false;ui.bar.classList.add('lh-help');status('🔒 <b>Kamera bu ochilishda ishlamaydi.</b> Fayl telefon xotirasidan (content:// yoki file://) ochilgan — brauzer xavfsizlik uchun kamerani faqat <b>https://</b> saytlarga beradi. Saytni GitHub Pages manzili (https://…github.io/…) orqali oching va kameraga ruxsat bering.','');toast('🔒 Kamera faqat https:// saytda ishlaydi — saytni GitHub Pages manzili orqali oching');return}
   status('⚠️ '+m.split(/[.—]/)[0].trim(),'');toast('⚠️ '+m);console.warn('[qo\'l kuzatuv]',e);ST.starting=false;stopAll(false);ui.bar.hidden=false;setTimeout(()=>{if(!ST.on&&!ST.starting&&ui)ui.bar.hidden=true},7000)}}
 function stopAll(user){
- ST.starting=false;const was=ST.on;ST.on=false;window.__labHandHook=null;
+ ST.starting=false;const was=ST.on;ST.on=false;window.__labHandHook=null;bodyOff(false);
  cancelAnimationFrame(ST.raf);if(ST.vcb&&ST.cam.v.cancelVideoFrameCallback){try{ST.cam.v.cancelVideoFrameCallback(ST.vcb)}catch(_){}}ST.vcb=0;
  [0,1].forEach(i=>releaseG(i,true));ST.hands=[null,null];ST.tg=[null,null];cancelAnimationFrame(ST.ui);ST.ui=0;ST.cam.stop();ST.book.on&&ST.book.end();
  const L=LX();if(L&&L.S){L.S.hov=null;(L.S.HANDS||[]).forEach(h=>{h.trk=0})}
@@ -12030,6 +13619,7 @@ function loopVideo(){const v=ST.cam.v;let k=0;const gen=ST.lg=(ST.lg||0)+1;
   if(v.requestVideoFrameCallback)ST.vcb=v.requestVideoFrameCallback(tick);else ST.raf=requestAnimationFrame(tick)};
  if(v.requestVideoFrameCallback)ST.vcb=v.requestVideoFrameCallback(tick);else ST.raf=requestAnimationFrame(tick)}
 function processFrame(){
+ bodyFrame(ST.cam.v);
  const r=ST.det.detect(ST.cam.v);if(!r)return;feed(r,ST.cam.facing==='user',ST.cam.v.videoWidth/Math.max(1,ST.cam.v.videoHeight))}
 /** natijani qabul qilish (sinov uchun tashqaridan ham beriladi) */
 function feed(r,front,aspect){
@@ -12040,6 +13630,7 @@ function feed(r,front,aspect){
   let lab=(hd[i]&&hd[i][0]&&hd[i][0].categoryName)||'Right';if(!front)lab=lab==='Left'?'Right':'Left';   // orqa kamerada o'ng-chap almashadi
   let slot=lab==='Left'?1:0;if(got[slot])slot=1-slot;if(got[slot])continue;
   got[slot]={lm:lms[i],wl:wls[i]}}
+bodyHands(got,t);
  for(const s of [0,1]){if(got[s]){ST.hands[s]=ST.maps[s].map(got[s].lm,got[s].wl,front,t,aspect||4/3,!!ST.g[s]);ST.seen[s]=now}}
  // ⚠️ ogohlantirishlar: qo'l yo'q, kadr chetida, yorug'lik kam
  const any=got[0]||got[1];if(any)ST.noT=now;else if(now-ST.noT>5000)hint('none','🖐 Qo\'l ko\'rinmayapti — qo\'lingizni kamera oldiga, 30–60 sm masofaga keltiring',12000);
@@ -12060,15 +13651,17 @@ function drawPrev(lms){const c=ui&&ui.pc;if(!c)return;const g=c.getContext('2d')
 function uiTick(){
  if(!ST.on){ST.ui=0;return}ST.ui=requestAnimationFrame(uiTick);
  const L=LX();if(!L||!L.S||!ui)return;const S=L.S,now=performance.now();
+ bodyApply(S,now);
  // tajriba xonasidan chiqilgan bo'lsa — kamera avtomatik o'chadi (batareya va maxfiylik)
  if(!SEC.classList.contains('on')){stopAll(false);return}
  // VR ↔ oddiy rejim almashsa: kamera tomoni almashadi (VR ko'zoynakda orqa kamera qo'llarni ko'radi)
- const want=S.vr?'environment':'user';if(ST.cam.stream&&ST.cam.facing!==want&&!ST.swc){ST.swc=1;status('📷 '+(want==='environment'?'Orqa':'Old')+' kameraga o\'tilmoqda…','wait');ST.cam.start(want).then(()=>{ST.maps.forEach(m=>{m.reset();m.pl0=null});loopVideo()}).catch(e=>{if(!(e&&e.abort))toast('⚠️ '+((e&&e.uz)||'Kamera almashmadi'))}).finally(()=>{ST.swc=0})}
+ const want=S.vr?'environment':ST.cam.defaultFacing();if(ST.cam.stream&&ST.cam.facing!==want&&!ST.swc&&!(ST.manualCam&&!S.vr)&&ST.vrWas!==S.vr&&ST.cam.mgr&&ST.cam.mgr.device.isMobile){ST.vrWas=S.vr;ST.swc=1;status('📷 '+(want==='environment'?'Orqa':'Old')+' kameraga o\'tilmoqda…','wait');ST.cam.start(want).then(()=>{ST.maps.forEach(m=>{m.reset();m.pl0=null});loopVideo()}).catch(e=>{if(!(e&&e.abort))toast('⚠️ '+((e&&e.uz)||'Kamera almashmadi'))}).finally(()=>{ST.swc=0})}
  const cr=S.cv.getBoundingClientRect(),wr=ui.W.getBoundingClientRect();
  for(const s of [0,1]){const st=ST.hands[s],c=ui.cur[s];const fresh=st&&now-ST.seen[s]<260;
   if(!fresh){ST.tg[s]=null;c.hidden=true;if(ST.g[s]&&now-ST.seen[s]>420)releaseG(s);continue}
   // ekran nuqtasi → 3D nishon (kamera nuri bo'ylab, taxminiy chuqurlikda)
-  const px=cr.left+st.sx*cr.width,py=cr.top+st.sy*cr.height;const R=L.ray(px,py);const target=v3.add(R.o,v3.mul(R.d,st.depth));
+  const ah=clamp((now-ST.seen[s])/1000+.025,0,.07);const qx=clamp(st.sx+st.vx*ah,0,1),qy=clamp(st.sy+st.vy*ah,0,1);   // bashorat (kechikishni yashiradi)
+  const px=cr.left+qx*cr.width,py=cr.top+qy*cr.height;const R=L.ray(px,py);const target=v3.add(R.o,v3.mul(R.d,st.depth));
   ST.tg[s]={st,target};
   c.hidden=false;c.style.transform='translate('+(px-wr.left).toFixed(1)+'px,'+(py-wr.top).toFixed(1)+'px)';
   try{gesture(s,st,px,py,L,target)}catch(e){console.warn('[qo\'l imo-ishora]',e)}}}
@@ -12079,7 +13672,7 @@ function frameHook(){
 /* ---- 6. imo-ishoralar: pinch/grab (gisterezis bilan), hover, ushlash, ko'tarish, burash ---- */
 function gesture(s,st,px,py,L,target){
  const S=L.S,c=ui.cur[s];let G=ST.g[s];
- const pinchOn=st.pinchD<.032||st.fist<1.02,pinchOff=st.pinchD>.052&&st.fist>1.18;   // yoqish/o'chirish chegaralari farqli — miltillamaydi
+ const pinchOn=st.pinchD<.036||st.pinchN<.36||st.fist<1.05,pinchOff=st.pinchD>.055&&st.pinchN>.55&&st.fist>1.2;   // yoqish/o'chirish chegaralari farqli — miltillamaydi
  if(!G){
   // hover: barmoq ostidagi jihozni yoritish
   const hc=ST.hc[s],now2=performance.now();let hv=hc.v;
@@ -12129,10 +13722,89 @@ function ptr(type,G,x,y,L){const S=L.S;let ev;
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&(ST.on||ST.starting))stopAll(false)});
 const nv=document.getElementById('nv');if(nv)nv.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-t]');if(b&&b.dataset.t!=='lab'&&(ST.on||ST.starting))stopAll(false)});
 /* xona birinchi marta ochilganda tugma qo'shiladi */
-const mo=new MutationObserver(()=>{if(document.getElementById('labw')&&!ui)buildUI()});mo.observe(SEC,{childList:true,subtree:true});if(document.getElementById('labw'))buildUI();
+/* ⚡ oldindan yuklash: tajriba xonasiga kirilgach, bo'sh vaqtda kutubxona va model brauzer xotirasiga olinadi —
+   «✋» bosilganda kamera deyarli darhol ishga tushadi. Trafikni tejash rejimi yoki sekin internetda yuklanmaydi. */
+let pre=0;function prefetch(){if(pre||ST.det.vis)return;pre=1;try{const c=navigator.connection;if(c&&(c.saveData||/2g/.test(c.effectiveType||'')))return}catch(_){}
+ const go=()=>{if(!SEC.classList.contains('on')){pre=0;return}import(MP_BASE+'/vision_bundle.mjs').then(v=>{if(!ST.det.vis)ST.det.vis=v;try{fetch(MP_BASE+'/wasm/vision_wasm_internal.wasm',{cache:'force-cache'}).catch(()=>{});fetch(MP_BASE+'/wasm/vision_wasm_internal.js',{cache:'force-cache'}).catch(()=>{})}catch(_){}}).catch(()=>{pre=0});
+  try{fetch(MP_MODEL,{cache:'force-cache'}).catch(()=>{})}catch(_){}};
+ (window.requestIdleCallback||(f=>setTimeout(f,1)))(()=>setTimeout(go,2500))}
+const mo=new MutationObserver(()=>{if(document.getElementById('labw')&&!ui)buildUI();if(ui&&SEC.classList.contains('on'))prefetch()});mo.observe(SEC,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});if(document.getElementById('labw'))buildUI();
+
+/* =============================== 9. Tana harakati — real qadamlar VR xonada (MotionKit) ===============================
+   Kamera sizni ko'rib turadi (old kamera / veb-kamera): yelka va son markazi, uning kattaligi (masofa) va tizzalar.
+   • kameraga 1 qadam yaqinlashsangiz — xonada oldinga, uzoqlashsangiz — orqaga, yonga qadam — yonga;
+   • joyida yursangiz (tizza ko'tarib yoki stol yonida yelka tebranishi) — oldinga yurasiz;
+   • ko'rsatkich barmoq bilan ko'rsatib tursangiz — o'sha tomonga yurasiz; musht — to'xtash.
+   Kelgan siljish uiTick'da (har kadrda) silliq qo'llanadi; devor va stol chegarasi saqlanadi. */
+const POSE_MODEL='https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task';
+const BD={on:false,loading:false,pl:null,ts:0,k:0,body:null,step:null,model:null,pend:[0,0],lastSeen:0,prevOff:null,prevFwd:null,real:0,lt:0,ht:0,pt:[null,null],hc:[{},{}],walk:0,at:0,ema:12};
+function bodyBtn(){const b=ui&&ui.bar.querySelector('#lhBody');if(!b)return;b.setAttribute('aria-pressed',String(BD.on||BD.loading));b.classList.toggle('walk',BD.on&&BD.walk>.15)}
+async function bodyLoad(){
+ if(BD.pl)return;const vis=ST.det.vis||(ST.det.vis=await import(/* webpackIgnore: true */ MP_BASE+'/vision_bundle.mjs'));
+ const fs=await vis.FilesetResolver.forVisionTasks(MP_BASE+'/wasm');
+ const mk=d=>vis.PoseLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:POSE_MODEL,delegate:d},runningMode:'VIDEO',numPoses:1,minPoseDetectionConfidence:.5,minPosePresenceConfidence:.5,minTrackingConfidence:.5});
+ if(ST.det.delegate!=='CPU'){try{BD.pl=await mk('GPU');BD.del='GPU';return}catch(_){}}
+ BD.pl=await mk('CPU');BD.del='CPU'}
+function bodyRecal(){if(!BD.body)return;const MK=window.MotionKit;BD.model.hfovDeg=MK.defaultFov(ST.cam.mgr&&ST.cam.mgr.device,ST.cam.facing);BD.model.setFrame(ST.cam.v.videoWidth||640,ST.cam.v.videoHeight||480);BD.body.calibrate();BD.step.reset();BD.prevOff=null;BD.prevFwd=null;BD.pend=[0,0]}
+async function bodyOn(){
+ if(BD.on||BD.loading)return;if(!ST.on){toast('📷 Avval qo\'l kamerasini yoqing, so\'ng 🚶 tugmasini bosing');return}
+ const MK=window.MotionKit;if(!MK){toast('⚠️ Harakat moduli yuklanmadi — sahifani yangilang');return}
+ BD.loading=true;bodyBtn();status('🚶 Tana modeli yuklanmoqda…','wait');
+ try{
+  const L=LX();
+  // telefon orqa kamerasi foydalanuvchini ko'rmaydi — tana kuzatuvi uchun old kamera
+  if(ST.cam.facing==='environment'&&ST.cam.mgr&&ST.cam.mgr.device.isMobile&&!(L&&L.S&&L.S.vr)){
+   try{await ST.cam.start('user');ST.maps.forEach(m=>{m.reset();m.pl0=null});loopVideo();toast('📷 Tana harakati uchun old kamera yoqildi (🔄 bilan almashtirish mumkin)')}catch(_){}}
+  await bodyLoad();if(!BD.loading)return;
+  BD.model=new MK.CameraModel({hfovDeg:62});
+  // o'quvchilar uchun: yelka ~0.34 m; xona kichik — real 1 m ≈ xonada 1.4 m; yuqori-past (cho'kish) bu xonada ishlatilmaydi
+  BD.body=new MK.BodyTracker({cameraModel:BD.model,shoulderWidthM:.34,torsoLengthM:.46,gain:{right:1.2,up:0,forward:1.4},deadzone:{right:.05,up:1,forward:.08},maxOffset:{right:2,up:0,forward:3}});
+  BD.step=new MK.StepDetector({stepLengthM:.5,maxSpeed:1.3});bodyRecal();
+  BD.on=true;BD.lastSeen=performance.now();
+  status('🚶 Joyingizda turing — sozlanmoqda…','wait');
+  hint('bodyStart','🚶 Kameradan 1.5–2.5 m uzoqda, yelkangizdan yuqorisi kadrga tushadigan qilib 1 soniya turing. So\'ng: kameraga qadam — oldinga, orqaga qadam — orqaga, yonga qadam — yonga, joyida yurish — oldinga yurish. Musht — to\'xtash.',1)
+ }catch(e){console.warn('[tana]',e);toast('⚠️ Tana modeli yuklanmadi — internet aloqasini tekshiring');BD.on=false}
+ finally{BD.loading=false;bodyBtn()}}
+function bodyOff(user){if(!BD.on&&!BD.loading)return;BD.on=false;BD.loading=false;BD.pend=[0,0];BD.walk=0;bodyBtn();if(user)toast('🚶 Tana harakati o\'chirildi')}
+/** har kamera kadrida (qo'l tahlilidan oldin) — og'ir qurilmada navbatma-navbat */
+function bodyFrame(video){
+ if(!BD.on||!BD.pl)return;const L=LX();if(L&&L.S&&L.S.vr&&ST.cam.facing==='environment')return;   // VR ko'zoynakda orqa kamera tanani ko'rmaydi
+ if(ST.det.ema+BD.ema>40&&(BD.k++%2))return;
+ let ts=performance.now();if(ts<=BD.ts)ts=BD.ts+.01;BD.ts=ts;const t0=ts;
+ let r=null;try{r=BD.pl.detectForVideo(video,ts)}catch(e){return}
+ BD.ema=BD.ema*.9+(performance.now()-t0)*.1;
+ const v=ST.cam.v;if(v.videoWidth&&(v.videoWidth!==BD.model.width||v.videoHeight!==BD.model.height))BD.model.setFrame(v.videoWidth,v.videoHeight);
+ const lm=r&&r.landmarks&&r.landmarks[0],wl=r&&r.worldLandmarks&&r.worldLandmarks[0],t=ts/1000;
+ if(!lm){if(performance.now()-BD.lastSeen>3000)hint('bodyNo','🚶 Gavdangiz ko\'rinmayapti — kameradan uzoqroq turing (bosh va yelkalar kadrda bo\'lsin)');return}
+ BD.lastSeen=performance.now();
+ const dt=BD.lt?clamp(t-BD.lt,.001,.25):1/30;BD.lt=t;
+ const s=BD.body.update(lm,wl,t);
+ if(s.ok&&s.calibrated){
+  if(s.justCalibrated){BD.prevOff=null;BD.prevFwd=null;status('🚶 Tayyor — qadam tashlang','ok');toast('✅ Sozlandi: oldinga, orqaga, yonga qadam tashlang yoki joyida yuring')}
+  if(BD.prevFwd!=null)BD.real+=((s.raw.forward-BD.prevFwd)/dt-BD.real)*(1-Math.exp(-6*dt));BD.prevFwd=s.raw.forward;
+  if(BD.prevOff){BD.pend[0]+=s.offset.right-BD.prevOff.right;BD.pend[1]+=s.offset.forward-BD.prevOff.forward}BD.prevOff=s.offset}
+ const st=BD.step.update(lm,t,BD.real,BD.model.ar);if(st.speed>0)BD.pend[1]+=st.speed*dt;
+ const w=st.speed>.15;if(w!==(BD.walk>.15)){BD.walk=st.speed;bodyBtn()}else BD.walk=st.speed}
+/** qo'l ishoralari: ko'rsatib yurish (0.5 s ushlab turilsa), musht — to'xtash */
+function bodyHands(got,t){
+ if(!BD.on||!BD.model)return;const MK=window.MotionKit;const dt=BD.ht?clamp(t-BD.ht,.001,.25):1/30;BD.ht=t;
+ for(const s of [0,1]){const g=got[s];if(!g){BD.pt[s]=null;BD.hc[s]={};continue}
+  const c=MK.classifyHand(g.lm,BD.model,BD.hc[s]);BD.hc[s]=c;
+  if(c.gesture==='fist'){BD.pend=[0,0];BD.step.speed=0;BD.step.streak=0;BD.pt=[null,null];return}
+  if(c.gesture==='point'&&!ST.g[s]){if(BD.pt[s]==null)BD.pt[s]=t;if(t-BD.pt[s]>=.5)BD.pend[1]+=.8*dt}else BD.pt[s]=null}}
+/** uiTick'da: yig'ilgan siljish silliq (kadr chastotasidan mustaqil) qo'llanadi; devor va stoldan o'tib bo'lmaydi */
+function bodyApply(S,now){
+ const dt=BD.at?clamp((now-BD.at)/1000,.001,.1):1/60;BD.at=now;if(!BD.on)return;
+ const k=1-Math.exp(-12*dt),dr=BD.pend[0]*k,df=BD.pend[1]*k;BD.pend[0]-=dr;BD.pend[1]-=df;
+ if(Math.abs(dr)+Math.abs(df)<1e-5||!S.cam)return;
+ const c=S.cam,fx=-Math.sin(c.yaw),fz=-Math.cos(c.yaw),rx=Math.cos(c.yaw),rz=-Math.sin(c.yaw);
+ let nx=c.p[0]+rx*dr+fx*df,nz=c.p[2]+rz*dr+fz*df;const B=S.bounds;if(B){nx=clamp(nx,B[0],B[1]);nz=clamp(nz,B[2],B[3])}
+ const T=S.TB,hit=(x,z)=>!!T&&Math.abs(x-T.x)<T.hx+.28&&Math.abs(z-T.z)<T.hz+.28;
+ if(hit(nx,nz)){if(!hit(nx,c.p[2]))nz=c.p[2];else if(!hit(c.p[0],nz))nx=c.p[0];else{BD.pend=[0,0];return}}
+ c.p=[nx,c.p[1],nz]}
 
 /* sinov va diagnostika uchun ochiq API */
-window.labHands={start:startAll,stop:()=>stopAll(true),state:()=>({on:ST.on,starting:ST.starting,fps:ST.fps,delegate:ST.det.delegate,facing:ST.cam.facing,hands:ST.hands.map(h=>!!h),grab:ST.g.map(g=>g&&g.kind),roll:ST.hands.map(h=>h&&+h.roll.toFixed(2)),gi:ST.g.map(g=>g&&g.it&&[g.it.id,g.it.dragged,+g.r0.toFixed(2)]),ema:+ST.det.ema.toFixed(1),skip:ST.det.skip}),
+window.labHands={body:{on:()=>bodyOn(),off:()=>bodyOff(true),state:()=>({on:BD.on,loading:BD.loading,cal:!!(BD.body&&BD.body.base),pend:BD.pend.map(v=>+v.toFixed(3)),walk:+BD.walk.toFixed(2),del:BD.del,mode:BD.step&&BD.step.mode})},start:startAll,stop:()=>stopAll(true),state:()=>({on:ST.on,starting:ST.starting,fps:ST.fps,delegate:ST.det.delegate,facing:ST.cam.facing,hands:ST.hands.map(h=>!!h),grab:ST.g.map(g=>g&&g.kind),roll:ST.hands.map(h=>h&&+h.roll.toFixed(2)),gi:ST.g.map(g=>g&&g.it&&[g.it.id,g.it.dragged,+g.r0.toFixed(2)]),ema:+ST.det.ema.toFixed(1),skip:ST.det.skip}),
  _feed:(r,front,aspect)=>{if(!ST.on){ST.on=true;window.__labHandHook=frameHook;buildUI();const L=LX();if(L)patchLab(L);ui.bar.hidden=false;ui.b.classList.add('on');ST.ui=requestAnimationFrame(uiTick)}feed(r,front!==false,aspect||4/3)},
  _book:ST.book};
 })();
@@ -12175,6 +13847,162 @@ body:has(>.emaktab-overlay) .l3v.l3full{z-index:999990!important}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fb);else fb();addEventListener('load',fb)})();
 </script>
+<style id="polish-css">
+/* ===== Yakuniy sayqal: bo'sh elementlar, mobil sarlavha, fokus ===== */
+#lv:empty{display:none!important}
+:where(button,a,[role=button],input,select,textarea,summary):focus-visible{outline:3px solid #38bdf8;outline-offset:2px}
+button:disabled,button[aria-disabled=true]{cursor:not-allowed}
+img{max-width:100%}
+@media (max-width:700px){
+ html body header{gap:6px!important;padding:8px 12px!important}
+ html body header .row{flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;padding:2px 0 4px;margin:0 -12px;padding-inline:12px;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 12px,#000 calc(100% - 26px),transparent)}
+ html body header .row::-webkit-scrollbar{display:none}
+ html body header .row>*{flex:0 0 auto!important;scroll-snap-align:start}
+ html body header .row #sq{flex:0 0 150px!important;width:150px!important;min-width:0!important}
+ html body #slides>.row{flex-wrap:wrap!important;gap:8px!important}
+ html body #slides>.row>button{flex:1 1 calc(50% - 8px)!important;min-width:0!important;white-space:nowrap;overflow:visible!important;font-size:14px}
+ html body #slides>.row>small{flex:1 1 100%;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ===== 7-sinf Fizika: 21 ta mavzu oynasi (faqat ko'rinish; havolalar o'zgarmaydi) ===== */
+body .emaktab-lib-box{--lb-bg:#0a1228;--lb-hd:#0f1b3a;--lb-tx:#eef4ff;--lb-mu:#93a4c3;--lb-cd:#111c38;--lb-cd2:#0c1530;--lb-bd:rgba(120,160,255,.16);
+ width:min(1180px,96vw);max-height:min(92vh,980px);background:var(--lb-bg);color:var(--lb-tx);border:1px solid var(--lb-bd);border-radius:28px;
+ box-shadow:0 40px 120px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);animation:lbIn .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes lbIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+body .emaktab-lib-head{position:relative;flex-wrap:wrap;padding:22px 26px 18px;gap:14px 16px;border-bottom:1px solid var(--lb-bd);
+ background:radial-gradient(120% 140% at 0% 0%,rgba(56,189,248,.22),transparent 55%),radial-gradient(90% 120% at 100% 0%,rgba(139,92,246,.22),transparent 60%),var(--lb-hd)}
+body .emaktab-lib-title{gap:14px;min-width:0;flex:1 1 320px}
+body .emaktab-lib-title>span{flex:0 0 auto;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;font-size:28px!important;color:#fff;
+ background:linear-gradient(135deg,#0ea5e9,#6366f1 60%,#a855f7);box-shadow:0 10px 24px rgba(79,70,229,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+body .emaktab-lib-title>div{min-width:0}
+body .emaktab-lib-title h2{font-size:clamp(18px,2.4vw,24px);line-height:1.2;letter-spacing:-.01em;color:var(--lb-tx);background:linear-gradient(90deg,#7dd3fc,#c4b5fd);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+body .emaktab-lib-title>div::after{content:"Mavzuni tanlang — interaktiv dars yangi sahifada ochiladi";display:block;margin-top:4px;font-size:13px;font-weight:500;color:var(--lb-mu)}
+body .emaktab-lib-badge{white-space:nowrap;font-size:12.5px;color:#bae6fd;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3);padding:6px 12px}
+body .emaktab-lib-close{flex:0 0 40px;width:40px;height:40px;font-size:22px;line-height:1;color:var(--lb-tx);background:rgba(255,255,255,.08);border:1px solid var(--lb-bd)}
+body .emaktab-lib-close:hover{background:rgba(239,68,68,.2);color:#fca5a5;border-color:rgba(239,68,68,.45)}
+body .emaktab-lib-close:active{transform:scale(.94)}
+/* qidiruv va jarayon (polish-js qo'shadi) */
+.lb-tools{flex:1 1 100%;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lb-tools input.lb-q{flex:1 1 220px;min-width:0;height:42px;border-radius:12px;border:1.5px solid var(--lb-bd);background:rgba(255,255,255,.05);color:var(--lb-tx);font:inherit;font-size:14px;padding:0 14px 0 38px;outline:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%2393a4c3' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='m13 13 4 4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px 50%}
+.lb-tools input.lb-q::placeholder{color:var(--lb-mu)}
+.lb-tools input.lb-q:focus{border-color:#38bdf8;box-shadow:0 0 0 3px rgba(56,189,248,.2)}
+.lb-prog{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--lb-mu);white-space:nowrap}
+.lb-bar{width:120px;height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.lb-bar>i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#22d3ee,#818cf8);transition:width .5s}
+/* ro'yxat */
+body .emaktab-lib-grid{flex:1 1 auto;min-height:0;grid-auto-rows:auto;padding:20px 24px 28px;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;align-content:start;scrollbar-width:thin;scrollbar-color:rgba(148,163,184,.35) transparent;overscroll-behavior:contain}
+.lb-grp{grid-column:1/-1;display:flex;align-items:center;gap:10px;margin:8px 2px 0;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--g,#7dd3fc)}
+.lb-grp:first-child{margin-top:0}
+.lb-grp::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--g,#7dd3fc);box-shadow:0 0 12px var(--g,#7dd3fc)}
+.lb-grp::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--lb-bd),transparent)}
+.lb-grp small{font-size:12px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--lb-mu);opacity:1}
+.lb-empty{grid-column:1/-1;text-align:center;padding:30px 10px;color:var(--lb-mu);font-size:14px}
+body .emaktab-lesson-card{--g:#38bdf8;position:relative;overflow:hidden;overflow:clip;min-height:118px;height:auto;padding:16px 18px 16px 20px;border-radius:18px;color:var(--lb-tx);
+ background:linear-gradient(160deg,var(--lb-cd),var(--lb-cd2));border:1px solid var(--lb-bd);box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 6px 18px rgba(0,0,0,.18);
+ transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s,box-shadow .2s,background .2s;-webkit-tap-highlight-color:transparent}
+body .emaktab-lesson-card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--g)}
+body .emaktab-lesson-card::after{content:"";position:absolute;inset:auto -40px -60px auto;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--g) 30%,transparent),transparent 70%);opacity:.0;transition:opacity .25s}
+body .emaktab-lesson-card[data-g="2"]{--g:#60a5fa}
+body .emaktab-lesson-card[data-g="3"]{--g:#a78bfa}
+body .emaktab-lesson-card[data-g="1"]{--g:#22d3ee}
+body .emaktab-lesson-card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--g) 65%,transparent);box-shadow:0 16px 34px rgba(0,0,0,.28),0 0 0 1px color-mix(in srgb,var(--g) 35%,transparent)}
+body .emaktab-lesson-card:hover::after,body .emaktab-lesson-card:focus-visible::after{opacity:1}
+body .emaktab-lesson-card:active{transform:translateY(-1px) scale(.99)}
+body .emaktab-lesson-card:focus-visible{outline:3px solid var(--g);outline-offset:2px}
+body .emaktab-card-meta{margin-bottom:10px;gap:8px}
+body .emaktab-num-tag{font-size:12px;padding:4px 10px;border-radius:999px;color:var(--g);background:color-mix(in srgb,var(--g) 14%,transparent);border:1px solid color-mix(in srgb,var(--g) 30%,transparent);letter-spacing:.02em}
+body .emaktab-open-arrow{font-size:12.5px;font-weight:700;color:var(--lb-mu);padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.04);transition:color .2s,background .2s}
+body .emaktab-lesson-card:hover .emaktab-open-arrow{color:#fff;background:var(--g)}
+body .emaktab-card-text{font-size:15px;font-weight:700;line-height:1.4;color:var(--lb-tx);text-wrap:pretty}
+body .emaktab-lesson-card.lb-seen .emaktab-num-tag::after{content:" ✓";}
+body .emaktab-lesson-card.lb-seen{background:linear-gradient(160deg,color-mix(in srgb,var(--g) 9%,var(--lb-cd)),var(--lb-cd2))}
+body .emaktab-lesson-card.lb-hide{display:none}
+@media (prefers-reduced-motion:no-preference){body .emaktab-lib-grid>.emaktab-lesson-card{animation:lbCard .38s both cubic-bezier(.2,.8,.2,1);animation-delay:calc(var(--i,0) * 18ms)}}
+@keyframes lbCard{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* kunduzgi rejim */
+html:not([data-t="night"]) body .emaktab-lib-box{--lb-bg:#f6f8fd;--lb-hd:#ffffff;--lb-tx:#0f1b3d;--lb-mu:#5b6b8c;--lb-cd:#ffffff;--lb-cd2:#f9fbff;--lb-bd:rgba(30,64,175,.13);box-shadow:0 40px 120px rgba(15,23,42,.35)}
+html:not([data-t="night"]) body .emaktab-lib-title h2{background:linear-gradient(90deg,#0369a1,#6d28d9);-webkit-background-clip:text;background-clip:text}
+html:not([data-t="night"]) body .emaktab-lib-badge{color:#075985;background:#e0f2fe;border-color:#bae6fd}
+html:not([data-t="night"]) body .emaktab-lib-close{background:#eef2fb}
+html:not([data-t="night"]) body .emaktab-lesson-card{box-shadow:0 1px 2px rgba(15,23,42,.05),0 6px 16px rgba(15,23,42,.06)}
+html:not([data-t="night"]) body .emaktab-lesson-card[data-g="1"]{--g:#0891b2}
+html:not([data-t="night"]) body .emaktab-lesson-card[data-g="2"]{--g:#2563eb}
+html:not([data-t="night"]) body .emaktab-lesson-card[data-g="3"]{--g:#7c3aed}
+html:not([data-t="night"]) body .emaktab-lesson-card:hover{box-shadow:0 14px 30px rgba(30,64,175,.14),0 0 0 1px color-mix(in srgb,var(--g) 35%,transparent)}
+html:not([data-t="night"]) body .emaktab-open-arrow{background:#eef2fb}
+html:not([data-t="night"]) .lb-tools input.lb-q{background-color:#fff}
+html:not([data-t="night"]) .lb-bar{background:#e4e9f5}
+html:not([data-t="night"]) .lb-grp{color:var(--g)}
+html:not([data-t="night"]) .lb-grp[data-g="1"]{--g:#0891b2}html:not([data-t="night"]) .lb-grp[data-g="2"]{--g:#2563eb}html:not([data-t="night"]) .lb-grp[data-g="3"]{--g:#7c3aed}
+.lb-grp[data-g="1"]{--g:#22d3ee}.lb-grp[data-g="2"]{--g:#60a5fa}.lb-grp[data-g="3"]{--g:#a78bfa}
+/* planshet va telefon */
+@media (max-width:640px){
+ body #emaktab-lib-overlay{padding:0;align-items:stretch}
+ body .emaktab-lib-box{width:100vw;max-height:none;height:100%;height:100dvh;border-radius:0;border:0}
+ body .emaktab-lib-head{padding:14px 14px 12px;gap:10px;padding-top:max(14px,env(safe-area-inset-top))}
+ body .emaktab-lib-head>div:last-child{gap:8px!important}
+ body .emaktab-lib-title{flex:1 1 0;gap:10px}
+ body .emaktab-lib-title>span{width:42px;height:42px;border-radius:13px;font-size:22px!important}
+ body .emaktab-lib-title h2{font-size:17px}
+ body .emaktab-lib-title>div::after{font-size:12px;content:"Mavzuni tanlang"}
+ body .emaktab-lib-badge{display:none}
+ .lb-tools{gap:8px}
+ .lb-grp{flex-wrap:wrap;font-size:12px;letter-spacing:.04em;gap:4px 8px}.lb-grp::after{display:none}.lb-grp small{flex-basis:100%;padding-left:18px}
+ .lb-prog{width:100%;justify-content:space-between}.lb-bar{flex:1}
+ body .emaktab-lib-grid{grid-template-columns:1fr;padding:14px 12px calc(20px + env(safe-area-inset-bottom));gap:10px}
+ body .emaktab-lesson-card{min-height:96px;padding:14px 14px 14px 18px;border-radius:16px}
+ body .emaktab-card-meta{margin-bottom:8px}
+ body .emaktab-card-text{font-size:15px}
+}
+@media (min-width:641px) and (max-width:900px){body .emaktab-lib-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script id="polish-js">
+(function(){'use strict';
+/* 21 ta mavzu oynasini bezash: guruh sarlavhalari, qidiruv, ko'rilganlar belgisi, Esc bilan yopish.
+   Havolalar (href) va ularning tartibiga TEGILMAYDI — faqat qo'shimcha sinf/atributlar va bo'luvchi sarlavhalar qo'shiladi. */
+var KEY='muallim_7fiz_seen';
+var GR=[[1,6,'Fizika va moddaning tuzilishi'],[7,14,'Mexanik harakat'],[15,21,'Massa, zichlik va kuchlar']];
+function seen(){try{var v=JSON.parse(localStorage.getItem(KEY)||'[]');return Array.isArray(v)?v:[]}catch(e){return []}}
+function mark(n){try{var s=seen();if(s.indexOf(n)<0){s.push(n);localStorage.setItem(KEY,JSON.stringify(s))}}catch(e){}}
+function gOf(n){for(var i=0;i<GR.length;i++)if(n>=GR[i][0]&&n<=GR[i][1])return i+1;return 1}
+function enhance(ov){
+ if(!ov||ov.__lb)return;var box=ov.querySelector('.emaktab-lib-box'),grid=ov.querySelector('.emaktab-lib-grid'),head=ov.querySelector('.emaktab-lib-head');
+ if(!box||!grid||!head)return;ov.__lb=1;
+ ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','7-sinf Fizika: 21 ta interaktiv dars');
+ var cl=ov.querySelector('.emaktab-lib-close');if(cl){cl.setAttribute('aria-label','Yopish');cl.title='Yopish (Esc)'}
+ var cards=[].slice.call(grid.querySelectorAll('.emaktab-lesson-card'));var S=seen();
+ cards.forEach(function(c,i){var n=+c.getAttribute('data-num')||i+1;c.setAttribute('data-g',gOf(n));c.style.setProperty('--i',i);
+  if(S.indexOf(n)>=0)c.classList.add('lb-seen');
+  var t=c.querySelector('.emaktab-card-text');c.setAttribute('aria-label',n+'-mavzu: '+(t?t.textContent:''));
+  c.addEventListener('click',function(){mark(n);c.classList.add('lb-seen');upd()})});
+ GR.forEach(function(g,k){var first=cards.filter(function(c){return +c.getAttribute('data-num')===g[0]})[0];if(!first)return;
+  var h=document.createElement('div');h.className='lb-grp';h.setAttribute('data-g',k+1);h.setAttribute('aria-hidden','true');
+  h.innerHTML='<span></span><small></small>';h.firstChild.textContent=g[2];h.lastChild.textContent=g[0]+'–'+g[1]+'-mavzular';grid.insertBefore(h,first)});
+ var tools=document.createElement('div');tools.className='lb-tools';
+ tools.innerHTML='<input class="lb-q" type="search" placeholder="Mavzuni qidiring…" aria-label="Mavzuni qidirish" autocomplete="off" enterkeyhint="search"><div class="lb-prog"><span class="lb-pt"></span><div class="lb-bar" aria-hidden="true"><i></i></div></div>';
+ head.appendChild(tools);
+ var empty=document.createElement('div');empty.className='lb-empty';empty.textContent='Hech narsa topilmadi — boshqa so‘z bilan qidirib ko‘ring.';empty.hidden=true;grid.appendChild(empty);
+ var q=tools.querySelector('.lb-q');
+ function norm(s){return String(s||'').toLowerCase().replace(/[ʻʼ‘’`']/g,"'").replace(/\s+/g,' ').trim()}
+ function filt(){var v=norm(q.value),any=0;cards.forEach(function(c){var ok=!v||norm(c.textContent).indexOf(v)>=0||String(c.getAttribute('data-num'))===v;c.classList.toggle('lb-hide',!ok);if(ok)any=1});
+  [].forEach.call(grid.querySelectorAll('.lb-grp'),function(h){h.hidden=!!v});empty.hidden=!!any}
+ q.addEventListener('input',filt);
+ q.addEventListener('keydown',function(e){if(e.key==='Enter'){var f=cards.filter(function(c){return !c.classList.contains('lb-hide')})[0];if(f){e.preventDefault();f.focus()}}});
+ function upd(){var n=cards.filter(function(c){return c.classList.contains('lb-seen')}).length;var pt=tools.querySelector('.lb-pt');if(pt)pt.textContent=n?('Ko‘rilgan: '+n+' / '+cards.length):(cards.length+' ta mavzu');var b=tools.querySelector('.lb-bar>i');if(b)b.style.width=(n/cards.length*100)+'%'}
+ upd();
+ function key(e){if(!document.body.contains(ov)){document.removeEventListener('keydown',key,true);return}if(e.key==='Escape'){e.stopPropagation();if(q.value&&document.activeElement===q){q.value='';filt();return}if(cl)cl.click();else ov.remove()}}
+ document.addEventListener('keydown',key,true);
+ setTimeout(function(){try{if(matchMedia('(pointer:fine)').matches)q.focus({preventScroll:true})}catch(e){}},60);
+}
+function scan(){var o=document.getElementById('emaktab-lib-overlay');if(o)enhance(o)}
+function start(){try{new MutationObserver(scan).observe(document.body,{childList:true})}catch(e){}scan()}
+if(document.body)start();else document.addEventListener('DOMContentLoaded',start);
+})();
+</script>
+
 <!-- ==================================================================== -->
 <!-- E-MAKTAB INTEGRATSIYASI: SUPABASE + O'QUVCHI ONBOARDING + 21 DARS    -->
 <!-- ==================================================================== -->

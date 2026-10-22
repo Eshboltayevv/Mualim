@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AR kamera namunasi</title>
+<style>
+  :root { --bg:#070b16; --fg:#eef3ff; --mu:#9fb0d0; --ac:#38bdf8; --pn:rgba(10,18,36,.78); --er:#b91c1c; }
+  * { box-sizing:border-box }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--fg); font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; overflow:hidden }
+  #stage { position:fixed; inset:0 }
+  #stage canvas, #stage video { position:absolute; inset:0; width:100%; height:100%; display:block; object-fit:cover }
+  .top { position:fixed; left:0; right:0; top:0; padding:max(12px,env(safe-area-inset-top)) 16px 12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+         background:linear-gradient(var(--pn),transparent) }
+  .top h1 { font-size:17px; margin:0; flex:1 1 auto }
+  .chip { font-size:12.5px; color:var(--mu); background:var(--pn); border-radius:999px; padding:5px 10px; backdrop-filter:blur(8px) }
+  .bottom { position:fixed; left:16px; right:16px; bottom:max(16px,env(safe-area-inset-bottom)); display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap }
+  .start { height:48px; padding:0 22px; border:0; border-radius:999px; font:700 16px system-ui,sans-serif; color:#fff; background:linear-gradient(135deg,#0ea5e9,#6366f1); cursor:pointer; box-shadow:0 10px 26px rgba(14,165,233,.35) }
+  .start:focus-visible { outline:3px solid #fff; outline-offset:3px }
+  .start[aria-pressed=true] { background:#334155; box-shadow:none }
+  .card { position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); width:min(440px,calc(100% - 32px)); padding:22px; border-radius:20px; background:var(--pn); backdrop-filter:blur(12px); text-align:center }
+  .card h2 { margin:0 0 8px; font-size:20px } .card p { margin:0 0 6px; color:var(--mu) }
+  .card.err { background:rgba(60,10,16,.9); border:1px solid #ef4444 } .card.err p { color:#fecaca }
+  [hidden] { display:none !important }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<header class="top">
+  <h1>🔬 AR fizika laboratoriyasi — kamera</h1>
+  <span class="chip" id="info">Kamera o'chiq</span>
+  <span class="chip" id="fps" hidden></span>
+</header>
+
+<section class="card" id="intro">
+  <h2>Kamerani yoqing</h2>
+  <p>Telefonda orqa kamera, kompyuterda veb-kamera ishlatiladi. Bir nechta kamera bo'lsa — 🔄 tugmasi bilan almashtiring.</p>
+</section>
+<section class="card err" id="err" role="alert" hidden><h2 id="errT"></h2><p id="errH"></p></section>
+
+<footer class="bottom">
+  <div id="switcher"></div>
+  <button type="button" class="start" id="go" aria-pressed="false">📷 Kamerani yoqish</button>
+</footer>
+
+<script type="module">
+import { CameraManager, checkSupport, createCameraSwitcher, createFrameLoop, useCameraBackground } from './camera-kit.js';
+
+const $ = id => document.getElementById(id);
+const stage = $('stage');
+
+/* 1) Kamera boshqaruvchisi: 720p — AR fon uchun; qo'l kuzatuvi uchun '480p' tezroq */
+const cam = new CameraManager({ resolution: '720p', frameRate: 30 });
+
+/* 2) Xatolarni ko'rsatish — har bir xatoda err.uz (nima bo'ldi) va err.hint (nima qilish kerak) bor */
+function showError(e) {
+  $('intro').hidden = true; $('err').hidden = false;
+  $('errT').textContent = e.uz || 'Kamera ishlamadi';
+  $('errH').textContent = e.hint || '';
+}
+cam.addEventListener('error', e => showError(e.detail.error));
+cam.addEventListener('start', e => {
+  const i = e.detail.info;
+  $('err').hidden = true; $('intro').hidden = true;
+  $('info').textContent = `${i.name} · ${i.width}×${i.height}${i.frameRate ? ' · ' + i.frameRate + ' FPS' : ''}`;
+});
+cam.addEventListener('stop', () => { $('info').textContent = 'Kamera o\'chiq'; });
+
+/* 3) Sahifa ochilganda — so'rovsiz tekshiruv (https, brauzer) */
+const sup = checkSupport();
+if (!sup.ok) showError(sup.error);
+
+/* 4) Kamera tanlash paneli (🔄 + ro'yxat) */
+createCameraSwitcher(cam, $('switcher'), { showErrors: false });   // xatolar yuqoridagi kartada ko'rsatiladi
+
+/* 5) Three.js sahnasi: kamera tasviri — fon, ustida 3D model. Three yuklanmasa — oddiy video ko'rsatiladi */
+let three = null;
+async function setupThree() {
+  try {
+    const THREE = await import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js');
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    stage.appendChild(renderer.domElement);
+    const scene = new THREE.Scene();
+    const camera3d = new THREE.PerspectiveCamera(60, 1, 0.01, 50);
+    camera3d.position.set(0, 0, 3);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x334466, 2.2));
+    // Namuna jism: atom modeli (yadro + 3 orbita)
+    const atom = new THREE.Group();
+    atom.add(new THREE.Mesh(new THREE.SphereGeometry(0.22, 32, 16), new THREE.MeshStandardMaterial({ color: 0xff7a45, roughness: .4 })));
+    for (let k = 0; k < 3; k++) {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.75, 0.012, 8, 96), new THREE.MeshBasicMaterial({ color: 0x7dd3fc }));
+      ring.rotation.set(Math.PI / 2, k * Math.PI / 3, 0);
+      const e = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 8), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+      e.position.x = 0.75; ring.add(e); atom.add(ring);
+    }
+    scene.add(atom);
+    const bg = useCameraBackground(THREE, renderer, scene, cam);   // ← kamera foni (cover + ko'zgu avtomatik)
+    const resize = () => {
+      const w = innerWidth, h = innerHeight;
+      renderer.setSize(w, h, false); camera3d.aspect = w / h; camera3d.updateProjectionMatrix(); bg.update();
+    };
+    addEventListener('resize', resize); resize();
+    renderer.setAnimationLoop(t => { atom.rotation.y = t / 1600; atom.children.forEach((r, i) => i && (r.rotation.z = t / (700 + i * 160))); renderer.render(scene, camera3d); });
+    return { renderer, bg };
+  } catch (e) {
+    console.warn('Three.js yuklanmadi, oddiy video ko\'rsatiladi:', e);
+    stage.appendChild(cam.video);                 // zaxira: video elementning o'zi
+    cam.video.removeAttribute('style'); delete cam.video.dataset.camerakit;
+    return null;
+  }
+}
+
+/* 6) Kadr tahlili — qo'l kuzatuvini shu yerga ulaysiz (MediaPipe HandLandmarker.detectForVideo).
+      Namuna sifatida faqat FPS hisoblanadi. */
+let loop = null;
+function startAnalysis() {
+  loop = createFrameLoop(cam.video, (video, nowMs) => {
+    // const result = handLandmarker.detectForVideo(video, nowMs);   // ← haqiqiy loyihada
+    // Old kamerada (cam.mirrored) x koordinatani 1 - x qilib aylantiring
+  }, { maxFps: 30 });
+  $('fps').hidden = false;
+  const t = setInterval(() => { if (!loop) return clearInterval(t); $('fps').textContent = `Tahlil: ${loop.fps} FPS`; }, 1000);
+}
+
+/* 7) Yoqish / o'chirish — iOS uchun foydalanuvchi bosishi bilan boshlash eng ishonchli */
+$('go').addEventListener('click', async () => {
+  const btn = $('go');
+  if (cam.active) {
+    cam.stop(); loop && loop.stop(); loop = null; $('fps').hidden = true;
+    btn.textContent = '📷 Kamerani yoqish'; btn.setAttribute('aria-pressed', 'false');
+    return;
+  }
+  btn.disabled = true;
+  try {
+    if (!three) three = await setupThree() || {};
+    await cam.start();
+    startAnalysis();
+    btn.textContent = '⏹ O\'chirish'; btn.setAttribute('aria-pressed', 'true');
+  } catch (e) { /* xabar 'error' hodisasida ko'rsatildi */ }
+  finally { btn.disabled = false; }
+});
+</script>
+</body>
+</html>
